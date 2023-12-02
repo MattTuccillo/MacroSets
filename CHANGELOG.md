@@ -8,7 +8,7 @@
   - Separate handling for general and character-specific macros.
   - Validation for macro set names.
 - Commands:
-  - `/ms save [name] [type]`: Save current macro set.
+  - `/ms save [name] [type]`: Save macros as a set, with type options 'g', 'c', or 'both'.
   - `/ms load [name]`: Load a macro set.
   - `/ms delete [name]`: Delete a macro set.
   - `/ms list`: List all saved macro sets.
