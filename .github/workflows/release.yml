@@ -1,0 +1,30 @@
+name: Create Release Zip
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Create Release Zip File
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          ZIP_NAME="MacroSets-${TAG_NAME}.zip"
+          zip -r $ZIP_NAME . -x '*.git*'
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./MacroSets-${{ github.ref_name }}.zip
+          asset_name: MacroSets-${{ github.ref_name }}.zip
+          asset_content_type: application/zip
