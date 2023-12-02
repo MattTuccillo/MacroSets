@@ -22,6 +22,10 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 ## Usage
 
 - `/ms save [name] [type]`: Save your current macros as a set.
+  - `[type]` Defaults to `"both"` if omitted.
+    - `"g"`: Save general macros as a set.
+    - `"c"`: Save character-specific macros as a set.
+    - `"both"`: Save all macros as a set.
 - `/ms load [name]`: Load a saved macro set.
 - `/ms delete [name]`: Delete a saved macro set.
 - `/ms list`: List all saved macro sets.
