@@ -5,6 +5,7 @@
 ## Version: 1.0
 ## SavedVariables: MacroSetsDB
 ## IconTexture: Interface\AddOns\MacroSets\Media\Textures\LogoAddon
+## X-Category: Utility Mods
 
 # Include your Lua and XML files here
 Main.lua
