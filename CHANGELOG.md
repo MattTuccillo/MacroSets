@@ -1,4 +1,4 @@
-# Changelog for MacroSets WoW Addon
+# Changelog for Macro Sets WoW Addon
 
 ## Version 1.0.0 - [12/2/2023]
 
@@ -13,7 +13,7 @@
   - `/ms delete [name]`: Delete a macro set.
   - `/ms list`: List all saved macro sets.
   - `/ms help`: Display help message.
-- Supports World of Warcraft version 10.2.0.
+- Supports World of Warcraft version 10.2.5.
 
 <!-- ## [F]uture Versions]
 
