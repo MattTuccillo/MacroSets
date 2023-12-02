@@ -25,25 +25,3 @@ jobs:
           zip_name="MacroSets-${{ steps.tag_name.outputs.TAG_NAME }}.zip"
           echo "::set-output name=ZIP_NAME::$zip_name"
           zip -r $zip_name . -x '*.git*'
-        id: zip_file
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.tag_name.outputs.TAG_NAME }}
-          release_name: Release ${{ steps.tag_name.outputs.TAG_NAME }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ steps.zip_file.outputs.ZIP_NAME }}
-          asset_name: ${{ steps.zip_file.outputs.ZIP_NAME }}
-          asset_content_type: application/zip
