@@ -1,4 +1,4 @@
-# Changelog for MacroSets WoW Addon
+# Changelog for Macro Sets WoW Addon
 
 ## Version 1.0.0 - [12/2/2023]
 

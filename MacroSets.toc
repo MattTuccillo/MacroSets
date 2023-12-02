@@ -1,11 +1,12 @@
 ## Interface: 100200
 ## Title: Macro Sets
 ## Notes: Manage and switch between macro sets easily.
-## Author: Yuki-Stormrage(US)
-## Version: 1.0
+## Author: Matthew Tuccillo
+## Version: 1.0.0
 ## SavedVariables: MacroSetsDB
 ## IconTexture: Interface\AddOns\MacroSets\Media\Textures\LogoAddon
-## X-Category: Utility Mods
+## X-Category: Miscellaneous
+## X-Curse-Project-ID: 945498
 
 # Include your Lua and XML files here
 Main.lua
