@@ -13,18 +13,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Install Zip Utility
+        run: sudo apt-get install zip
+
+      - name: Determine Tag Name
+        id: tag_name
+        run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
+
       - name: Create Release Zip File
         run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/}
-          ZIP_NAME="MacroSets-${TAG_NAME}.zip"
-          zip -r $ZIP_NAME . -x '*.git*'
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./MacroSets-${{ github.ref_name }}.zip
-          asset_name: MacroSets-${{ github.ref_name }}.zip
-          asset_content_type: application/zip
+          zip_name="MacroSets-${{ steps.tag_name.outputs.TAG_NAME }}.zip"
+          echo "::set-output name=ZIP_NAME::$zip_name"
+          zip -r $zip_name . -x '*.git*'
