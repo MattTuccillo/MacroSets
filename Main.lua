@@ -40,18 +40,29 @@ local function SaveMacroSet(setName, macroType)
         startSlot, endSlot = 1, 138
     end
 
-    MacroSetsDB[setName] = {macros = {}, type = macroType}
+    local generalMacroCount = 0
+    local characterMacroCount = 0
+
+    MacroSetsDB[setName] = {macros = {}, type = macroType, generalCount = 0, characterCount = 0}
     for i = startSlot, endSlot do
         local name, icon, body = GetMacroInfo(i)
         if name then
             table.insert(MacroSetsDB[setName].macros, {name = name, icon = icon, body = body})
+            if i <= 120 then
+                generalMacroCount = generalMacroCount + 1
+            else
+                characterMacroCount = characterMacroCount + 1
+            end
         end
     end
+
+    MacroSetsDB[setName].generalCount = generalMacroCount
+    MacroSetsDB[setName].characterCount = characterMacroCount
 
     if (macroType == "g") then
         print("General Macro set saved as '" .. setName .. "'.")
     elseif (macroType == "c") then
-        print("Character Specific Macro set saved as '" .. setName .. "'.")
+        print("Character Macro set saved as '" .. setName .. "'.")
     elseif (macroType == "both") then
         print("Macro set saved as '" .. setName .. "'.")
     else
@@ -91,19 +102,20 @@ local function LoadMacroSet(setName)
         end
     end
 
-    local macroSlot = macroSetType == "g" and 1 or startSlot
+    local generalMacroCount = MacroSetsDB[setName].generalCount or 0
+    local characterMacroCount = MacroSetsDB[setName].characterCount or 0
     for _, macro in ipairs(macroSet) do
-        if macroSetType == "g" and macroSlot > 120 then
-            print("Not enough general macro slots available.")
-            break
-        elseif macroSetType ~= "g" and macroSlot > 138 then
-            print("Not enough character-specific macro slots available.")
+        if generalMacroCount > 0 then
+            CreateMacro(macro.name, macro.icon, macro.body)
+            generalMacroCount = generalMacroCount - 1
+        elseif characterMacroCount > 0 then
+            CreateMacro(macro.name, macro.icon, macro.body, 1)  -- 1 for character-specific
+            characterMacroCount = characterMacroCount - 1
+        else
+            print("No more macro slots available for this type.")
             break
         end
-        local macroTypeFlag = macroSetType == "g" and nil or 1
-        CreateMacro(macro.name, macro.icon, macro.body, macroTypeFlag)
-        macroSlot = macroSlot + 1
-    end    
+    end  
     
     if macroFrameWasOpen then
         ShowUIPanel(MacroFrame)
@@ -138,7 +150,13 @@ local function ListMacroSets()
     print("Saved Macro Sets:")
     for setName, setDetails in pairs(MacroSetsDB) do
         local setType = setDetails.type
-        print("- " .. setName .. " (Type: " .. setType .. ")")
+        if (setType == 'c') then
+            print("- (C)" .. setName .. "")
+        elseif (setType == 'g') then
+            print("- (G)" .. setName .. "")
+        else
+            print("- (B)" .. setName .. "")
+        end
     end
 end
 
