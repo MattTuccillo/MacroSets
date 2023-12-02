@@ -1,5 +1,7 @@
 # Macro Sets Addon for Retail World of Warcraft
 
+![Macro Sets Logo](/Media/Textures/LogoAddon.png)
+
 ## Description
 
 Macro Sets is an addon for Retail World of Warcraft that allows players to manage and switch between sets of macros easily. This addon is particularly useful for players who use different sets of macros for various activities like PvE, PvP, roles, and/or specializations.
