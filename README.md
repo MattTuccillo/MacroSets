@@ -39,3 +39,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Fulgerul, author of the addon "Profiles: Macros" which hasn't been updated in many years, for providing the inspiration for this project.
 - ChatGPT for troubleshooting.
+- Dall-E for logo.
