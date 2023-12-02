@@ -91,7 +91,7 @@ local function LoadMacroSet(setName)
         end
     end
 
-    local macroSlot = startSlot
+    local macroSlot = macroSetType == "g" and 1 or startSlot
     for _, macro in ipairs(macroSet) do
         if macroSetType == "g" and macroSlot > 120 then
             print("Not enough general macro slots available.")
@@ -100,10 +100,10 @@ local function LoadMacroSet(setName)
             print("Not enough character-specific macro slots available.")
             break
         end
-        local macroTypeFlag = macroSetType == "g" and nil or 1  -- nil for general, 1 for character-specific
+        local macroTypeFlag = macroSetType == "g" and nil or 1
         CreateMacro(macro.name, macro.icon, macro.body, macroTypeFlag)
         macroSlot = macroSlot + 1
-    end
+    end    
     
     if macroFrameWasOpen then
         ShowUIPanel(MacroFrame)
