@@ -1,0 +1,9 @@
+## Interface: 10205
+## Title: Macro Sets
+## Notes: Manage and switch between macro sets easily.
+## Author: Yuki-Stormrage(US)
+## Version: 1.0
+## SavedVariables: MacroSetsDB
+
+# Include your Lua and XML files here
+Main.lua
