@@ -93,14 +93,18 @@ local function LoadMacroSet(setName)
 
     local macroSlot = startSlot
     for _, macro in ipairs(macroSet) do
-        if macroSlot > 138 then
+        if macroSetType == "g" and macroSlot > 120 then
+            print("Not enough general macro slots available.")
+            break
+        elseif macroSetType ~= "g" and macroSlot > 138 then
             print("Not enough character-specific macro slots available.")
             break
         end
-        CreateMacro(macro.name, macro.icon, macro.body, 1)  -- The 1 indicates a per-character macro
+        local macroTypeFlag = macroSetType == "g" and nil or 1  -- nil for general, 1 for character-specific
+        CreateMacro(macro.name, macro.icon, macro.body, macroTypeFlag)
         macroSlot = macroSlot + 1
     end
-
+    
     if macroFrameWasOpen then
         ShowUIPanel(MacroFrame)
     end
@@ -142,7 +146,12 @@ end
 
 local function DisplayHelp()
     print("Macro Sets Addon - Help")
-    print("/ms save [name] [type] - Save the current macro set with the specified name. Type can be 'g' for general, 'c' for character, or 'both'. Default is 'both'.")
+    print("/ms save [name] [type] - Save the current macro set with the specified name.")
+    print("- [type] options")
+    print("  - 'g' for general tab.")
+    print("  - 'c' for character tab.")
+    print("  - 'both' for both.")
+    print("  - Default is 'both'.")
     print("/ms load [name] - Load the macro set with the specified name.")
     print("/ms delete [name] - Delete the macro set with the specified name.")
     print("/ms list - List all saved macro sets.")
