@@ -19,12 +19,24 @@ jobs:
           ZIP_NAME="MacroSets-${TAG_NAME}.zip"
           zip -r $ZIP_NAME . -x '*.git*'
 
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: "Release of version ${{ github.ref }}"
+          draft: false
+          prerelease: false
+
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./MacroSets-${{ github.ref_name }}.zip
-          asset_name: MacroSets-${{ github.ref_name }}.zip
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.create_release.outputs.ZIP_NAME }}
+          asset_name: ${{ steps.create_release.outputs.ZIP_NAME }}
           asset_content_type: application/zip
