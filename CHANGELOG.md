@@ -13,7 +13,7 @@
   - `/ms delete [name]`: Delete a macro set.
   - `/ms list`: List all saved macro sets.
   - `/ms help`: Display help message.
-- Supports World of Warcraft version 10.2.5.
+- Supports World of Warcraft version 10.2.0.
 
 <!-- ## [F]uture Versions]
 
