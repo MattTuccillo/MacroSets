@@ -56,6 +56,7 @@ local function SaveMacroSet(setName, macroType)
         print("Macro set saved as '" .. setName .. "'.")
     else
         print("Invalid macro set type.")
+    end
 end
 
 
@@ -155,13 +156,19 @@ local function DisplayDefault()
 end
 
 local function HandleSlashCommands(msg)
+    -- Trim leading and trailing spaces
+    msg = string.match(msg, "^%s*(.-)%s*$")
+
     local command, setName, macroType = strsplit(" ", msg)
+
+    -- Converting the command to lower case for consistent comparison
+    command = string.lower(command)
 
     if command == 'save' then
         SaveMacroSet(setName, macroType)
-    elseif command == 'load' and setName then
+    elseif command == 'load' then
         LoadMacroSet(setName)
-    elseif command == 'delete' and setName then
+    elseif command == 'delete' then
         DeleteMacroSet(setName)
     elseif command == 'list' then
         ListMacroSets()
@@ -171,6 +178,7 @@ local function HandleSlashCommands(msg)
         DisplayDefault()
     end
 end
+
 
 
 SLASH_MACROSETS1 = '/ms'
