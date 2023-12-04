@@ -2,9 +2,12 @@ print("MacroSets loaded Successfully!")
 
 MacroSetsDB = MacroSetsDB or {}
 
+local isElvUI = IsAddOnLoaded("ElvUI")
+local isBartender4 = IsAddOnLoaded("Bartender4")
+
 local function IsValidSetName(setName)
     if not setName or setName == "" then
-        print("Please provide a valid macro set name.")
+        print("Please enter a macro set name.")
         return false
     end
 
@@ -21,15 +24,52 @@ local function IsValidSetName(setName)
     return true
 end
 
+
+
+local function GetActionBarSlotForMacro(macroName)
+    for i = 1, 120 do  -- The total number of slots in WoW's default action bars
+        local actionType, id = GetActionInfo(i)
+        if actionType == "macro" then
+            local name = GetMacroInfo(id)
+            if name == macroName then
+                return i  -- Return the slot number where the macro is found
+            end
+        end
+    end
+    return nil  -- Return nil if the macro is not found in any slot
+end
+
+
+
+local function PlaceMacroInActionBarSlot(macroId, actionBarSlot)
+    if not macroId or not actionBarSlot then
+        print("Invalid parameters for PlaceMacroInActionBarSlot")
+        return
+    end
+
+    -- Ensure the slot is within valid range (usually 1-120 for standard action bars)
+    if actionBarSlot < 1 or actionBarSlot > 120 then
+        print("Action bar slot is out of range.")
+        return
+    end
+
+    -- The API function PickUpMacro places a macro into the 'cursor' in the UI
+    PickupMacro(macroId)
+
+    -- The API function PlaceAction places whatever is on the cursor into a specified action bar slot
+    PlaceAction(actionBarSlot)
+
+    -- Clear the cursor after placing the macro
+    ClearCursor()
+end
+
+
+
+
 local function SaveMacroSet(setName, macroType)
     if not IsValidSetName(setName) then return end
     -- Default to both if no macroType is specified
     macroType = macroType or "both"
-
-    if not setName or setName == "" then
-        print("Please provide a name for the macro set.")
-        return
-    end
 
     local startSlot, endSlot
     if macroType == "g" then
@@ -47,13 +87,20 @@ local function SaveMacroSet(setName, macroType)
     for i = startSlot, endSlot do
         local name, icon, body = GetMacroInfo(i)
         if name then
-            table.insert(MacroSetsDB[setName].macros, {name = name, icon = icon, body = body})
+            local actionBarSlot = GetActionBarSlotForMacro(name)
+
+            table.insert(MacroSetsDB[setName].macros, {name = name, icon = icon, body = body, position = actionBarSlot})
             if i <= 120 then
                 generalMacroCount = generalMacroCount + 1
             else
                 characterMacroCount = characterMacroCount + 1
             end
         end
+    end
+
+    if generalMacroCount == 0 and characterMacroCount == 0 then
+        print("There are no macros to save.")
+        return
     end
 
     MacroSetsDB[setName].generalCount = generalMacroCount
@@ -71,16 +118,20 @@ local function SaveMacroSet(setName, macroType)
 end
 
 
+
 local function LoadMacroSet(setName)
-    if not IsValidSetName(setName) then return end
+    if not IsValidSetName(setName) then 
+        return 
+    end
+
+    if not MacroSetsDB[setName] then
+        print("Set does not exist.")
+        return
+    end
+
     local macroFrameWasOpen = MacroFrame and MacroFrame:IsVisible()
     if macroFrameWasOpen then
         HideUIPanel(MacroFrame)
-    end
-
-    if not setName or setName == "" or not MacroSetsDB[setName] then
-        print("Invalid macro set name or set does not exist.")
-        return
     end
 
     local macroSetType = MacroSetsDB[setName].type
@@ -105,15 +156,19 @@ local function LoadMacroSet(setName)
     local generalMacroCount = MacroSetsDB[setName].generalCount or 0
     local characterMacroCount = MacroSetsDB[setName].characterCount or 0
     for _, macro in ipairs(macroSet) do
+        local macroId
         if generalMacroCount > 0 then
-            CreateMacro(macro.name, macro.icon, macro.body)
+            macroId = CreateMacro(macro.name, macro.icon, macro.body)
             generalMacroCount = generalMacroCount - 1
         elseif characterMacroCount > 0 then
-            CreateMacro(macro.name, macro.icon, macro.body, 1)  -- 1 for character-specific
+            macroId = CreateMacro(macro.name, macro.icon, macro.body, 1)  -- 1 for character-specific
             characterMacroCount = characterMacroCount - 1
         else
             print("No more macro slots available for this type.")
             break
+        end
+        if macroId and macro.position then
+            PlaceMacroInActionBarSlot(macroId, macro.position)
         end
     end  
     
@@ -123,6 +178,7 @@ local function LoadMacroSet(setName)
 
     print("Macro set '" .. setName .. "' loaded.")
 end
+
 
 
 local function DeleteMacroSet(setName)
@@ -139,6 +195,7 @@ local function DeleteMacroSet(setName)
         print("Macro set '" .. setName .. "' not found.")
     end
 end
+
 
 
 local function ListMacroSets()
@@ -164,7 +221,7 @@ end
 
 local function DisplayHelp()
     print("Macro Sets Addon - Help")
-    print("/ms save [name] [type] - Save the current macro set with the specified name.")
+    print("/ms save [name] [type] - Save the current macro set with the specified name. Example: /ms save mySet g")
     print("- [type] options")
     print("  - 'g' for general tab.")
     print("  - 'c' for character tab.")
