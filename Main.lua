@@ -1,9 +1,8 @@
 print("MacroSets loaded Successfully!")
 
-MacroSetsDB = MacroSetsDB or {}
+local actionBarLimit = 180
 
-local isElvUI = IsAddOnLoaded("ElvUI")
-local isBartender4 = IsAddOnLoaded("Bartender4")
+MacroSetsDB = MacroSetsDB or {}
 
 local function IsValidSetName(setName)
     if not setName or setName == "" then
@@ -26,41 +25,38 @@ end
 
 
 
-local function GetActionBarSlotForMacro(macroName)
-    for i = 1, 120 do  -- The total number of slots in WoW's default action bars
+local function GetActionBarSlotsForMacro(macroName)
+    local slots = {}
+    for i = 1, actionBarLimit do  -- The total number of slots in WoW's default action bars
         local actionType, id = GetActionInfo(i)
         if actionType == "macro" then
             local name = GetMacroInfo(id)
             if name == macroName then
-                return i  -- Return the slot number where the macro is found
+                table.insert(slots, i) -- Return the slot number where the macro is found
             end
         end
     end
-    return nil  -- Return nil if the macro is not found in any slot
+    return slots  -- Return nil if the macro is not found in any slot
 end
 
 
 
-local function PlaceMacroInActionBarSlot(macroId, actionBarSlot)
-    if not macroId or not actionBarSlot then
-        print("Invalid parameters for PlaceMacroInActionBarSlot")
+local function PlaceMacrosInActionBarSlots(macroId, actionBarSlots)
+    if not macroId or not actionBarSlots then
+        print("Invalid parameters for PlaceMacrosInActionBarSlots")
         return
     end
 
-    -- Ensure the slot is within valid range (usually 1-120 for standard action bars)
-    if actionBarSlot < 1 or actionBarSlot > 120 then
-        print("Action bar slot is out of range.")
-        return
+    for _, slot in ipairs(actionBarSlots) do
+        -- Ensure each slot is within valid range
+        if slot < 1 or slot > actionBarLimit then
+            print("Action bar slot " .. slot .. " is out of range.")
+        else
+            PickupMacro(macroId)
+            PlaceAction(slot)
+            ClearCursor()
+        end
     end
-
-    -- The API function PickUpMacro places a macro into the 'cursor' in the UI
-    PickupMacro(macroId)
-
-    -- The API function PlaceAction places whatever is on the cursor into a specified action bar slot
-    PlaceAction(actionBarSlot)
-
-    -- Clear the cursor after placing the macro
-    ClearCursor()
 end
 
 
@@ -87,9 +83,8 @@ local function SaveMacroSet(setName, macroType)
     for i = startSlot, endSlot do
         local name, icon, body = GetMacroInfo(i)
         if name then
-            local actionBarSlot = GetActionBarSlotForMacro(name)
-
-            table.insert(MacroSetsDB[setName].macros, {name = name, icon = icon, body = body, position = actionBarSlot})
+            local actionBarSlots = GetActionBarSlotsForMacro(name)
+            table.insert(MacroSetsDB[setName].macros, {name = name, icon = icon, body = body, position = actionBarSlots})
             if i <= 120 then
                 generalMacroCount = generalMacroCount + 1
             else
@@ -168,7 +163,7 @@ local function LoadMacroSet(setName)
             break
         end
         if macroId and macro.position then
-            PlaceMacroInActionBarSlot(macroId, macro.position)
+            PlaceMacrosInActionBarSlots(macroId, macro.position)
         end
     end  
     
@@ -230,6 +225,7 @@ local function DisplayHelp()
     print("/ms load [name] - Load the macro set with the specified name.")
     print("/ms delete [name] - Delete the macro set with the specified name.")
     print("/ms list - List all saved macro sets.")
+    print("- Sets will note the tab type they encompass.")
     print("/ms help - Display this help message.")
 end
 
@@ -258,6 +254,31 @@ local function HandleSlashCommands(msg)
         ListMacroSets()
     elseif command == 'help' then
         DisplayHelp()
+    -- elseif command == 'test1' then
+    --     for i = 1, 36 do
+    --         print(i)
+    --         print(GetActionInfo(i))
+    --     end
+    -- elseif command == 'test2' then
+    --     for i = 37, 72 do
+    --         print(i)
+    --         print(GetActionInfo(i))
+    --     end
+    -- elseif command == 'test3' then
+    --     for i = 73, 108 do
+    --         print(i)
+    --         print(GetActionInfo(i))
+    --     end
+    -- elseif command == 'test4' then
+    --     for i = 109, 144 do
+    --         print(i)
+    --         print(GetActionInfo(i))
+    --     end
+    -- elseif command == 'test5' then
+    --     for i = 145, 180 do
+    --         print(i)
+    --         print(GetActionInfo(i))
+    --     end
     else
         DisplayDefault()
     end
