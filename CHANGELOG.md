@@ -1,5 +1,17 @@
 # Changelog for Macro Sets WoW Addon
 
+## Version 1.1.0 - [TBD]
+
+- Features
+  - Macro action bar positions are saved with set.
+  - Macros are placed on action bars on set load.
+- Changes
+  - Macro set name character limit increased from **25** to **50**.
+  - Checks to restrict addon usage during combat.
+  - Checks for duplicate macro names when saving a set.
+- Added simple testing framework to aid with debugging.
+- Substantial code refactoring.
+
 ## Version 1.0.0 - [12/2/2023]
 
 - Initial release of the addon.
@@ -14,7 +26,3 @@
   - `/ms list`: List all saved macro sets.
   - `/ms help`: Display help message.
 - Supports World of Warcraft version 10.2.0.
-
-<!-- ## [F]uture Versions]
-
-- [Date]: Version number - Description of changes, fixes, or updates. -->
