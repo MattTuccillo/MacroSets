@@ -64,15 +64,7 @@ local function SetMacroSlotRanges(macroType)
     end
 end
 
-local function GenerateUniqueMacroName(index, name)
-    local hexIdentifier = string.format("%02X", index)
-    local truncatedName = string.sub(name, 1, 14)  -- Truncate the name to 14 characters
-    local paddingLength = 14 - string.len(truncatedName)
-    local paddedName = truncatedName .. string.rep("_", paddingLength)
-    return paddedName .. hexIdentifier
-end
-
-local function EmptyMacroSet(generalCount, characterCount, macroType)
+local function MacroSetIsEmpty(generalCount, characterCount, macroType)
     if (macroType == "g" and generalCount == 0) or
         (macroType == "c" and characterCount == 0) or
         (generalCount == 0 and characterCount == 0) then
@@ -103,7 +95,7 @@ local function DeleteMacrosInRange(startSlot, endSlot)
     end
 end
 
-local function FixMacroBodies(setName)
+local function RestoreMacroBodies(setName)
     for _, macroDetails in ipairs(MacroSetsDB[setName].macros) do
         EditMacro(GetMacroIndexByName(macroDetails.name), macroDetails.name, macroDetails.icon, macroDetails.body)
     end
@@ -124,6 +116,17 @@ local function DeleteMacroSet(setName)
     end
 end
 
+local function DuplicateNames(array)
+    local seen = {}
+    for _, value in ipairs(array) do
+        if seen[value] then
+            return true
+        end
+        seen[value] = true
+    end
+    return false
+end
+
 local function SaveMacroSet(setName, macroType)
     if not IsValidSetName(setName) then 
         return 
@@ -132,15 +135,18 @@ local function SaveMacroSet(setName, macroType)
     local startSlot, endSlot = SetMacroSlotRanges(macroType)
     local generalMacroCount = 0
     local characterMacroCount = 0
-    MacroSetsDB[setName] = {macros = {}, type = macroType, generalCount = 0, characterCount = 0}
+    local dupes = false
+    local namesCache = {}
+    MacroSetsDB[setName] = {macros = {}, type = macroType, generalCount = 0, characterCount = 0, dupes = false}
     for i = startSlot, endSlot do
         local name, icon, body = GetMacroInfo(i)
         local stashedChar = ""
         if name then
-            local newName = GenerateUniqueMacroName(i, name)
-            EditMacro(i, newName, icon, "", 1)
-            local actionBarSlots = GetActionBarSlotsForMacro(newName)
-            table.insert(MacroSetsDB[setName].macros, {name = newName, icon = icon, body = body, position = actionBarSlots})
+            EditMacro(i, name, icon, "", 1)
+            local actionBarSlots = GetActionBarSlotsForMacro(name)
+            EditMacro(i, name, icon, body, 1)
+            table.insert(MacroSetsDB[setName].macros, {name = name, icon = icon, body = body, position = actionBarSlots})
+            table.insert(namesCache, name)
             if i <= 120 then
                 generalMacroCount = generalMacroCount + 1
             else
@@ -148,9 +154,13 @@ local function SaveMacroSet(setName, macroType)
             end
         end
     end
+    MacroSetsDB[setName].dupes = DuplicateNames(namesCache)
     MacroSetsDB[setName].generalCount = generalMacroCount
     MacroSetsDB[setName].characterCount = characterMacroCount
-    if not EmptyMacroSet(generalMacroCount, characterMacroCount, macroType) then
+    if MacroSetsDB[setName].dupes == true then
+        print("ERROR: Failed to save set. All macros in a set must have unique names.")
+    end
+    if not MacroSetIsEmpty(generalMacroCount, characterMacroCount, macroType) or MacroSetsDB[setName].dupes == true then
         MacroSetsDB[setName] = nil
         return
     end
@@ -177,10 +187,10 @@ local function LoadMacroSet(setName)
         local macroIndex
         local positions
         if generalMacroCount > 0 then
-            macroIndex = CreateMacro(macro.name, macro.icon, macro.body)
+            macroIndex = CreateMacro(macro.name, macro.icon, "")
             generalMacroCount = generalMacroCount - 1
         elseif characterMacroCount > 0 then
-            macroIndex = CreateMacro(macro.name, macro.icon, macro.body, 1)  -- 1 for character-specific
+            macroIndex = CreateMacro(macro.name, macro.icon, "", 1)  -- 1 for character-specific
             characterMacroCount = characterMacroCount - 1
         else
             print("No more macro slots available for this type.")
@@ -191,7 +201,7 @@ local function LoadMacroSet(setName)
             PlaceMacroInActionBarSlots(macroIndex, positions)
         end
     end
-    FixMacroBodies(setName)
+    RestoreMacroBodies(setName)
     if macroFrameWasOpen then 
         ShowUIPanel(MacroFrame) 
     end
