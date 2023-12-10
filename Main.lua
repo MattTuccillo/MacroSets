@@ -105,7 +105,7 @@ end
 
 local function FixMacroBodies(setName)
     for _, macroDetails in ipairs(MacroSetsDB[setName].macros) do
-        EditMacro(GetMacroIndexByName(macroDetails.name), macroDetails.name, macroDetails.icon, macroDetails.originalBody)
+        EditMacro(GetMacroIndexByName(macroDetails.name), macroDetails.name, macroDetails.icon, macroDetails.body)
     end
 end
 
@@ -140,7 +140,7 @@ local function SaveMacroSet(setName, macroType)
             local newName = GenerateUniqueMacroName(i, name)
             EditMacro(i, newName, icon, "", 1)
             local actionBarSlots = GetActionBarSlotsForMacro(newName)
-            table.insert(MacroSetsDB[setName].macros, {name = newName, icon = icon, body = "", position = actionBarSlots, originalBody = body})
+            table.insert(MacroSetsDB[setName].macros, {name = newName, icon = icon, body = body, position = actionBarSlots})
             if i <= 120 then
                 generalMacroCount = generalMacroCount + 1
             else
