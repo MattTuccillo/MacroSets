@@ -18,11 +18,34 @@ local test = {
     deleteMacrosInRange = false,
     restoreMacroBodies = false,
     duplicateNames = false,
-    handleSlashCommands = false
+    handleSlashCommands = false,
+    toggleDynamicIcons = false
 }
 
 local actionBarSlotLimit = 180
 MacroSetsDB = MacroSetsDB or {}
+MacroSetsDB.dynamicIcons = MacroSetsDB.dynamicIcons or false
+
+local function ToggleDynamicIcons()
+
+    if test.toggleDynamicIcons or test.allFunctions then
+        print("ToggleDynamicIcons(): Function called.")
+    end
+
+    MacroSetsDB.dynamicIcons = not MacroSetsDB.dynamicIcons
+    local status = MacroSetsDB.dynamicIcons and 'on' or 'off'
+    print("Dynamic macro icons toggled " .. status .. ".")
+    if MacroSetsDB.dynamicIcons then
+        print("If the last 2 characters of a macro name are '#i' the icon will be dynamically set when saved.")
+    else
+        print("If the last 2 characters of a macro name are '#i' the currently displayed icon will be set when saved.")
+    end
+
+    if test.toggleDynamicIcons or test.allFunctions then
+        print("ToggleDynamicIcons(): Toggled to " .. tostring(MacroSetsDB.dynamicIcons) .. ".")
+    end
+
+end
 
 local function IsValidSetName(setName)
 
@@ -317,8 +340,21 @@ local function SaveMacroSet(setName, macroType)
             return
         end
         local name, icon, body = GetMacroInfo(i)
-        local stashedChar = ""
         if name then
+            local endsWithD = string.sub(name, -2) == "#i"
+            if MacroSetsDB.dynamicIcons and endsWithD then
+                -- If dynamic icons are enabled and the name ends with "#i"
+                icon = 134400
+                if test.saveMacroSet or test.allFunctions then
+                    print("SaveMacroSet(): Dynamic icon set for macro: " .. name ..".")
+                end
+            elseif not MacroSetsDB.dynamicIcons and not endsWithD then
+                -- If dynamic icons are disabled and the name does not end with "#i"
+                icon = 134400
+                if test.saveMacroSet or test.allFunctions then
+                    print("SaveMacroSet(): Dynamic icon set for macro: " .. name ..".")
+                end
+            end
             EditMacro(i, name, icon, "", 1)
             local actionBarSlots = GetActionBarSlotsForMacro(name)
             EditMacro(i, name, icon, body, 1)
@@ -469,6 +505,11 @@ local function DisplayHelp()
     print("/ms delete [name] - Delete the macro set with the specified name.")
     print("/ms list - List all saved macro sets.")
     print("- Sets will note the tab type they encompass.")
+    print("/ms icons - Toggle what the '#i' flag does at the end of macro names.")
+    print("- Macros with names that end with '#i' will:")
+    print("  - Set all macro icons to the default icon when saved if toggled 'on'.")
+    print("  - Set all macro icons to the currently displayed icon when saved if toggled 'off'.")
+    print("  - Set to 'off' by default.")
     print("/ms help - Display this help message.")
 
 end
@@ -501,6 +542,8 @@ local function HandleSlashCommands(msg)
         DeleteMacroSet(setName)
     elseif command == 'list' then
         ListMacroSets()
+    elseif command == 'icons' then
+        ToggleDynamicIcons()
     elseif command == 'help' then
         DisplayHelp()
     else
