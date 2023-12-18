@@ -13,9 +13,13 @@
   - Added help information for `/ms icons` to `/ms help`.
 - Commands:
   - `/ms icons`: Toggles what the `#i` flag does at the end of macro names
-    - Set all macro icons to the default icon when saved if toggled to `on`.
-    - Set all macro icons to the currently displayed icon when saved if toggled `off`.
-    - Set to `off` by default.
+    - Toggled '**ON**':
+      - Macros with names that end with `#i` will be saved with the default/dynamic question mark icon.
+      - All other macros will be saved with the first icon shown when placed on the action bar.
+    - Toggled '**OFF**':
+      - Macros with names that end with `#i` will be saved with the first icon shown when placed on the action bar.
+      - All other macros will be saved with the default/dynamic question mark icon.
+    - Set to '**OFF**' by default.
 - Added simple testing framework to aid with debugging.
 - Substantial code refactoring.
 

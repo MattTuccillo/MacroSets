@@ -33,11 +33,43 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 - `/ms list`: List all saved macro sets.
   - Sets will note the tab type they encompass.
 - `/ms icons`: Toggles what the `#i` flag does at the end of macro names
-  - Macros with names that end with `#i` will:
-    - Set all macro icons to the default icon when saved if toggled to `on`.
-    - Set all macro icons to the currently displayed icon when saved if toggled `off`.
-    - Set to `off` by default.
+  - Toggled '**ON**':
+    - Macros with names that end with `#i` will be saved with the default/dynamic question mark icon.
+    - All other macros will be saved with the first icon shown when placed on the action bar.
+  - Toggled '**OFF**':
+    - Macros with names that end with `#i` will be saved with the first icon shown when placed on the action bar.
+    - All other macros will be saved with the default/dynamic question mark icon.
+  - Set to '**OFF**' by default.
 - `/ms help`: Display help information for the addon.
+
+## Explanation for `/ms icons`
+
+In this seciton I'll provide a visual example of the way the `/ms icons` affects the addon's functionality as well as an explanation for why it had to exist in the first place.
+
+### Example
+
+#### Initial macros
+
+- ![Example Initial](/Media/Textures/ExINIT.jpg)
+- both macros are using a custom selected icon
+- both macro bodies are the same
+  - ```
+    #showtooltip
+    /cast Lightning Bolt
+    ```
+- the macro 'B' on the right has the `#i` flag at the end of the name
+
+#### Saved while toggled 'ON'
+
+- ![Example ON](/Media/Textures/ExON.jpg)
+- macro without #i flag retained it's chosen icon
+- macro with #i flag was given the dynamic icon and it defaulted to the Lightning Bolt icon
+
+#### Saved while toggled 'OFF'
+
+- ![Example OFF](/Media/Textures/ExOFF.jpg)
+- macro with #i flag retained it's chosen icon
+- macro without #i flag was given the dynamic icon and it defaulted to the Lightning Bolt icon
 
 ## Testing
 

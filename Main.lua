@@ -1,4 +1,4 @@
-print("MacroSets loaded Successfully!")
+print("Macro Sets loaded Successfully!")
 
 -- testing toggles for debugging --
 local test = {
@@ -33,14 +33,8 @@ local function ToggleDynamicIcons()
     end
 
     MacroSetsDB.dynamicIcons = not MacroSetsDB.dynamicIcons
-    local status = MacroSetsDB.dynamicIcons and 'on' or 'off'
-    print("Dynamic macro icons toggled " .. status .. ".")
-    if MacroSetsDB.dynamicIcons then
-        print("If the last 2 characters of a macro name are '#i' the icon will be dynamically set when saved.")
-    else
-        print("If the last 2 characters of a macro name are '#i' the currently displayed icon will be set when saved.")
-    end
-
+    local status = MacroSetsDB.dynamicIcons and 'ON' or 'OFF'
+    print("Dynamic macro icons toggled '" .. status .. "'.")
     if test.toggleDynamicIcons or test.allFunctions then
         print("ToggleDynamicIcons(): Toggled to " .. tostring(MacroSetsDB.dynamicIcons) .. ".")
     end
@@ -477,17 +471,20 @@ local function ListMacroSets()
 
     print("Saved Macro Sets:")
     for setName, setDetails in pairs(MacroSetsDB) do
-        local setType = setDetails.type
-        if (setType == 'c') then
-            print("- (C)" .. setName .. "")
-        elseif (setType == 'g') then
-            print("- (G)" .. setName .. "")
-        else
-            print("- (B)" .. setName .. "")
+        if type(setDetails) == 'table' then
+            local setType = setDetails.type
+            if (setType == 'c') then
+                print("- (C)" .. setName)
+            elseif (setType == 'g') then
+                print("- (G)" .. setName)
+            else
+                print("- (B)" .. setName)
+            end
         end
     end
-
 end
+
+
 
 local function DisplayHelp()
 
@@ -506,10 +503,13 @@ local function DisplayHelp()
     print("/ms list - List all saved macro sets.")
     print("- Sets will note the tab type they encompass.")
     print("/ms icons - Toggle what the '#i' flag does at the end of macro names.")
-    print("- Macros with names that end with '#i' will:")
-    print("  - Set all macro icons to the default icon when saved if toggled 'on'.")
-    print("  - Set all macro icons to the currently displayed icon when saved if toggled 'off'.")
-    print("  - Set to 'off' by default.")
+    print("- Toggled 'ON':")
+    print("  - Macros with names that end with '#i' will be saved with the default/dynamic question mark icon.")
+    print("  - All other macros will be saved with the first icon shown when placed on the action bar.")
+    print("- Toggled 'OFF':")
+    print("  - Macros with names that end with '#i' will be saved with the first icon shown when placed on the action bar.")
+    print("  - All other macros will be saved with the default/dynamic question mark icon.")
+    print("- Set to 'OFF' by default.")
     print("/ms help - Display this help message.")
 
 end
