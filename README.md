@@ -44,7 +44,11 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 
 ## Explanation for `/ms icons`
 
-In this seciton I'll provide a visual example of the way the `/ms icons` affects the addon's functionality as well as an explanation for why it had to exist in the first place.
+In this section I'll provide a visual example of the way the `/ms icons` affects the addon's functionality as well as an explanation for why it had to exist in the first place.
+
+### Why it was necessary
+
+Due to the limitations of WOW's API I was unable to devise a method that would allow me to save the user's chosen icon, only the icon that is shown when the macro is placed on the action bar. My thinking was that the next best approach would be to manually set all icons to the default question mark icon so they would naturally retake the most fitting icon. Unfortunately, that would cause issues for people who choose specific icons for their macros. As a final solution I opted for the `#i` tag. It's a minor inconvenience however I implemented the toggle that would invert the flags rules so that if you are a person who prefers to use the dynamic icon 9 times out of 10, then you can pick the option that defaults to the dynamic icon. If you are a person who prefers to use their own chosen icon 9 times out of 10, then you can pick the option that defaults to the displayed icon when saved. I'm aware it's not as user friendly of a solution and I've supplied examples to provide a better understanding of the way it works but I did my best to handle this in as graceful a manner as I could while retaining functionality and customizability for the user.
 
 ### Example
 
