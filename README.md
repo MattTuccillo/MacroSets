@@ -66,13 +66,13 @@ Due to the limitations of WOW's API I was unable to devise a method that would a
 #### Saved while toggled 'ON'
 
 - ![Example ON](/Media/Textures/ExON.jpg)
-- macro without #i flag retained it's chosen icon
+- macro without #i flag retained its chosen icon
 - macro with #i flag was given the dynamic icon and it defaulted to the Lightning Bolt icon
 
 #### Saved while toggled 'OFF'
 
 - ![Example OFF](/Media/Textures/ExOFF.jpg)
-- macro with #i flag retained it's chosen icon
+- macro with #i flag retained its chosen icon
 - macro without #i flag was given the dynamic icon and it defaulted to the Lightning Bolt icon
 
 ## Testing
