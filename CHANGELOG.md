@@ -1,6 +1,6 @@
 # Changelog for Macro Sets WoW Addon
 
-## Version 1.1.0 - [TBD]
+## Version 1.1.0 - [12/18/2023]
 
 - Features:
   - Macro action bar positions are saved with set.
