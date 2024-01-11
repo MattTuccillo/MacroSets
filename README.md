@@ -13,6 +13,8 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 - Separate handling for general and character-specific macros.
 - Easy-to-use slash commands for managing macro sets.
 - Control over how macro icons are stored and set.
+- Filter your macro sets when listing (WIP).
+- Automatically reload set when changing talents (to force dynamic icon if macro ability is no longer known)(WIP).
 
 ## Installation
 
