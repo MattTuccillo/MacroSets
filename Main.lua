@@ -26,6 +26,17 @@ local actionBarSlotLimit = 180
 MacroSetsDB = MacroSetsDB or {}
 MacroSetsDB.dynamicIcons = MacroSetsDB.dynamicIcons or false
 
+-- Create alphabetized macro set list for easier reference when listed --
+local sortedSetNames = {}
+local function AlphabetizeMacroSets()
+    sortedSetNames = {}
+    for setName in pairs(MacroSetsDB) do
+        table.insert(sortedSetNames, setName)
+    end
+    table.sort(sortedSetNames)
+end
+AlphabetizeMacroSets()
+
 local function ToggleDynamicIcons()
 
     if test.toggleDynamicIcons or test.allFunctions then
@@ -264,6 +275,7 @@ local function DeleteMacroSet(setName)
     if MacroSetsDB[setName] then
         MacroSetsDB[setName] = nil  -- Remove the macro set from the database
         print("Macro set '" .. setName .. "' has been deleted.")
+        AlphabetizeMacroSets()
     else
         print("Macro set '" .. setName .. "' not found.")
     end
@@ -374,6 +386,7 @@ local function SaveMacroSet(setName, macroType)
     end
 
     DisplaySetSavedMessage(setName, macroType)
+    AlphabetizeMacroSets()
     
     if test.saveMacroSet or test.allFunctions then
         if MacroSetsDB[setName] == nil then
@@ -459,27 +472,22 @@ local function LoadMacroSet(setName)
 end
 
 local function ListMacroSets()
-
     if test.listMacroSets or test.allFunctions then
         print("ListMacroSets(): Function called.")
     end
 
-    if next(MacroSetsDB) == nil then
+    if #sortedSetNames == 0 then
         print("No macro sets saved.")
         return
     end
 
     print("Saved Macro Sets:")
-    for setName, setDetails in pairs(MacroSetsDB) do
+    for _, setName in ipairs(sortedSetNames) do
+        local setDetails = MacroSetsDB[setName]
         if type(setDetails) == 'table' then
             local setType = setDetails.type
-            if (setType == 'c') then
-                print("- (C)" .. setName)
-            elseif (setType == 'g') then
-                print("- (G)" .. setName)
-            else
-                print("- (B)" .. setName)
-            end
+            local setTypeIndicator = setType == 'c' and "(C)" or setType == 'g' and "(G)" or "(B)"
+            print("- " .. setTypeIndicator .. setName)
         end
     end
 end
