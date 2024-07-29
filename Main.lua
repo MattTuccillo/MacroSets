@@ -1,8 +1,7 @@
-print("Macro Sets loaded Successfully!")
-
 -- testing toggles for debugging --
 local test = {
     allFunctions = false,
+    alphabetizeMacroSets = false,
     saveMacroSet = false,
     loadMacroSet = false,
     deleteMacroSet = false,
@@ -28,17 +27,29 @@ MacroSetsDB.dynamicIcons = MacroSetsDB.dynamicIcons or false
 
 -- Create alphabetized macro set list for easier reference when listed --
 local sortedSetNames = {}
+
 local function AlphabetizeMacroSets()
     sortedSetNames = {}
-    for setName in pairs(MacroSetsDB) do
-        table.insert(sortedSetNames, setName)
+    for setName, setDetails in pairs(MacroSetsDB) do
+        if type(setDetails) == 'table' and setDetails.macros then
+            table.insert(sortedSetNames, setName)
+        end
     end
-    table.sort(sortedSetNames)
+    table.sort(sortedSetNames, function(a, b)
+        return string.lower(a) < string.lower(b)
+    end)
+    if test.alphabetizeMacroSets then
+        print("Alphabetized Macro Sets:")
+        for _, setName in ipairs(sortedSetNames) do
+            print(setName)
+        end
+    end
 end
+
+
 AlphabetizeMacroSets()
 
 local function ToggleDynamicIcons()
-
     if test.toggleDynamicIcons or test.allFunctions then
         print("ToggleDynamicIcons(): Function called.")
     end
@@ -49,11 +60,9 @@ local function ToggleDynamicIcons()
     if test.toggleDynamicIcons or test.allFunctions then
         print("ToggleDynamicIcons(): Toggled to " .. tostring(MacroSetsDB.dynamicIcons) .. ".")
     end
-
 end
 
 local function IsValidSetName(setName)
-
     if test.isValidSetName or test.allFunctions then
         print("IsValidSetName(): Function called.")
         print("IsValidSetName(): setName = " .. setName .. ".")
@@ -75,11 +84,9 @@ local function IsValidSetName(setName)
     end
 
     return true
-
 end
 
 local function GetActionBarSlotsForMacro(macroName)
-
     if test.getActionBarSlotsForMacro or test.allFunctions then
         print("GetActionBarSlotsForMacro(): Function called.")
     end
@@ -110,11 +117,9 @@ local function GetActionBarSlotsForMacro(macroName)
     end
     
     return slots
-
 end
 
 local function PlaceMacroInActionBarSlots(macroIndex, positions)
-
     local name, icon, body = GetMacroInfo(macroIndex)
 
     if test.placeMacroInActionBarSlots or test.allFunctions then
@@ -123,7 +128,6 @@ local function PlaceMacroInActionBarSlots(macroIndex, positions)
     end
 
     for _, slot in ipairs(positions) do
-
         if test.placeMacroInActionBarSlots or test.allFunctions then
             print("PlaceMacroInActionBarSlots(): Trying slot: " .. slot .. ".")
         end
@@ -143,14 +147,11 @@ local function PlaceMacroInActionBarSlots(macroIndex, positions)
                     print("PlaceMacroInActionBarSlots(): " .. name .. " failed to find slot " .. slot .. ".")
                 end
             end
-
         end
     end
-
 end
 
 local function SetMacroSlotRanges(macroType)
-
     if test.setMacroSlotRanges or test.allFunctions then
         print("SetMacroSlotRanges(): Function called.")
     end
@@ -162,11 +163,9 @@ local function SetMacroSlotRanges(macroType)
     else
         return 1, 138
     end
-
 end
 
 local function MacroSetIsEmpty(generalCount, characterCount, macroType)
-
     if test.macroSetIsEmpty or test.allFunctions then
         local total = generalCount + characterCount
         print("MacroSetIsEmpty(): Function called.")
@@ -183,11 +182,9 @@ local function MacroSetIsEmpty(generalCount, characterCount, macroType)
     end
 
     return true
-
 end
 
 local function DisplaySetSavedMessage(setName, macroType)
-
     if test.displaySetSavedMessage or test.allFunctions then
         print("DisplaySetSavedMessage(): Function called.")
         print("DisplaySetSavedMessage(): macroType = " .. macroType .. ".")
@@ -202,11 +199,9 @@ local function DisplaySetSavedMessage(setName, macroType)
     else
         print("Invalid macro set type.")
     end
-
 end
 
 local function DeleteMacrosInRange(startSlot, endSlot)
-
     if test.deleteMacrosInRange or test.allFunctions then
         print("DeleteMacrosInRange(): Function called.")
     end
@@ -219,8 +214,8 @@ local function DeleteMacrosInRange(startSlot, endSlot)
     end
 
     if test.deleteMacrosInRange or test.allFunctions then
-        for i = startSlot, endSlot  do
-            remainingMacros = {}
+        local remainingMacros = {}
+        for i = startSlot, endSlot do
             local macroName = GetMacroInfo(i)
             if macroName then
                 table.insert(remainingMacros, macroName)
@@ -235,11 +230,9 @@ local function DeleteMacrosInRange(startSlot, endSlot)
             print("DeleteMacrosInRange(): Macros deleted successfully.")
         end
     end
-
 end
 
 local function RestoreMacroBodies(setName)
-
     if test.restoreMacroBodies or test.allFunctions then
         print("RestoreMacroBodies(): Function called.")
     end
@@ -249,16 +242,13 @@ local function RestoreMacroBodies(setName)
 
         if test.restoreMacroBodies or test.allFunctions then
             if GetMacroBody(macroDetails.name) ~= macroDetails.body then
-                print("RestoreMacroBodies(): Failes to restore macro body to " .. macroDetails.name .. ".")
+                print("RestoreMacroBodies(): Failed to restore macro body to " .. macroDetails.name .. ".")
             end
         end
-
     end
-
 end
 
 local function DeleteMacroSet(setName)
-
     if test.deleteMacroSet or test.allFunctions then
         print("DeleteMacroSet(): Function called.")
     end
@@ -275,7 +265,6 @@ local function DeleteMacroSet(setName)
     if MacroSetsDB[setName] then
         MacroSetsDB[setName] = nil  -- Remove the macro set from the database
         print("Macro set '" .. setName .. "' has been deleted.")
-        AlphabetizeMacroSets()
     else
         print("Macro set '" .. setName .. "' not found.")
     end
@@ -285,11 +274,9 @@ local function DeleteMacroSet(setName)
             print("DeleteMacroSet(): Successfully deleted " .. setName .. ".")
         end
     end
-
 end
 
 local function DuplicateNames(array)
-
     if test.duplicateNames or test.allFunctions then
         print("DuplicateNames(): Function called.")
     end
@@ -297,11 +284,9 @@ local function DuplicateNames(array)
     local seen = {}
     for _, value in ipairs(array) do
         if seen[value] then
-
             if test.duplicateNames or test.allFunctions then
                 print("DuplicateNames(): Duplicate found: " .. value .. ".")
             end
-
             return true
         end
         seen[value] = true
@@ -312,11 +297,9 @@ local function DuplicateNames(array)
     end
 
     return false
-
 end
 
 local function SaveMacroSet(setName, macroType)
-
     if test.saveMacroSet or test.allFunctions then
         print("SaveMacroSet(): Function called.")
     end
@@ -395,11 +378,9 @@ local function SaveMacroSet(setName, macroType)
             print("SaveMacroSet(): Successfully saved " .. setName ..".")
         end
     end
-
 end
 
 local function LoadMacroSet(setName)
-
     if test.loadMacroSet or test.allFunctions then
         print("LoadMacroSet(): Function called.")
     end
@@ -468,7 +449,6 @@ local function LoadMacroSet(setName)
     end
 
     print("Macro set '" .. setName .. "' loaded.")
-
 end
 
 local function ListMacroSets()
@@ -484,7 +464,7 @@ local function ListMacroSets()
     print("Saved Macro Sets:")
     for _, setName in ipairs(sortedSetNames) do
         local setDetails = MacroSetsDB[setName]
-        if type(setDetails) == 'table' then
+        if type(setDetails) == 'table' and setDetails.macros then
             local setType = setDetails.type
             local setTypeIndicator = setType == 'c' and "(C)" or setType == 'g' and "(G)" or "(B)"
             print("- " .. setTypeIndicator .. setName)
@@ -492,10 +472,7 @@ local function ListMacroSets()
     end
 end
 
-
-
 local function DisplayHelp()
-
     if test.displayHelp or test.allFunctions then
         print("DisplayHelp(): Function called.")
     end
@@ -519,21 +496,17 @@ local function DisplayHelp()
     print("  - All other macros will be saved with the default/dynamic question mark icon.")
     print("- Set to 'OFF' by default.")
     print("/ms help - Display this help message.")
-
 end
 
 local function DisplayDefault()
-
     if test.displayDefault or test.allFunctions then
         print("DisplayDefault(): Function called.")
     end
 
     print("Invalid Command: Type '/ms help' for a list of valid commands.")
-
 end
 
 local function HandleSlashCommands(msg)
-
     if test.handleSlashCommands or test.allFunctions then
         print("HandleSlashCommands(): Function called.")
     end
@@ -549,6 +522,7 @@ local function HandleSlashCommands(msg)
     elseif command == 'delete' then
         DeleteMacroSet(setName)
     elseif command == 'list' then
+        AlphabetizeMacroSets() -- Ensure sortedSetNames is up to date
         ListMacroSets()
     elseif command == 'icons' then
         ToggleDynamicIcons()
@@ -557,7 +531,6 @@ local function HandleSlashCommands(msg)
     else
         DisplayDefault()
     end
-
 end
 
 SLASH_MACROSETS1 = '/ms'

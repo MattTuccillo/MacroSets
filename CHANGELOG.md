@@ -1,13 +1,12 @@
 # Changelog for Macro Sets WoW Addon
 
-## Version TBD - [xx/xx/2024]
+## Version 1.2.0 - [xx/xx/2024]
 
 - Features:
   - TBD
 - Changes:
   - Alphabetized macro set list for easier referencing.
-- Commands:
-  - TBD
+  - Removed the "MacroSets loaded Successfully" message on addon initialization.
 
 ## Version 1.1.0 - [12/18/2023]
 
