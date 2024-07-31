@@ -1,5 +1,24 @@
 # Changelog for Macro Sets WoW Addon
 
+## Version 1.2.0 - [7/30/2024]
+
+- Features:
+  - Ability to toggle action bar placements on set load.
+  - Alphabetization of macro sets list.
+  - Added color to text for easier readability.
+- Changes:
+  - Alphabetized macro set list for easier referencing.
+  - Removed the "MacroSets loaded Successfully" message on addon initialization.
+  - Added help information for `/ms bars` to `/ms help`.
+- Commands:
+  - `/ms bars`: Toggles whether the macros will be placed on their saved action bar positions on load.
+    - Toggled '**ON**':
+      - Macros will return to their saved action bar positions on load.
+    - Toggled '**OFF**':
+      - All macros pertaining to the sets scope will be removed from the action bars on load.
+    - Set to '**ON**' by default.
+- Supports World of Warcraft version 11.0.0.
+
 ## Version 1.1.0 - [12/18/2023]
 
 - Features:
