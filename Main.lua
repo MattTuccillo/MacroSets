@@ -31,7 +31,7 @@ local test = {
     duplicateNames = false,
     handleSlashCommands = false,
     toggleDynamicIcons = false,
-    toggleActionBarPlacements = true,
+    toggleActionBarPlacements = false,
 }
 
 local actionBarSlotLimit = 180
