@@ -34,6 +34,13 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 - `/ms delete [name]`: Delete the macro set with the specified name.
 - `/ms list`: List all saved macro sets.
   - Sets will note the tab type they encompass.
+  - Sets will be alphabetized.
+- `/ms bars`: Toggles whether you want the macros to return to their action bar positions on load.
+  - Toggled '**ON**':
+    - Macros will return to their saved action bar positions on load.
+  - Toggled '**OFF**':
+    - All macros pertaining to the sets scope will be removed from the action bars on load.
+  - Set to '**ON**' by default.
 - `/ms icons`: Toggles what the `#i` flag does at the end of macro names
   - Toggled '**ON**':
     - Macros with names that end with `#i` will be saved with the default/dynamic question mark icon.
@@ -84,6 +91,7 @@ I've implemented a simple testing framework to assist with debugging. It execute
 ```
 local test = {
     allFunctions = false,
+    alphabetizeMacroSets = false,
     saveMacroSet = false,
     loadMacroSet = false,
     deleteMacroSet = false,
@@ -100,7 +108,8 @@ local test = {
     restoreMacroBodies = false,
     duplicateNames = false,
     handleSlashCommands = false,
-    toggleDynamicIcons = false
+    toggleDynamicIcons = false,
+    toggleActionBarPlacements = false,
 }
 ```
 
