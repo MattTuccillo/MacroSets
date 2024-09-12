@@ -1,5 +1,11 @@
 # Changelog for Macro Sets WoW Addon
 
+## Version 1.2.1 - [9/12/2024]
+
+- Changes:
+  - Updated macro slots limit to account for character specific macro slot increase.
+- Supports World of Warcraft version 11.0.2.
+
 ## Version 1.2.0 - [7/30/2024]
 
 - Features:

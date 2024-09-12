@@ -34,13 +34,12 @@ local test = {
     toggleActionBarPlacements = false,
 }
 
+-- Create alphabetized macro set list for easier reference when listed --
+local sortedSetNames = {}
 local actionBarSlotLimit = 180
 MacroSetsDB = MacroSetsDB or {}
 MacroSetsDB.dynamicIcons = MacroSetsDB.dynamicIcons or false
 MacroSetsDB.placeOnBars = MacroSetsDB.placeOnBars or true
-
--- Create alphabetized macro set list for easier reference when listed --
-local sortedSetNames = {}
 
 local function AlphabetizeMacroSets()
     if test.alphabetizeMacroSets or test.allFunctions then
@@ -186,9 +185,9 @@ local function SetMacroSlotRanges(macroType)
     if macroType == "g" then
         return 1, 120
     elseif macroType == "c" then
-        return 121, 138
+        return 121, 150
     else
-        return 1, 138
+        return 1, 150
     end
 end
 
