@@ -37,9 +37,10 @@ local test = {
 -- Create alphabetized macro set list for easier reference when listed --
 local sortedSetNames = {}
 local actionBarSlotLimit = 180
+MacroSetsFunctions = MacroSetsFunctions or {}
 MacroSetsDB = MacroSetsDB or {}
 MacroSetsDB.dynamicIcons = MacroSetsDB.dynamicIcons or false
-MacroSetsDB.placeOnBars = MacroSetsDB.placeOnBars or true
+MacroSetsDB.replaceBars = MacroSetsDB.replaceBars or true
 
 local function AlphabetizeMacroSets()
     if test.alphabetizeMacroSets or test.allFunctions then
@@ -62,7 +63,7 @@ local function AlphabetizeMacroSets()
     end
 end
 
-local function ToggleDynamicIcons()
+function MacroSetsFunctions.ToggleDynamicIcons()
     if test.toggleDynamicIcons or test.allFunctions then
         print(COLOR_PURPLE .. "ToggleDynamicIcons(): Function called." .. COLOR_RESET)
     end
@@ -75,16 +76,15 @@ local function ToggleDynamicIcons()
     end
 end
 
-local function ToggleActionBarPlacements()
+function MacroSetsFunctions.ToggleActionBarPlacements()
     if test.toggleActionBarPlacements or test.allFunctions then
         print(COLOR_PURPLE .. "ToggleActionBarPlacements(): Function called." .. COLOR_RESET)
     end
 
-    MacroSetsDB.placeOnBars = not MacroSetsDB.placeOnBars
-    local status = MacroSetsDB.placeOnBars and 'OFF' or 'ON'
-    print("Action bar placements on load toggled " .. COLOR_ORANGE .. "'" .. status .. "'" .. COLOR_RESET .. ".")
+    MacroSetsDB.replaceBars = not MacroSetsDB.replaceBars
+    local status = MacroSetsDB.replaceBars and 'ON' or 'OFF'
     if test.toggleActionBarPlacements or test.allFunctions then
-        print(COLOR_PURPLE .. "ToggleActionBarPlacements(): Toggled to " .. tostring(MacroSetsDB.placeOnBars) .. "." .. COLOR_RESET)
+        print(COLOR_PURPLE .. "ToggleActionBarPlacements(): Toggled to " .. tostring(MacroSetsDB.replaceBars) .. "." .. COLOR_RESET)
     end
 end
 
@@ -454,7 +454,7 @@ local function LoadMacroSet(setName)
             break
         end
         positions = macro.position or {}
-        if MacroSetsDB.placeOnBars == false then
+        if MacroSetsDB.replaceBars == true then
             if macroIndex and #positions ~= 0 then
                 PlaceMacroInActionBarSlots(macroIndex, positions)
             end
@@ -557,10 +557,10 @@ local function HandleSlashCommands(msg)
     elseif command == 'list' then
         AlphabetizeMacroSets()
         ListMacroSets()
-    elseif command == 'icons' then
-        ToggleDynamicIcons()
-    elseif command == 'bars' then
-        ToggleActionBarPlacements()
+    -- elseif command == 'icons' then
+    --     ToggleDynamicIcons()
+    -- elseif command == 'bars' then
+    --     ToggleActionBarPlacements()
     elseif command == 'help' then
         DisplayHelp()
     else
