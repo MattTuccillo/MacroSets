@@ -1,5 +1,4 @@
 --TODO
---remove commands for dynamic icons and bar placement toggles
 --add "undo" command
 -----delate
 -----delate all
