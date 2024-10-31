@@ -1,3 +1,16 @@
+--TODO
+--remove commands for dynamic icons and bar placement toggles
+--add "undo" command
+-----delate
+-----delate all
+-----save
+--add delete all command with confirmation
+--more filtering for list
+--adjust readme
+--adjust help
+--adjust changelog
+--new command to open options '/ms options'
+
 -- Color codes
 local COLOR_PURPLE = "|cFFCC79A7" -- testing messages
 local COLOR_SKY_BLUE = "|cFF56B4E9" -- help section text
@@ -70,7 +83,6 @@ function MacroSetsFunctions.ToggleDynamicIcons()
 
     MacroSetsDB.dynamicIcons = not MacroSetsDB.dynamicIcons
     local status = MacroSetsDB.dynamicIcons and 'ON' or 'OFF'
-    print("Dynamic macro icons toggled " .. COLOR_ORANGE .. "'" .. status .. "'" .. COLOR_RESET .. ".")
     if test.toggleDynamicIcons or test.allFunctions then
         print(COLOR_PURPLE .. "ToggleDynamicIcons(): Toggled to " .. tostring(MacroSetsDB.dynamicIcons) .. "." .. COLOR_RESET)
     end
@@ -557,10 +569,6 @@ local function HandleSlashCommands(msg)
     elseif command == 'list' then
         AlphabetizeMacroSets()
         ListMacroSets()
-    -- elseif command == 'icons' then
-    --     ToggleDynamicIcons()
-    -- elseif command == 'bars' then
-    --     ToggleActionBarPlacements()
     elseif command == 'help' then
         DisplayHelp()
     else
