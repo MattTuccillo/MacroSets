@@ -1,7 +1,7 @@
 --TODO
 --add "undo" command
------delate
------delate all
+-----delete
+-----delete all
 -----save
 --add delete all command with confirmation
 --more filtering for list
@@ -53,6 +53,7 @@ MacroSetsFunctions = MacroSetsFunctions or {}
 MacroSetsDB = MacroSetsDB or {}
 MacroSetsDB.dynamicIcons = MacroSetsDB.dynamicIcons or false
 MacroSetsDB.replaceBars = MacroSetsDB.replaceBars or true
+MacroSetsDB.charSpecific = MacroSetsDB.charSpecific or false
 
 local function AlphabetizeMacroSets()
     if test.alphabetizeMacroSets or test.allFunctions then
@@ -96,6 +97,18 @@ function MacroSetsFunctions.ToggleActionBarPlacements()
     local status = MacroSetsDB.replaceBars and 'ON' or 'OFF'
     if test.toggleActionBarPlacements or test.allFunctions then
         print(COLOR_PURPLE .. "ToggleActionBarPlacements(): Toggled to " .. tostring(MacroSetsDB.replaceBars) .. "." .. COLOR_RESET)
+    end
+end
+
+function MacroSetsFunctions.ToggleCharSpecific()
+    if test.toggleCharSpecific or test.allFunctions then
+        print(COLOR_PURPLE .. "ToggleCharSpecific(): Function called." .. COLOR_RESET)
+    end
+
+    MacroSetsDB.charSpecific = not MacroSetsDB.charSpecific
+    local status = MacroSetsDB.charSpecific and 'ON' or 'OFF'
+    if test.toggleCharSpecific or test.allFunctions then
+        print(COLOR_PURPLE .. "ToggleCharSpecific(): Toggled to " .. tostring(MacroSetsDB.charSpecific) .. "." .. COLOR_RESET)
     end
 end
 
@@ -352,7 +365,11 @@ local function SaveMacroSet(setName, macroType)
 
     local macroType = macroType
     if macroType ~= "c" and macroType ~= "g" then
-        macroType = "both"
+        if MacroSetsDB.charSpecific then
+            macroType = "c"
+        else
+            macroType = "both"
+        end
     end
     local startSlot, endSlot = SetMacroSlotRanges(macroType)
     local generalMacroCount = 0
