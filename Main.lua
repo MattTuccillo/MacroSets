@@ -1,15 +1,3 @@
---TODO
---add "undo" command
------delete
------delete all
------save
---add delete all command with confirmation
---more filtering for list
---adjust readme
---adjust help
---adjust changelog
---new command to open options '/ms options'
-
 -- Color codes
 local COLOR_PURPLE = "|cFFCC79A7" -- testing messages
 local COLOR_SKY_BLUE = "|cFF56B4E9" -- help section text
@@ -587,6 +575,15 @@ local function HandleSlashCommands(msg)
         ListMacroSets()
     elseif command == 'help' then
         DisplayHelp()
+    elseif command == 'options' then
+        if SettingsPanel:GetCurrentCategory() == macroSetsCategory and SettingsPanel:IsShown() then
+            SettingsPanel:Hide()
+        else
+            -- Force reset and reopen the panel
+            SettingsPanel:Hide()
+            SettingsPanel:Show()
+            Settings.OpenToCategory(macroSetsCategory:GetID())
+        end    
     else
         DisplayDefault()
     end
