@@ -32,6 +32,8 @@ local test = {
     handleSlashCommands = false,
     toggleDynamicIcons = false,
     toggleActionBarPlacements = false,
+    toggleCharSpecific = false,
+    optionsScreenToggle = false,
 }
 
 -- Create alphabetized macro set list for easier reference when listed --
@@ -516,6 +518,24 @@ local function ListMacroSets()
     end
 end
 
+local function OptionsScreenToggle()
+    if test.optionsScreenToggle or test.allFunctions then
+        print(COLOR_PURPLE .. "OptionsScreenToggle(): Function called." .. COLOR_RESET)
+    end
+    if SettingsPanel:GetCurrentCategory() == macroSetsCategory and SettingsPanel:IsShown() then
+        SettingsPanel:Hide()
+        if test.optionsScreenToggle or test.allFunctions then
+            print(COLOR_PURPLE .. "OptionsScreenToggle(): Options screen hidden." .. COLOR_RESET)
+        end
+    else
+        SettingsPanel:Hide()
+        SettingsPanel:Show()
+        Settings.OpenToCategory(macroSetsCategory:GetID())
+        if test.optionsScreenToggle or test.allFunctions then
+            print(COLOR_PURPLE .. "OptionsScreenToggle(): Options screen shown." .. COLOR_RESET)
+        end
+    end    
+
 local function DisplayHelp()
     if test.displayHelp or test.allFunctions then
         print(COLOR_PURPLE .. "DisplayHelp(): Function called." .. COLOR_RESET)
@@ -576,14 +596,7 @@ local function HandleSlashCommands(msg)
     elseif command == 'help' then
         DisplayHelp()
     elseif command == 'options' then
-        if SettingsPanel:GetCurrentCategory() == macroSetsCategory and SettingsPanel:IsShown() then
-            SettingsPanel:Hide()
-        else
-            -- Force reset and reopen the panel
-            SettingsPanel:Hide()
-            SettingsPanel:Show()
-            Settings.OpenToCategory(macroSetsCategory:GetID())
-        end    
+        OptionsScreenToggle()
     else
         DisplayDefault()
     end
