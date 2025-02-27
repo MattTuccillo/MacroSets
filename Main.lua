@@ -10,13 +10,18 @@ local COLOR_VERMILLION = "|cFFD55E00" -- error message
 local COLOR_GREEN = "|cFF009E73" -- success message
 local COLOR_RESET = "|r" -- reset back to original color
 
--- testing toggles for debugging --
+-- Testing toggles for debugging --
 local test = {
     allFunctions = false,
+    toggleDynamicIcons = false,
+    toggleActionBarPlacements = false,
+    toggleCharSpecific = false,
+    backupMacroSets = false,
     alphabetizeMacroSets = false,
     saveMacroSet = false,
     loadMacroSet = false,
     deleteMacroSet = false,
+    undoLastOperation = false,
     listMacroSets = false,
     displayHelp = false,
     displayDefault = false,
@@ -29,12 +34,24 @@ local test = {
     deleteMacrosInRange = false,
     restoreMacroBodies = false,
     duplicateNames = false,
-    handleSlashCommands = false,
-    toggleDynamicIcons = false,
-    toggleActionBarPlacements = false,
-    toggleCharSpecific = false,
     optionsScreenToggle = false,
+    handleSlashCommands = false,
 }
+
+local function DeepCopyTable(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[DeepCopyTable(orig_key)] = DeepCopyTable(orig_value)
+        end
+        setmetatable(copy, DeepCopyTable(getmetatable(orig)))
+    else
+        copy = orig
+    end
+    return copy
+end
 
 -- Create alphabetized macro set list for easier reference when listed --
 local sortedSetNames = {}
@@ -45,26 +62,14 @@ MacroSetsDB.dynamicIcons = MacroSetsDB.dynamicIcons or false
 MacroSetsDB.replaceBars = MacroSetsDB.replaceBars or true
 MacroSetsDB.charSpecific = MacroSetsDB.charSpecific or false
 
-local function AlphabetizeMacroSets()
-    if test.alphabetizeMacroSets or test.allFunctions then
-        print(COLOR_PURPLE .. "AlphabetizeMacroSets(): Function called." .. COLOR_RESET)
-    end
-    sortedSetNames = {}
-    for setName, setDetails in pairs(MacroSetsDB) do
-        if type(setDetails) == 'table' and setDetails.macros then
-            table.insert(sortedSetNames, setName)
-        end
-    end
-    table.sort(sortedSetNames, function(a, b)
-        return string.lower(a) < string.lower(b)
-    end)
-    if test.alphabetizeMacroSets or test.allFunctions then
-        print(COLOR_PURPLE .. "AlphabetizeMacroSets():" .. COLOR_RESET)
-        for _, setName in ipairs(sortedSetNames) do
-            print(COLOR_PURPLE .. setName .. COLOR_RESET)
-        end
+-- Create a backup of all macro sets for restoration through undo --
+MacroSetsBackup = MacroSetsBackup or {}
+if next(MacroSetsBackup) == nil then
+    for setName, setData in pairs(MacroSetsDB) do
+        MacroSetsBackup[setName] = DeepCopyTable(setData)
     end
 end
+
 
 function MacroSetsFunctions.ToggleDynamicIcons()
     if test.toggleDynamicIcons or test.allFunctions then
@@ -99,6 +104,46 @@ function MacroSetsFunctions.ToggleCharSpecific()
     local status = MacroSetsDB.charSpecific and 'ON' or 'OFF'
     if test.toggleCharSpecific or test.allFunctions then
         print(COLOR_PURPLE .. "ToggleCharSpecific(): Toggled to " .. tostring(MacroSetsDB.charSpecific) .. "." .. COLOR_RESET)
+    end
+end
+
+local function BackupMacroSets()
+    if test.backupMacroSets or test.allFunctions then
+        print(COLOR_PURPLE .. "BackupMacroSets(): Function called." .. COLOR_RESET)
+    end
+
+    MacroSetsBackup = {}
+    for setName, setData in pairs(MacroSetsDB) do
+        MacroSetsBackup[setName] = DeepCopyTable(setData)
+    end
+
+    if test.backupMacroSets or test.allFunctions then
+        if next(MacroSetsBackup) == nil then
+            print(COLOR_VERMILLION .. "BackupMacroSets(): Backup failed. No data copied." .. COLOR_RESET)
+        else
+            print(COLOR_GREEN .. "BackupMacroSets(): Backup successful. Macro sets copied." .. COLOR_RESET)
+        end
+    end
+end
+
+local function AlphabetizeMacroSets()
+    if test.alphabetizeMacroSets or test.allFunctions then
+        print(COLOR_PURPLE .. "AlphabetizeMacroSets(): Function called." .. COLOR_RESET)
+    end
+    sortedSetNames = {}
+    for setName, setDetails in pairs(MacroSetsDB) do
+        if type(setDetails) == 'table' and setDetails.macros then
+            table.insert(sortedSetNames, setName)
+        end
+    end
+    table.sort(sortedSetNames, function(a, b)
+        return string.lower(a) < string.lower(b)
+    end)
+    if test.alphabetizeMacroSets or test.allFunctions then
+        print(COLOR_PURPLE .. "AlphabetizeMacroSets():" .. COLOR_RESET)
+        for _, setName in ipairs(sortedSetNames) do
+            print(COLOR_PURPLE .. setName .. COLOR_RESET)
+        end
     end
 end
 
@@ -206,6 +251,7 @@ local function SetMacroSlotRanges(macroType)
 end
 
 local function MacroSetIsEmpty(generalCount, characterCount, macroType)
+    -- Test callback
     if test.macroSetIsEmpty or test.allFunctions then
         local total = generalCount + characterCount
         print(COLOR_PURPLE .. "MacroSetIsEmpty(): Function called." .. COLOR_RESET)
@@ -217,7 +263,6 @@ local function MacroSetIsEmpty(generalCount, characterCount, macroType)
     if (macroType == "g" and generalCount == 0) or
         (macroType == "c" and characterCount == 0) or
         (generalCount == 0 and characterCount == 0) then
-        print(COLOR_VERMILLION .. "No macros to save." .. COLOR_RESET)
         return false
     end
 
@@ -225,6 +270,7 @@ local function MacroSetIsEmpty(generalCount, characterCount, macroType)
 end
 
 local function DisplaySetSavedMessage(setName, macroType)
+    -- Test callback
     if test.displaySetSavedMessage or test.allFunctions then
         print(COLOR_PURPLE .. "DisplaySetSavedMessage(): Function called." .. COLOR_RESET)
         print(COLOR_PURPLE .. "DisplaySetSavedMessage(): macroType = " .. macroType .. "." .. COLOR_RESET)
@@ -289,6 +335,7 @@ local function RestoreMacroBodies(setName)
 end
 
 local function DeleteMacroSet(setName)
+    -- Test callback
     if test.deleteMacroSet or test.allFunctions then
         print(COLOR_PURPLE .. "DeleteMacroSet(): Function called." .. COLOR_RESET)
     end
@@ -303,12 +350,16 @@ local function DeleteMacroSet(setName)
     end
 
     if MacroSetsDB[setName] then
-        MacroSetsDB[setName] = nil  -- Remove the macro set from the database
+        -- Backup current macro sets
+        BackupMacroSets()
+        -- Remove the macro set from the database
+        MacroSetsDB[setName] = nil
         print(COLOR_GREEN .. "Macro set '" .. setName .. "' has been deleted." .. COLOR_RESET)
     else
         print(COLOR_VERMILLION .. "Macro set '" .. setName .. "' not found." .. COLOR_RESET)
     end
 
+    -- Test callback
     if test.deleteMacroSet or test.allFunctions then
         if MacroSetsDB[setName] == nil then
             print(COLOR_PURPLE .. "DeleteMacroSet(): Successfully deleted " .. setName .. "." .. COLOR_RESET)
@@ -317,6 +368,7 @@ local function DeleteMacroSet(setName)
 end
 
 local function DuplicateNames(array)
+    -- Test callback
     if test.duplicateNames or test.allFunctions then
         print(COLOR_PURPLE .. "DuplicateNames(): Function called." .. COLOR_RESET)
     end
@@ -324,6 +376,7 @@ local function DuplicateNames(array)
     local seen = {}
     for _, value in ipairs(array) do
         if seen[value] then
+            -- Test callback
             if test.duplicateNames or test.allFunctions then
                 print(COLOR_PURPLE .. "DuplicateNames(): Duplicate found: " .. value .. "." .. COLOR_RESET)
             end
@@ -332,6 +385,7 @@ local function DuplicateNames(array)
         seen[value] = true
     end
 
+    -- Test callback
     if test.duplicateNames or test.allFunctions then
         print(COLOR_PURPLE .. "DuplicateNames(): No duplicates found." .. COLOR_RESET)
     end
@@ -340,19 +394,23 @@ local function DuplicateNames(array)
 end
 
 local function SaveMacroSet(setName, macroType)
+    -- Test callback
     if test.saveMacroSet or test.allFunctions then
         print(COLOR_PURPLE .. "SaveMacroSet(): Function called." .. COLOR_RESET)
     end
 
+    -- Prevent execution during combat
     if InCombatLockdown() then
         print(COLOR_VERMILLION .. "Cannot perform this action during combat." .. COLOR_RESET)
         return
     end
 
+    -- Validate macro set name
     if not IsValidSetName(setName) then 
         return 
     end
 
+    -- Determine macro set type
     local macroType = macroType
     if macroType ~= "c" and macroType ~= "g" then
         if MacroSetsDB.charSpecific then
@@ -361,29 +419,44 @@ local function SaveMacroSet(setName, macroType)
             macroType = "both"
         end
     end
+
+    -- Initialize variables
     local startSlot, endSlot = SetMacroSlotRanges(macroType)
     local generalMacroCount = 0
     local characterMacroCount = 0
     local dupes = false
     local namesCache = {}
-    MacroSetsDB[setName] = {macros = {}, type = macroType, generalCount = 0, characterCount = 0, dupes = dupes}
+    -- Store data in a temporary table
+    -- MacroSetsDB[setName] = {macros = {}, type = macroType, generalCount = 0, characterCount = 0, dupes = dupes}
+    local tempMacroSet = {
+        macros = {}, 
+        type = macroType, 
+        generalCount = 0, 
+        characterCount = 0, 
+        dupes = dupes
+    }
     for i = startSlot, endSlot do
+        -- Prevent Execution During Combat
         if InCombatLockdown() then
             print(COLOR_VERMILLION .. "Save interrupted. Please try again after leaving combat." .. COLOR_RESET)
             return
         end
+        -- Load macro information
         local name, icon, body = GetMacroInfo(i)
         if name then
+            -- Check for macro icon behavior flag
             local endsWithD = string.sub(name, -2) == "#i"
+            -- If dynamic icons are enabled and the name ends with "#i"
             if MacroSetsDB.dynamicIcons and endsWithD then
-                -- If dynamic icons are enabled and the name ends with "#i"
                 icon = 134400
+                -- Test callback
                 if test.saveMacroSet or test.allFunctions then
                     print(COLOR_PURPLE .. "SaveMacroSet(): Dynamic icon set for macro: " .. name .. "." .. COLOR_RESET)
                 end
+            -- If dynamic icons are disabled and the name does not end with "#i"
             elseif not MacroSetsDB.dynamicIcons and not endsWithD then
-                -- If dynamic icons are disabled and the name does not end with "#i"
                 icon = 134400
+                -- Test callback
                 if test.saveMacroSet or test.allFunctions then
                     print(COLOR_PURPLE .. "SaveMacroSet(): Dynamic icon set for macro: " .. name .. "." .. COLOR_RESET)
                 end
@@ -391,7 +464,7 @@ local function SaveMacroSet(setName, macroType)
             EditMacro(i, name, icon, "", 1)
             local actionBarSlots = GetActionBarSlotsForMacro(name)
             EditMacro(i, name, icon, body, 1)
-            table.insert(MacroSetsDB[setName].macros, {name = name, icon = icon, body = body, position = actionBarSlots})
+            table.insert(tempMacroSet.macros, {name = name, icon = icon, body = body, position = actionBarSlots})
             table.insert(namesCache, name)
             if i <= 120 then
                 generalMacroCount = generalMacroCount + 1
@@ -400,21 +473,31 @@ local function SaveMacroSet(setName, macroType)
             end
         end
     end
-    MacroSetsDB[setName].dupes = DuplicateNames(namesCache)
-    MacroSetsDB[setName].generalCount = generalMacroCount
-    MacroSetsDB[setName].characterCount = characterMacroCount
+    tempMacroSet.dupes = DuplicateNames(namesCache)
+    tempMacroSet.generalCount = generalMacroCount
+    tempMacroSet.characterCount = characterMacroCount
 
-    if MacroSetsDB[setName].dupes == true then
+    -- Check duplicate macro names
+    if tempMacroSet.dupes then
         print(COLOR_VERMILLION .. "Failed to save set. All macros in a set must have unique names." .. COLOR_RESET)
+        return
     end
-    if not MacroSetIsEmpty(generalMacroCount, characterMacroCount, macroType) or MacroSetsDB[setName].dupes == true then
-        MacroSetsDB[setName] = nil
+    -- Check empty macro set
+    if not MacroSetIsEmpty(generalMacroCount, characterMacroCount, macroType) then
+        print(COLOR_VERMILLION .. "No macros to save." .. COLOR_RESET)
         return
     end
 
+    -- Backup current macro sets
+    BackupMacroSets()
+    -- Insert new set into current database
+    MacroSetsDB[setName] = tempMacroSet
+    -- Display successful save message
     DisplaySetSavedMessage(setName, macroType)
+    -- Alphabetize macro sets
     AlphabetizeMacroSets()
     
+    -- Test callback
     if test.saveMacroSet or test.allFunctions then
         if MacroSetsDB[setName] == nil then
             print(COLOR_PURPLE .. "SaveMacroSet(): Failed to save " .. setName .."." .. COLOR_RESET)
@@ -425,6 +508,7 @@ local function SaveMacroSet(setName, macroType)
 end
 
 local function LoadMacroSet(setName)
+    -- Test callback
     if test.loadMacroSet or test.allFunctions then
         print(COLOR_PURPLE .. "LoadMacroSet(): Function called." .. COLOR_RESET)
     end
@@ -497,6 +581,41 @@ local function LoadMacroSet(setName)
     print(COLOR_GREEN .. "Macro set '" .. setName .. "' loaded." .. COLOR_RESET)
 end
 
+local function UndoLastOperation()
+
+    if test.undoLastOperation or test.allFunctions then
+        print(COLOR_PURPLE .. "UndoLastOperation(): Function called." .. COLOR_RESET)
+    end
+
+    -- Temporarily store backup sets
+    local tempMacroSetsDB = {}
+    for setName, setData in pairs(MacroSetsBackup) do
+        tempMacroSetsDB[setName] = DeepCopyTable(setData)
+    end
+
+    -- Update backup to current macro sets
+    BackupMacroSets()
+    
+    -- Clean current macro sets database
+    for setName in pairs(MacroSetsDB) do
+        if type(MacroSetsDB[setName]) == "table" then
+            MacroSetsDB[setName] = nil
+        end
+    end
+
+    -- Load backup into current macro sets database
+    for setName, setData in pairs(tempMacroSetsDB) do
+        MacroSetsDB[setName] = DeepCopyTable(setData)
+    end
+
+    if test.undoLastOperation or test.allFunctions then
+        print(COLOR_PURPLE .. "UndoLastOperation(): Backup restored." .. COLOR_RESET)
+    end
+    print(COLOR_GREEN .. "Previous action successfully undone." .. COLOR_RESET)
+
+    
+end
+
 local function ListMacroSets()
     if test.listMacroSets or test.allFunctions then
         print(COLOR_PURPLE .. "ListMacroSets(): Function called." .. COLOR_RESET)
@@ -507,7 +626,7 @@ local function ListMacroSets()
         return
     end
 
-    print(COLOR_GREEN .. "Saved Macro Sets:" .. COLOR_RESET)
+    print(COLOR_YELLOW .. "Saved Macro Sets:" .. COLOR_RESET)
     for _, setName in ipairs(sortedSetNames) do
         local setDetails = MacroSetsDB[setName]
         if type(setDetails) == 'table' and setDetails.macros then
@@ -534,7 +653,8 @@ local function OptionsScreenToggle()
         if test.optionsScreenToggle or test.allFunctions then
             print(COLOR_PURPLE .. "OptionsScreenToggle(): Options screen shown." .. COLOR_RESET)
         end
-    end    
+    end
+end    
 
 local function DisplayHelp()
     if test.displayHelp or test.allFunctions then
@@ -590,6 +710,8 @@ local function HandleSlashCommands(msg)
         LoadMacroSet(setName)
     elseif command == 'delete' then
         DeleteMacroSet(setName)
+    elseif command == 'undo' then
+        UndoLastOperation()
     elseif command == 'list' then
         AlphabetizeMacroSets()
         ListMacroSets()
