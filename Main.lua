@@ -21,6 +21,7 @@ local test = {
     saveMacroSet = false,
     loadMacroSet = false,
     deleteMacroSet = false,
+    deleteAllMacroSets = false,
     undoLastOperation = false,
     listMacroSets = false,
     displayHelp = false,
@@ -61,15 +62,7 @@ MacroSetsDB = MacroSetsDB or {}
 MacroSetsDB.dynamicIcons = MacroSetsDB.dynamicIcons or false
 MacroSetsDB.replaceBars = MacroSetsDB.replaceBars or true
 MacroSetsDB.charSpecific = MacroSetsDB.charSpecific or false
-
--- Create a backup of all macro sets for restoration through undo --
 MacroSetsBackup = MacroSetsBackup or {}
-if next(MacroSetsBackup) == nil then
-    for setName, setData in pairs(MacroSetsDB) do
-        MacroSetsBackup[setName] = DeepCopyTable(setData)
-    end
-end
-
 
 function MacroSetsFunctions.ToggleDynamicIcons()
     if test.toggleDynamicIcons or test.allFunctions then
@@ -363,6 +356,41 @@ local function DeleteMacroSet(setName)
     if test.deleteMacroSet or test.allFunctions then
         if MacroSetsDB[setName] == nil then
             print(COLOR_PURPLE .. "DeleteMacroSet(): Successfully deleted " .. setName .. "." .. COLOR_RESET)
+        end
+    end
+end
+
+local function DeleteAllMacroSets()
+    -- Test callback
+    if test.deleteAllMacroSets or test.allFunctions then
+        print(COLOR_PURPLE .. "DeleteAllMacroSets(): Function called." .. COLOR_RESET)
+    end
+
+    -- Backup current macro sets
+    BackupMacroSets()
+
+    -- Delete all macro sets
+    for setName in pairs(MacroSetsDB) do
+        if type(MacroSetsDB[setName]) == "table" then
+            MacroSetsDB[setName] = nil
+        end
+    end
+
+    print(COLOR_GREEN .. "All macro sets have been deleted." .. COLOR_RESET)
+
+    -- Test callback
+    if test.deleteAllMacroSets or test.allFunctions then
+        local foundTable = false
+        for setName in pairs(MacroSetsDB) do
+            if type(MacroSetsDB[setName]) == "table" then
+                foundTable = true
+                break
+            end
+        end
+        if foundTable then
+            print(COLOR_PURPLE .. "DeleteAllMacroSets(): Failed to delete all macro sets." .. COLOR_RESET)
+        else
+            print(COLOR_PURPLE .. "DeleteAllMacroSets(): Successfully deleted all macro sets." .. COLOR_RESET)
         end
     end
 end
@@ -710,6 +738,8 @@ local function HandleSlashCommands(msg)
         LoadMacroSet(setName)
     elseif command == 'delete' then
         DeleteMacroSet(setName)
+    elseif command == 'deleteall' then
+        DeleteAllMacroSets()
     elseif command == 'undo' then
         UndoLastOperation()
     elseif command == 'list' then

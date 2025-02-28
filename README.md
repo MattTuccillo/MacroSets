@@ -13,14 +13,13 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 - Separate handling for general and character-specific macros.
 - Easy-to-use slash commands for managing macro sets.
 - Control over how macro icons are stored and set.
-- Filter your macro sets when listing (WIP).
 
 ## Installation
 
 1. Download the addon.
 2. Extract the ZIP file.
 3. Place the `MacroSets` folder into your `World of Warcraft\_retail_\Interface\AddOns` directory.
-4. Restart World of Warcraft or reload your UI.
+4. Reload your UI or restart World of Warcraft
 
 ## Usage
 
