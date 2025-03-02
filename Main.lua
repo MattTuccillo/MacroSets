@@ -5,7 +5,7 @@ local COLOR_LIGHT_BLUE = "|cFFADD8E6" -- help section bullets
 local COLOR_PINK = "|cFFF4B183" -- help section examples
 local COLOR_YELLOW = "|cFFF0E442" -- help section commands
 local COLOR_ORANGE = "|cFFE69F00" -- help section parameters
-local COLOR_BLUE = "|cFF0072B2" -- headings
+local COLOR_BLUE = "|cFF0072B2" -- heading dividers
 local COLOR_VERMILLION = "|cFFD55E00" -- error message
 local COLOR_GREEN = "|cFF009E73" -- success message
 local COLOR_RESET = "|r" -- reset back to original color
@@ -59,9 +59,17 @@ local sortedSetNames = {}
 local actionBarSlotLimit = 180
 MacroSetsFunctions = MacroSetsFunctions or {}
 MacroSetsDB = MacroSetsDB or {}
-MacroSetsDB.dynamicIcons = MacroSetsDB.dynamicIcons or false
-MacroSetsDB.replaceBars = MacroSetsDB.replaceBars or true
-MacroSetsDB.charSpecific = MacroSetsDB.charSpecific or false
+
+if MacroSetsDB.dynamicIcons == nil then
+    MacroSetsDB.dynamicIcons = false
+end
+if MacroSetsDB.replaceBars == nil then
+    MacroSetsDB.replaceBars = true
+end
+if MacroSetsDB.charSpecific == nil then
+    MacroSetsDB.charSpecific = false
+end
+
 MacroSetsBackup = MacroSetsBackup or {}
 
 function MacroSetsFunctions.ToggleDynamicIcons()
@@ -654,7 +662,9 @@ local function ListMacroSets()
         return
     end
 
-    print(COLOR_YELLOW .. "Saved Macro Sets:" .. COLOR_RESET)
+    print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+    print("Saved Macro Sets:" .. COLOR_RESET)
+    print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
     for _, setName in ipairs(sortedSetNames) do
         local setDetails = MacroSetsDB[setName]
         if type(setDetails) == 'table' and setDetails.macros then
@@ -663,6 +673,7 @@ local function ListMacroSets()
             print(COLOR_GREEN .. "- " .. COLOR_RESET .. setTypeIndicator .. setName)
         end
     end
+    print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
 end
 
 local function OptionsScreenToggle()
@@ -684,37 +695,6 @@ local function OptionsScreenToggle()
     end
 end    
 
-local function DisplayHelp()
-    if test.displayHelp or test.allFunctions then
-        print(COLOR_PURPLE .. "DisplayHelp(): Function called." .. COLOR_RESET)
-    end
-
-    print(COLOR_BLUE .. "Macro Sets Addon - Help" .. COLOR_RESET)
-    print(COLOR_YELLOW .. "/ms save [name] [type]" .. COLOR_SKY_BLUE .. " - Save the current macro set with the specified name." .. COLOR_RESET) 
-    print(COLOR_PINK .. "  Example: /ms save mySet g" .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "- " .. COLOR_ORANGE .. "[name]" .. COLOR_LIGHT_BLUE .. " 50 characters limit. No spaces." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "- " .. COLOR_ORANGE .. "[type]" .. COLOR_LIGHT_BLUE .. " Defaults to " .. COLOR_ORANGE .. "'both'" .. COLOR_LIGHT_BLUE .." if omitted." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "'g'" .. COLOR_LIGHT_BLUE .. " for general macros tab." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "'c'" .. COLOR_LIGHT_BLUE .. " for character macros tab." .. COLOR_RESET)
-    print(COLOR_YELLOW .. "/ms load [name]" .. COLOR_SKY_BLUE .. " - Load the macro set with the specified name." .. COLOR_RESET)
-    print(COLOR_YELLOW .. "/ms delete [name]" .. COLOR_SKY_BLUE .. " - Delete the macro set with the specified name." .. COLOR_RESET)
-    print(COLOR_YELLOW .. "/ms list" .. COLOR_SKY_BLUE .. " - List all saved macro sets." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "- Sets will note the tab type they encompass." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "- Sets will be alphabetized." .. COLOR_RESET)
-    print(COLOR_YELLOW .. "/ms bars" .. COLOR_SKY_BLUE .. " - Toggle whether you want the macros to return to their saved action bar positions on load." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "- Set to " .. COLOR_ORANGE .. "'ON'" .. COLOR_LIGHT_BLUE .. " by default." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "- Due to the nature of the addon, setting to " .. COLOR_ORANGE .. "'OFF'" .. COLOR_LIGHT_BLUE .. " means all macros will be removed from bars on load." .. COLOR_RESET)
-    print(COLOR_YELLOW .. "/ms icons" .. COLOR_SKY_BLUE .. " - Toggle what the '#i' flag does at the end of macro names." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "- Toggled " .. COLOR_ORANGE .. "'ON'" .. COLOR_LIGHT_BLUE .. ":" .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "  - Macros with names that end with ".. COLOR_ORANGE .. "'#i'" .. COLOR_LIGHT_BLUE .. " will be saved with the default/dynamic question mark icon." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "  - All other macros will be saved with the first icon shown when placed on the action bar." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "- Toggled " .. COLOR_ORANGE .. "'OFF'" .. COLOR_LIGHT_BLUE .. ":" .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "  - Macros with names that end with " .. COLOR_ORANGE .. "'#i'" .. COLOR_LIGHT_BLUE .. " will be saved with the first icon shown when placed on the action bar." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "  - All other macros will be saved with the default/dynamic question mark icon." .. COLOR_RESET)
-    print(COLOR_LIGHT_BLUE .. "- Set to " .. COLOR_ORANGE .. "'OFF'" .. COLOR_LIGHT_BLUE .. " by default." .. COLOR_RESET)
-    print(COLOR_YELLOW .. "/ms help" .. COLOR_SKY_BLUE .. " - Display this help message." .. COLOR_RESET)
-end
-
 local function DisplayDefault()
     if test.displayDefault or test.allFunctions then
         print(COLOR_PURPLE .. "DisplayDefault(): Function called." .. COLOR_RESET)
@@ -723,21 +703,123 @@ local function DisplayDefault()
     print(COLOR_VERMILLION .. "Invalid Command: Type " .. COLOR_YELLOW .. "'/ms help'" .. COLOR_VERMILLION .. " for a list of valid commands." .. COLOR_RESET)
 end
 
+local function DisplayHelp(helpSection)
+    if test.displayHelp or test.allFunctions then
+        print(COLOR_PURPLE .. "DisplayHelp(): Function called." .. COLOR_RESET)
+    end
+
+    if helpSection == nil then
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print("Macro Sets - Help" .. COLOR_RESET)
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print(COLOR_YELLOW .. "/ms save [name] [type]" .. COLOR_SKY_BLUE .. " - Save the current macro set with the specified name." .. COLOR_RESET) 
+        print(COLOR_YELLOW .. "/ms load [name]" .. COLOR_SKY_BLUE .. " - Load the macro set with the specified name." .. COLOR_RESET)
+        print(COLOR_YELLOW .. "/ms delete [name]" .. COLOR_SKY_BLUE .. " - Delete the macro set with the specified name." .. COLOR_RESET)
+        print(COLOR_YELLOW .. "/ms deleteall" .. COLOR_SKY_BLUE .. " - Delete all saved macro sets." .. COLOR_RESET)
+        print(COLOR_YELLOW .. "/ms undo" .. COLOR_SKY_BLUE .. " - Undo the last operation." .. COLOR_RESET)
+        -- print(COLOR_LIGHT_BLUE .. "- Can revert previous save, delete, or deleteall operation." .. COLOR_RESET)
+        -- print(COLOR_LIGHT_BLUE .. "- Consecutive call will undo the undo." .. COLOR_RESET)
+        print(COLOR_YELLOW .. "/ms list" .. COLOR_SKY_BLUE .. " - List all saved macro sets." .. COLOR_RESET)
+        -- print(COLOR_LIGHT_BLUE .. "- Sets will note the tab type they encompass." .. COLOR_RESET)
+        -- print(COLOR_LIGHT_BLUE .. "- Sets will be alphabetized." .. COLOR_RESET)
+        print(COLOR_YELLOW .. "/ms options" .. COLOR_SKY_BLUE .. " - Open the options screen." .. COLOR_RESET)
+        print(COLOR_YELLOW .. "/ms help [command]" .. COLOR_SKY_BLUE .. " - Display detailed information about a specific command." .. COLOR_RESET)
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+    elseif helpSection == "save" then
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print("Macro Sets - Help: Save" .. COLOR_RESET)
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print(COLOR_SKY_BLUE .. "- Type " .. COLOR_YELLOW .. "/ms save [name] [type]" .. COLOR_SKY_BLUE .. " to save the current macro set." .. COLOR_RESET)
+        print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "[name]" .. COLOR_LIGHT_BLUE .. " 50 characters limit. No spaces." .. COLOR_RESET)
+        if (MacroSetsDB.charSpecific) then
+            print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "[type]" .. COLOR_LIGHT_BLUE .. " Defaults to " .. COLOR_ORANGE .. "'c'" .. COLOR_LIGHT_BLUE .." if omitted." .. COLOR_RESET)
+        else
+            print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "[type]" .. COLOR_LIGHT_BLUE .. " Defaults to " .. COLOR_ORANGE .. "'both'" .. COLOR_LIGHT_BLUE .." if omitted." .. COLOR_RESET)
+        end
+        print(COLOR_LIGHT_BLUE .. "    - " .. COLOR_ORANGE .. "'g'" .. COLOR_LIGHT_BLUE .. " for general macros tab." .. COLOR_RESET)
+        print(COLOR_LIGHT_BLUE .. "    - " .. COLOR_ORANGE .. "'c'" .. COLOR_LIGHT_BLUE .. " for character macros tab." .. COLOR_RESET)
+        if (MacroSetsDB.dynamicIcons) then
+            print(COLOR_SKY_BLUE .. "- By default icons are stored with the |T134400:0|t icon when saved." .. COLOR_RESET)
+            print(COLOR_LIGHT_BLUE .. "  - Macro names ending with " .. COLOR_RESET .. "'#i'" .. COLOR_LIGHT_BLUE .. " are stored as they appeared when saved." .. COLOR_RESET)
+        else
+            print(COLOR_SKY_BLUE .. "- By default icons are stored as they appeared when saved." .. COLOR_RESET)
+            print(COLOR_LIGHT_BLUE .. "  - Macro names ending with " .. COLOR_RESET .. "'#i'" .. COLOR_LIGHT_BLUE .. " are stored with the |T134400:0|t icon when saved." .. COLOR_RESET)
+        end
+        print(COLOR_LIGHT_BLUE .. "  - |T134400:0|t icon changes based upon macro text content." .. COLOR_RESET)
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+    elseif helpSection == "load" then
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print("Macro Sets - Help: Load" .. COLOR_RESET)
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print(COLOR_SKY_BLUE .. "- Type " .. COLOR_YELLOW .. "/ms load [name]" .. COLOR_SKY_BLUE .. " to load a specific macro set." .. COLOR_RESET)
+        print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "[name]" .. COLOR_LIGHT_BLUE .. " Must exist to successfully load." .. COLOR_RESET)
+        if (MacroSetsDB.replaceBars) then
+            print(COLOR_SKY_BLUE .. "- By default macros are placed in the action bar slots they were saved in when loaded." .. COLOR_RESET)
+            print(COLOR_LIGHT_BLUE .. "  - Existing items in the action bar slot will be overwritten." .. COLOR_RESET)
+        else
+            print(COLOR_SKY_BLUE .. "- By default macros are not placed in the action bar slots they were saved in when loaded." .. COLOR_RESET)
+            print(COLOR_LIGHT_BLUE .. "  - Macros will only be loaded into the macro frame." .. COLOR_RESET)
+        end
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        return
+    elseif helpSection == "delete" then
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print("Macro Sets - Help: Delete" .. COLOR_RESET)
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        return
+    elseif helpSection == "deleteall" then
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print("Macro Sets - Help: Delete All" .. COLOR_RESET)
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        return
+    elseif helpSection == "undo" then
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print("Macro Sets - Help: Undo" .. COLOR_RESET)
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        return
+    elseif helpSection == "list" then
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print("Macro Sets - Help: List" .. COLOR_RESET)
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        return
+    elseif helpSection == "options" then
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        print("Macro Sets - Help: Options" .. COLOR_RESET)
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        
+        print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
+        return
+    else
+        DisplayDefault()
+    end
+end
+
 local function HandleSlashCommands(msg)
     if test.handleSlashCommands or test.allFunctions then
         print(COLOR_PURPLE .. "HandleSlashCommands(): Function called." .. COLOR_RESET)
     end
 
     msg = string.match(msg, "^%s*(.-)%s*$")
-    local command, setName, macroType = strsplit(" ", msg)
+    local command, arg1, arg2 = strsplit(" ", msg)
     command = string.lower(command)
 
     if command == 'save' then
-        SaveMacroSet(setName, macroType)
+        -- arg1 = setName, arg2 = macroType
+        SaveMacroSet(arg1, arg2)
     elseif command == 'load' then
-        LoadMacroSet(setName)
+        -- arg1 = setName
+        LoadMacroSet(arg1)
     elseif command == 'delete' then
-        DeleteMacroSet(setName)
+        -- arg1 = setName
+        DeleteMacroSet(arg1)
     elseif command == 'deleteall' then
         DeleteAllMacroSets()
     elseif command == 'undo' then
@@ -746,7 +828,8 @@ local function HandleSlashCommands(msg)
         AlphabetizeMacroSets()
         ListMacroSets()
     elseif command == 'help' then
-        DisplayHelp()
+        -- arg1 = helpSection
+        DisplayHelp(arg1)
     elseif command == 'options' then
         OptionsScreenToggle()
     else
