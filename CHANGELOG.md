@@ -1,5 +1,55 @@
 # Changelog for Macro Sets WoW Addon
 
+## Version 2.0.0 - [3/7/2025]
+
+- Features: (*Check **Commands** section for more information on all of the features listed below.*)
+  - A configuration screen containing 3 toggles is now available in `Interface>AddOns>MacroSets`.
+  - Ability to delete all of your macro sets with a single command.
+  - Ability to undo the most recent `save`, `delete`, `deleteall`, or `undo` command.
+  - Ability to toggle the default type when saving macro sets without a type flag.
+  - In-depth and dynamic help command overhaul that changes content based on current configuration toggles.
+- Changes:
+  - `/ms bars` command has been removed. 
+    - Functionality is now a toggle in the new MacroSets configuration screen.
+  - `/ms icons` command has been removed.
+    - Functionality is now a toggle in the new MacroSets configuration screen.
+  - `/ms help` now prints a list of available commands with short descriptors.
+    - `/ms help [command]` prints additional information on usage and functionality of a specific command.
+  - `/ms list` now colorizes the set type indicators for easier differentiation.
+- Commands:
+  - `/ms deleteall`: Delete all macro sets.
+    - Wipe them out, all of them.
+  - `/ms undo`: Undo the most recent action (save, delete, deleteall, undo).
+    - Some example scenarios:
+      - Undo a `save` incase you accidentally overwrite an existing macro set.
+      - Undo a `delete` incase you accidentally delete an existing macro set.
+      - Undo a `deleteall` incase you accidentally deleted all of your existing macro sets.
+      - Undo an `undo` incase you accidentally undid the thing you should actually have done.
+    - Reiterating for emphasis, you only get **1** undo.
+  - `/ms options`: Toggles the MacroSets configuration screen.
+    - Contains toggles for:
+      - Dynamic macro icons (previously `/ms icons`)
+        - Toggled '**ON**':
+          - Macros with names that end with `#i` will be saved with the default/dynamic question mark icon.
+          - All other macros will be saved with the first icon shown when placed on the action bar.
+        - Toggled '**OFF**':
+          - Macros with names that end with `#i` will be saved with the first icon shown when placed on the action bar.
+          - All other macros will be saved with the default/dynamic question mark icon.
+        - Set to '**OFF**' by default.
+      - Action bar placements (previously `/ms bars`)
+        - Toggled '**ON**':
+          - Macros will return to their saved action bar positions on load.
+        - Toggled '**OFF**':
+          - Macros will not return to their saved action bar positions on load.
+        - Set to '**ON**' by default.
+      - Default macro set types
+        - Toggled '**ON**':
+          - Macro sets only save the character specific tab by default.
+        - Toggled '**OFF**':
+          - Macro sets save both the general and the character specific tabs by default.
+        - Set to '**OFF**' by default.
+- Supports World of Warcraft version 11.1.0.
+
 ## Version 1.2.1 - [9/12/2024]
 
 - Changes:
