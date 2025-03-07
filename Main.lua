@@ -669,7 +669,11 @@ local function ListMacroSets()
         local setDetails = MacroSetsDB[setName]
         if type(setDetails) == 'table' and setDetails.macros then
             local setType = setDetails.type
-            local setTypeIndicator = setType == 'c' and "(C)" or setType == 'g' and "(G)" or "(B)"
+            local COLOR_BOTH_INDICATOR = "|cFFFFFF36(B)|r" -- both macro set type indicator
+            local COLOR_GENERAL_INDICATOR = "|cFF36FF4C(G)|r" -- general macro set type indicator
+            local COLOR_CHARACTER_INDICATOR = "|cFF58E5F5(C)|r" -- character macro set type indicator
+            local setTypeIndicator = setType == 'c' and COLOR_CHARACTER_INDICATOR or setType == 'g' and COLOR_GENERAL_INDICATOR or COLOR_BOTH_INDICATOR
+            -- local setTypeIndicator = setType == 'c' and "(C)" or setType == 'g' and "(G)" or "(B)"
             print(COLOR_GREEN .. "- " .. COLOR_RESET .. setTypeIndicator .. setName)
         end
     end
@@ -796,9 +800,9 @@ local function DisplayHelp(helpSection)
         print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
         print(COLOR_SKY_BLUE .. "- Type " .. COLOR_YELLOW .. "/ms list " .. COLOR_SKY_BLUE .. "to display a list of all existing macro sets." .. COLOR_RESET)
         print(COLOR_SKY_BLUE .. "- Sets will note the set type they encompass." .. COLOR_RESET)
-        print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_RESET .. "(G) " .. COLOR_LIGHT_BLUE .. "for general macros." .. COLOR_RESET)
-        print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_RESET .. "(C) " .. COLOR_LIGHT_BLUE .. "for character-specific macros." .. COLOR_RESET)
-        print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_RESET .. "(B) " .. COLOR_LIGHT_BLUE .. "for both general and character-specific macros." .. COLOR_RESET)
+        print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_RESET .. "(G) " .. COLOR_LIGHT_BLUE .. "in green for general macros." .. COLOR_RESET)
+        print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_RESET .. "(C) " .. COLOR_LIGHT_BLUE .. "in blue for character-specific macros." .. COLOR_RESET)
+        print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_RESET .. "(B) " .. COLOR_LIGHT_BLUE .. "in yellow for both general and character-specific macros." .. COLOR_RESET)
         print(COLOR_SKY_BLUE .. "- Sets will be ordered alphabetically." .. COLOR_RESET)
         print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
         return

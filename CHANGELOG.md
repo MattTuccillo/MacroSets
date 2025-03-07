@@ -13,12 +13,13 @@
     - Functionality is now a toggle in the new MacroSets configuration screen.
   - `/ms icons` command has been removed.
     - Functionality is now a toggle in the new MacroSets configuration screen.
-  - `/ms help` now prints a list of available commands with short descriptors
-    - `/ms help [command]` prints additional information on usage and functionality of a specific command
+  - `/ms help` now prints a list of available commands with short descriptors.
+    - `/ms help [command]` prints additional information on usage and functionality of a specific command.
+  - `/ms list` now colorizes the set type indicators for easier differentiation.
 - Commands:
   - `/ms deleteall`: Delete all macro sets.
     - Wipe them out, all of them.
-  - `/ms undo`: Undo the most recent action (save, delete, deleteall, undo)
+  - `/ms undo`: Undo the most recent action (save, delete, deleteall, undo).
     - Some example scenarios:
       - Undo a `save` incase you accidentally overwrite an existing macro set.
       - Undo a `delete` incase you accidentally delete an existing macro set.

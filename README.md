@@ -9,7 +9,7 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 ## Features
 
 - Save and load macro sets.
-- Automatically place macros in their saved action bar slots when loading a set
+- Ability to have macros automatically placed in their saved action bar slots when loading a set.
 - Separate handling for general and character-specific macros.
 - Easy-to-use slash commands for managing macro sets.
 - Control over how macro icons are stored and set.
@@ -89,10 +89,16 @@ I've implemented a simple testing framework to assist with debugging. It execute
 ```
 local test = {
     allFunctions = false,
+    toggleDynamicIcons = false,
+    toggleActionBarPlacements = false,
+    toggleCharSpecific = false,
+    backupMacroSets = false,
     alphabetizeMacroSets = false,
     saveMacroSet = false,
     loadMacroSet = false,
     deleteMacroSet = false,
+    deleteAllMacroSets = false,
+    undoLastOperation = false,
     listMacroSets = false,
     displayHelp = false,
     displayDefault = false,
@@ -105,9 +111,8 @@ local test = {
     deleteMacrosInRange = false,
     restoreMacroBodies = false,
     duplicateNames = false,
+    optionsScreenToggle = false,
     handleSlashCommands = false,
-    toggleDynamicIcons = false,
-    toggleActionBarPlacements = false,
 }
 ```
 
