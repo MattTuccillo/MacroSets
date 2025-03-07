@@ -10,7 +10,7 @@ local COLOR_VERMILLION = "|cFFD55E00" -- error message
 local COLOR_GREEN = "|cFF009E73" -- success message
 local COLOR_RESET = "|r" -- reset back to original color
 
--- Testing toggles for debugging --
+-- Testing toggles for debugging
 local test = {
     allFunctions = false,
     toggleDynamicIcons = false,
@@ -54,22 +54,11 @@ local function DeepCopyTable(orig)
     return copy
 end
 
--- Create alphabetized macro set list for easier reference when listed --
+-- Create alphabetized macro set list for easier reference when listed
 local sortedSetNames = {}
 local actionBarSlotLimit = 180
 MacroSetsFunctions = MacroSetsFunctions or {}
 MacroSetsDB = MacroSetsDB or {}
-
-if MacroSetsDB.dynamicIcons == nil then
-    MacroSetsDB.dynamicIcons = false
-end
-if MacroSetsDB.replaceBars == nil then
-    MacroSetsDB.replaceBars = true
-end
-if MacroSetsDB.charSpecific == nil then
-    MacroSetsDB.charSpecific = false
-end
-
 MacroSetsBackup = MacroSetsBackup or {}
 
 function MacroSetsFunctions.ToggleDynamicIcons()
@@ -669,11 +658,10 @@ local function ListMacroSets()
         local setDetails = MacroSetsDB[setName]
         if type(setDetails) == 'table' and setDetails.macros then
             local setType = setDetails.type
-            local COLOR_BOTH_INDICATOR = "|cFFFFFF36(B)|r" -- both macro set type indicator
-            local COLOR_GENERAL_INDICATOR = "|cFF36FF4C(G)|r" -- general macro set type indicator
-            local COLOR_CHARACTER_INDICATOR = "|cFF58E5F5(C)|r" -- character macro set type indicator
+            local COLOR_BOTH_INDICATOR = "|cFFFFFF36(B)|r"
+            local COLOR_GENERAL_INDICATOR = "|cFF36FF4C(G)|r"
+            local COLOR_CHARACTER_INDICATOR = "|cFF58E5F5(C)|r"
             local setTypeIndicator = setType == 'c' and COLOR_CHARACTER_INDICATOR or setType == 'g' and COLOR_GENERAL_INDICATOR or COLOR_BOTH_INDICATOR
-            -- local setTypeIndicator = setType == 'c' and "(C)" or setType == 'g' and "(G)" or "(B)"
             print(COLOR_GREEN .. "- " .. COLOR_RESET .. setTypeIndicator .. setName)
         end
     end

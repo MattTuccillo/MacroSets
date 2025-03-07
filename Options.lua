@@ -51,7 +51,6 @@ local charSpecificHelpText = CreateHelpText(checkboxesFrame, charSpecificCheckbo
 
 -- Function to initialize settings if they are not already defined
 local function initializeSettings()
-    MacroSetsDB = MacroSetsDB or {}
     if MacroSetsDB.dynamicIcons == nil then
         MacroSetsDB.dynamicIcons = false
     end
