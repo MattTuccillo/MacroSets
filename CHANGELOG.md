@@ -3,7 +3,7 @@
 ## Version 2.0.0 - [3/xx/2025]
 
 - Features: (*Check **Commands** section for more information on all of the features listed below.*)
-  - A configuration screen containing 3 toggles is now available in `Interface-->AddOns-->MacroSets`.
+  - A configuration screen containing 3 toggles is now available in `Interface>AddOns>MacroSets`.
   - Ability to delete all of your macro sets with a single command.
   - Ability to undo the most recent `save`, `delete`, `deleteall`, or `undo` command.
   - Ability to toggle the default type when saving macro sets without a type flag.

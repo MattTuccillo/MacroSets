@@ -13,6 +13,7 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 - Separate handling for general and character-specific macros.
 - Easy-to-use slash commands for managing macro sets.
 - Control over how macro icons are stored and set.
+- Undo command incase you make a mistake.
 
 ## Installation
 
@@ -23,35 +24,19 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 
 ## Usage
 
-- `/ms save [name] [type]`: Save the current macro set with the specified name. Example: /ms save mySet g.
-  - `[name]` 50 characters limit. No spaces.
-  - `[type]` Defaults to `"both"` if omitted.
-    - `"g"`: Save general macros as a set.
-    - `"c"`: Save character-specific macros as a set.
+- `/ms save [name] [type]`: Save the current macro set with the specified name. 
 - `/ms load [name]`: Load the macro set with the specified name.
 - `/ms delete [name]`: Delete the macro set with the specified name.
+- `/ms deleteall`: Delete all saved macro sets.
+- `/ms undo`: Undo the last eligible action.
 - `/ms list`: List all saved macro sets.
-  - Sets will note the tab type they encompass.
-  - Sets will be alphabetized.
-- `/ms bars`: Toggles whether you want the macros to return to their action bar positions on load.
-  - Toggled '**ON**':
-    - Macros will return to their saved action bar positions on load.
-  - Toggled '**OFF**':
-    - All macros pertaining to the sets scope will be removed from the action bars on load.
-  - Set to '**ON**' by default.
-- `/ms icons`: Toggles what the `#i` flag does at the end of macro names
-  - Toggled '**ON**':
-    - Macros with names that end with `#i` will be saved with the default/dynamic question mark icon.
-    - All other macros will be saved with the first icon shown when placed on the action bar.
-  - Toggled '**OFF**':
-    - Macros with names that end with `#i` will be saved with the first icon shown when placed on the action bar.
-    - All other macros will be saved with the default/dynamic question mark icon.
-  - Set to '**OFF**' by default.
-- `/ms help`: Display help information for the addon.
+- `/ms options`: Toggle the options screen.
+- `/ms help`: Display this list of available commands.
+- `/ms help [command]`: Display detailed information about a specific command.
 
-## Explanation for `/ms icons`
+## Explanation for dynamic icon toggle setting
 
-In this section I'll provide a visual example of the way the `/ms icons` affects the addon's functionality as well as an explanation for why it had to exist in the first place.
+In this section I'll provide a visual example of the way the the dynamic icon toggle setting affects the addon's functionality as well as an explanation for why it had to exist in the first place.
 
 ### Why it was necessary
 
