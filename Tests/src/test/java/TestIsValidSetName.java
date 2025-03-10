@@ -42,48 +42,48 @@ public class TestIsValidSetName {
     }
 
     @Test
-    public void testValidName_Normal() {
+    public void testIsValidSetName_Normal() {
         assertTrue(isValidSetNameFunction.call(LuaValue.valueOf("ValidName")).toboolean(), "Expected 'ValidName' to be valid");
     }
 
     @Test
-    public void testValidName_WithUnderscore() {
+    public void testIsValidSetName_WithUnderscore() {
         assertTrue(isValidSetNameFunction.call(LuaValue.valueOf("valid_name")).toboolean(), "Expected 'valid_name' to be valid");
     }
 
     @Test
-    public void testValidName_WithHyphen() {
+    public void testIsValidSetName_WithHyphen() {
         assertTrue(isValidSetNameFunction.call(LuaValue.valueOf("valid-name")).toboolean(), "Expected 'valid-name' to be valid");
     }
 
     @Test
-    public void testValidName_WithNumbers() {
+    public void testIsValidSetName_WithNumbers() {
         assertTrue(isValidSetNameFunction.call(LuaValue.valueOf("MacroSet_01")).toboolean(), "Expected 'MacroSet_01' to be valid");
     }
 
     @Test
-    public void testInvalidName_EmptyString() {
+    public void testIsValidSetName_EmptyString() {
         assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("")).toboolean(), "Expected empty string to be invalid");
     }
 
     @Test
-    public void testInvalidName_SingleSpace() {
+    public void testIsValidSetName_SingleSpace() {
         assertFalse(isValidSetNameFunction.call(LuaValue.valueOf(" ")).toboolean(), "Expected whitespace to be invalid");
     }
 
     @Test
-    public void testInvalidName_ContainsSpecialCharacter() {
+    public void testIsValidSetName_ContainsSpecialCharacter() {
         assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("Invalid@Name")).toboolean(), "Expected 'Invalid@Name' to be invalid");
     }
 
     @Test
-    public void testInvalidName_TooLong() {
+    public void testIsValidSetName_TooLong() {
         assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("TooLongName_111111111111111111111111111111111111111")).toboolean(), 
             "Expected overly long name to be invalid");
     }
 
     @Test
-    public void testInvalidName_ContainsSpaces() {
+    public void testIsValidSetName_ContainsSpaces() {
         assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("Name With Spaces")).toboolean(), "Expected 'Name With Spaces' to be invalid");
     }
 

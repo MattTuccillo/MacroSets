@@ -32,7 +32,7 @@ local debug = {
     getActionBarSlotsForMacro = false,
     placeMacroInActionBarSlots = false,
     setMacroSlotRanges = false,
-    macroSetIsEmpty = false,
+    isMacroSetEmpty = false,
     displaySetSavedMessage = false,
     deleteMacrosInRange = false,
     restoreMacroBodies = false,
@@ -218,10 +218,8 @@ local function PlaceMacroInActionBarSlots(macroIndex, positions)
 end
 
 local function SetMacroSlotRanges(macroType)
-    if debug.setMacroSlotRanges or debug.allFunctions then
-        print(COLOR_PURPLE .. "SetMacroSlotRanges(): Function called." .. COLOR_RESET)
-    end
-
+    DebugMessage("SetMacroSlotRanges(): Function called.", debug.setMacroSlotRanges)
+    DebugMessage("SetMacroSlotRanges(): macroType = " .. macroType .. ".", debug.setMacroSlotRanges)
     if macroType == "g" then
         return 1, 120
     elseif macroType == "c" then
@@ -231,23 +229,20 @@ local function SetMacroSlotRanges(macroType)
     end
 end
 
-local function MacroSetIsEmpty(generalCount, characterCount, macroType)
-    -- debug callback
-    if debug.macroSetIsEmpty or debug.allFunctions then
-        local total = generalCount + characterCount
-        print(COLOR_PURPLE .. "MacroSetIsEmpty(): Function called." .. COLOR_RESET)
-        print(COLOR_PURPLE .. "MacroSetIsEmpty(): " .. generalCount .. " general macros found." .. COLOR_RESET)
-        print(COLOR_PURPLE .. "MacroSetIsEmpty(): " .. characterCount .. " character macros found." .. COLOR_RESET)
-        print(COLOR_PURPLE .. "MacroSetIsEmpty(): " .. total .. " total macros found." .. COLOR_RESET)
-    end
+local function IsMacroSetEmpty(generalCount, characterCount, macroType)
+    DebugMessage("IsMacroSetEmpty(): Function called.", debug.isMacroSetEmpty)
+    DebugMessage("IsMacroSetEmpty(): generalCount = " .. generalCount .. ".", debug.isMacroSetEmpty)
+    DebugMessage("IsMacroSetEmpty(): characterCount = " .. characterCount .. ".", debug.isMacroSetEmpty)
+    DebugMessage("IsMacroSetEmpty():" .. generalCount+characterCount .. " total macros found.", debug.isMacroSetEmpty)
+    DebugMessage("IsMacroSetEmpty(): macroType = " .. macroType .. ".", debug.isMacroSetEmpty)
 
     if (macroType == "g" and generalCount == 0) or
         (macroType == "c" and characterCount == 0) or
         (generalCount == 0 and characterCount == 0) then
-        return false
+        return true
     end
 
-    return true
+    return false
 end
 
 local function DisplaySetSavedMessage(setName, macroType)
@@ -499,7 +494,7 @@ local function SaveMacroSet(setName, macroType)
         return
     end
     -- Check empty macro set
-    if not MacroSetIsEmpty(generalMacroCount, characterMacroCount, macroType) then
+    if IsMacroSetEmpty(generalMacroCount, characterMacroCount, macroType) then
         print(COLOR_VERMILLION .. "No macros to save." .. COLOR_RESET)
         return
     end
@@ -846,7 +841,7 @@ if testingEnabled then
         GetActionBarSlotsForMacro = GetActionBarSlotsForMacro,
         PlaceMacroInActionBarSlots = PlaceMacroInActionBarSlots,
         SetMacroSlotRanges = SetMacroSlotRanges,
-        MacroSetIsEmpty = MacroSetIsEmpty,
+        IsMacroSetEmpty = IsMacroSetEmpty,
         DisplaySetSavedMessage = DisplaySetSavedMessage,
         DeleteMacrosInRange = DeleteMacrosInRange,
         RestoreMacroBodies = RestoreMacroBodies,
