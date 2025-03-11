@@ -17,6 +17,7 @@ public class TestDuplicateNames {
     public void setup() {
         // Initialize Lua environment
         globals = JsePlatform.standardGlobals();
+        globals.load("testingEnabled = true").call();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
 
         try {

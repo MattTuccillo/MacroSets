@@ -10,9 +10,7 @@ local COLOR_VERMILLION = "|cFFD55E00" -- error message
 local COLOR_GREEN = "|cFF009E73" -- success message
 local COLOR_RESET = "|r" -- reset back to original color
 
--- flag for junit to access local functions
-testingEnabled = true
--- debugging toggles for debugging
+-- toggles for debugging
 local debug = {
     allFunctions = false,
     toggleDynamicIcons = false,
@@ -27,13 +25,11 @@ local debug = {
     undoLastOperation = false,
     listMacroSets = false,
     displayHelp = false,
-    displayDefault = false,
     isValidSetName = false,
     getActionBarSlotsForMacro = false,
     placeMacroInActionBarSlots = false,
     setMacroSlotRanges = false,
     isMacroSetEmpty = false,
-    displaySetSavedMessage = false,
     deleteMacrosInRange = false,
     restoreMacroBodies = false,
     duplicateNames = false,
@@ -99,9 +95,7 @@ local function BackupMacroSets()
 end
 
 local function AlphabetizeMacroSets()
-    if debug.alphabetizeMacroSets or debug.allFunctions then
-        print(COLOR_PURPLE .. "AlphabetizeMacroSets(): Function called." .. COLOR_RESET)
-    end
+    DebugMessage("AlphabetizeMacroSets(): Function called.", debug.alphabetizeMacroSets)
     sortedSetNames = {}
     for setName, setDetails in pairs(MacroSetsDB) do
         if type(setDetails) == 'table' and setDetails.macros then
@@ -111,12 +105,6 @@ local function AlphabetizeMacroSets()
     table.sort(sortedSetNames, function(a, b)
         return string.lower(a) < string.lower(b)
     end)
-    if debug.alphabetizeMacroSets or debug.allFunctions then
-        print(COLOR_PURPLE .. "AlphabetizeMacroSets():" .. COLOR_RESET)
-        for _, setName in ipairs(sortedSetNames) do
-            print(COLOR_PURPLE .. setName .. COLOR_RESET)
-        end
-    end
 end
 
 local function IsValidSetName(setName)
@@ -142,10 +130,7 @@ local function IsValidSetName(setName)
 end
 
 local function GetActionBarSlotsForMacro(macroName)
-    if debug.getActionBarSlotsForMacro or debug.allFunctions then
-        print(COLOR_PURPLE .. "GetActionBarSlotsForMacro(): Function called." .. COLOR_RESET)
-    end
-
+    DebugMessage("GetActionBarSlotsForMacro(): Function called.", debug.getActionBarSlotsForMacro)
     local slots = {}
     for i = 1, actionBarSlotLimit do
         local actionType, id = GetActionInfo(i)
@@ -154,54 +139,24 @@ local function GetActionBarSlotsForMacro(macroName)
             table.insert(slots, i)
         end
     end
-
-    if debug.getActionBarSlotsForMacro or debug.allFunctions then
-        if #slots == 0 then
-            print(COLOR_PURPLE .. "GetActionBarSlotsForMacro(): No slots found for " .. macroName .. "." .. COLOR_RESET)
-        else
-            local slotsString = "{"
-            for i, slot in ipairs(slots) do
-                slotsString = slotsString .. slot
-                if i < #slots then
-                    slotsString = slotsString .. ", "
-                end
-            end
-            slotsString = slotsString .. "}"
-            print(COLOR_PURPLE .. "GetActionBarSlotsForMacro(): " .. macroName .. " found in slots: " .. slotsString .. COLOR_RESET)
-        end
-    end
-    
     return slots
 end
 
 local function PlaceMacroInActionBarSlots(macroIndex, positions)
     local name, icon, body = GetMacroInfo(macroIndex)
 
-    if debug.placeMacroInActionBarSlots or debug.allFunctions then
-        print(COLOR_PURPLE .. "PlaceMacroInActionBarSlots(): Function called." .. COLOR_RESET)
-        print(COLOR_PURPLE .. "PlaceMacroInActionBarSlots(): Placing " .. name .. "." .. COLOR_RESET)
-    end
+    DebugMessage("PlaceMacroInActionBarSlots(): Function called.", debug.placeMacroInActionBarSlots)
+    DebugMessage("PlaceMacroInActionBarSlots(): Placing " .. name .. ".", debug.placeMacroInActionBarSlots)
+    DebugMessage("PlaceMacroInActionBarSlots(): Macro index = " .. macroIndex .. ".", debug.placeMacroInActionBarSlots)
+    DebugMessage("PlaceMacroInActionBarSlots(): Positions = " .. table.concat(positions, ", ") .. ".", debug.placeMacroInActionBarSlots)
 
     for _, slot in ipairs(positions) do
-        if debug.placeMacroInActionBarSlots or debug.allFunctions then
-            print(COLOR_PURPLE .. "PlaceMacroInActionBarSlots(): Trying slot: " .. slot .. "." .. COLOR_RESET)
-        end
-
         if slot < 1 or slot > actionBarSlotLimit then
             print(COLOR_VERMILLION .. "Action bar slot " .. slot .. " is out of range." .. COLOR_RESET)
         else
             PickupMacro(macroIndex)
             PlaceAction(slot)
             ClearCursor()
-
-            if debug.placeMacroInActionBarSlots or debug.allFunctions then
-                local actionType, id = GetActionInfo(slot)
-                if id == macroIndex then
-                    print(COLOR_PURPLE .. "PlaceMacroInActionBarSlots(): " .. name .. " successfully found slot " .. slot .. "." .. COLOR_RESET)
-                else
-                    print(COLOR_PURPLE .. "PlaceMacroInActionBarSlots(): " .. name .. " failed to find slot " .. slot .. "." .. COLOR_RESET)
-                end
-            end
         end
     end
 end
@@ -234,48 +189,14 @@ local function IsMacroSetEmpty(generalCount, characterCount, macroType)
     return false
 end
 
-local function DisplaySetSavedMessage(setName, macroType)
-    DebugMessage("DisplaySetSavedMessage(): Function called.", debug.displaySetSavedMessage)
-    DebugMessage("DisplaySetSavedMessage(): setName = " .. setName .. ".", debug.displaySetSavedMessage)
-    DebugMessage("DisplaySetSavedMessage(): macroType = " .. macroType .. ".", debug.displaySetSavedMessage)
-    if macroType == "g" then
-        print(COLOR_GREEN .. "General Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
-    elseif macroType == "c" then
-        print(COLOR_GREEN .. "Character Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
-    elseif macroType == "both" then
-        print(COLOR_GREEN .. "Macro set saved as '" .. setName .. "'." .. COLOR_GREEN)
-    else
-        print(COLOR_VERMILLION .. "Invalid macro set type." .. COLOR_RESET)
-    end
-end
-
 local function DeleteMacrosInRange(startSlot, endSlot)
-    if debug.deleteMacrosInRange or debug.allFunctions then
-        print(COLOR_PURPLE .. "DeleteMacrosInRange(): Function called." .. COLOR_RESET)
-    end
-
+    DebugMessage("DeleteMacrosInRange(): Function called.", debug.deleteMacrosInRange)
+    DebugMessage("DeleteMacrosInRange(): startSlot = " .. startSlot .. ".", debug.deleteMacrosInRange)
+    DebugMessage("DeleteMacrosInRange(): endSlot = " .. endSlot .. ".", debug.deleteMacrosInRange)
     for i = endSlot, startSlot, -1 do
         local macroName = GetMacroInfo(i)
         if macroName then
             DeleteMacro(i)
-        end
-    end
-
-    if debug.deleteMacrosInRange or debug.allFunctions then
-        local remainingMacros = {}
-        for i = startSlot, endSlot do
-            local macroName = GetMacroInfo(i)
-            if macroName then
-                table.insert(remainingMacros, macroName)
-            end
-        end
-        if #remainingMacros > 0 then
-            print(COLOR_PURPLE .. "DeleteMacrosInRange(): Remaining macros:" .. COLOR_RESET)
-            for i, name in ipairs(remainingMacros) do
-                print(COLOR_PURPLE .. name .. " found in slot " .. i .. "." .. COLOR_RESET)
-            end
-        else
-            print(COLOR_PURPLE .. "DeleteMacrosInRange(): Macros deleted successfully." .. COLOR_RESET)
         end
     end
 end
@@ -289,18 +210,11 @@ local function RestoreMacroBodies(setName)
 end
 
 local function DeleteMacroSet(setName)
-    -- debug callback
-    if debug.deleteMacroSet or debug.allFunctions then
-        print(COLOR_PURPLE .. "DeleteMacroSet(): Function called." .. COLOR_RESET)
-    end
+    DebugMessage("DeleteMacroSet(): Function called.", debug.deleteMacroSet)
+    DebugMessage("DeleteMacroSet(): setName = " .. setName .. ".", debug.deleteMacroSet)
 
     if not IsValidSetName(setName) then 
         return 
-    end
-
-    if not setName or setName == "" then
-        print(COLOR_VERMILLION .. "Please provide a valid macro set name to delete." .. COLOR_RESET)
-        return
     end
 
     if MacroSetsDB[setName] then
@@ -311,13 +225,6 @@ local function DeleteMacroSet(setName)
         print(COLOR_GREEN .. "Macro set '" .. setName .. "' has been deleted." .. COLOR_RESET)
     else
         print(COLOR_VERMILLION .. "Macro set '" .. setName .. "' not found." .. COLOR_RESET)
-    end
-
-    -- debug callback
-    if debug.deleteMacroSet or debug.allFunctions then
-        if MacroSetsDB[setName] == nil then
-            print(COLOR_PURPLE .. "DeleteMacroSet(): Successfully deleted " .. setName .. "." .. COLOR_RESET)
-        end
     end
 end
 
@@ -404,17 +311,11 @@ local function SaveMacroSet(setName, macroType)
             -- If dynamic icons are enabled and the name ends with "#i"
             if MacroSetsDB.dynamicIcons and endsWithD then
                 icon = 134400
-                -- debug callback
-                if debug.saveMacroSet or debug.allFunctions then
-                    print(COLOR_PURPLE .. "SaveMacroSet(): Dynamic icon set for macro: " .. name .. "." .. COLOR_RESET)
-                end
+                DebugMessage("SaveMacroSet(): Static icon set for macro: " .. name .. ".", debug.saveMacroSet)
             -- If dynamic icons are disabled and the name does not end with "#i"
             elseif not MacroSetsDB.dynamicIcons and not endsWithD then
                 icon = 134400
-                -- debug callback
-                if debug.saveMacroSet or debug.allFunctions then
-                    print(COLOR_PURPLE .. "SaveMacroSet(): Dynamic icon set for macro: " .. name .. "." .. COLOR_RESET)
-                end
+                DebugMessage("SaveMacroSet(): Dynamic icon set for macro: " .. name .. ".", debug.saveMacroSet)
             end
             EditMacro(i, name, icon, "", 1)
             local actionBarSlots = GetActionBarSlotsForMacro(name)
@@ -448,7 +349,15 @@ local function SaveMacroSet(setName, macroType)
     -- Insert new set into current database
     MacroSetsDB[setName] = tempMacroSet
     -- Display successful save message
-    DisplaySetSavedMessage(setName, macroType)
+    if macroType == "g" then
+        print(COLOR_GREEN .. "General Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
+    end
+    if macroType == "c" then
+        print(COLOR_GREEN .. "Character Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
+    end
+    if macroType == "both" then
+        print(COLOR_GREEN .. "Macro set saved as '" .. setName .. "'." .. COLOR_GREEN)
+    end
     -- Alphabetize macro sets
     AlphabetizeMacroSets()
 end
@@ -502,15 +411,6 @@ local function LoadMacroSet(setName)
         if MacroSetsDB.replaceBars == true then
             if macroIndex and #positions ~= 0 then
                 PlaceMacroInActionBarSlots(macroIndex, positions)
-            end
-        end
-    end
-
-    if debug.loadMacroSet or debug.allFunctions then
-        for _, macro in ipairs(macroSet) do
-            local name, icon, body = GetMacroInfo(macro.name)
-            if macro.name ~= name then
-                print(COLOR_PURPLE .. "LoadMacroSet(): " .. macro.name .. " failed to load." .. COLOR_RESET)
             end
         end
     end
@@ -587,11 +487,6 @@ local function OptionsScreenToggle()
         DebugMessage("OptionsScreenToggle(): Options screen shown.", debug.optionsScreenToggle)
     end
 end    
-
-local function DisplayDefault()
-    DebugMessage("DisplayDefault(): Function called.", debug.displayDefault)
-    print(COLOR_VERMILLION .. "Invalid Command: Type " .. COLOR_YELLOW .. "'/ms help'" .. COLOR_VERMILLION .. " for a list of valid commands." .. COLOR_RESET)
-end
 
 local function DisplayHelp(helpSection)
     DebugMessage("DisplayHelp(): Function called.", debug.displayHelp)
@@ -702,14 +597,12 @@ local function DisplayHelp(helpSection)
         print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
         return
     else
-        DisplayDefault()
+        print(COLOR_VERMILLION .. "Invalid Command: Type " .. COLOR_YELLOW .. "'/ms help'" .. COLOR_VERMILLION .. " for a list of valid commands." .. COLOR_RESET)
     end
 end
 
 local function HandleSlashCommands(msg)
-    if debug.handleSlashCommands or debug.allFunctions then
-        print(COLOR_PURPLE .. "HandleSlashCommands(): Function called." .. COLOR_RESET)
-    end
+    DebugMessage("HandleSlashCommands(): Function called.", debug.handleSlashCommands)
 
     msg = string.match(msg, "^%s*(.-)%s*$")
     local command, arg1, arg2 = strsplit(" ", msg)
@@ -737,7 +630,7 @@ local function HandleSlashCommands(msg)
     elseif command == 'options' then
         OptionsScreenToggle()
     else
-        DisplayDefault()
+        print(COLOR_VERMILLION .. "Invalid Command: Type " .. COLOR_YELLOW .. "'/ms help'" .. COLOR_VERMILLION .. " for a list of valid commands." .. COLOR_RESET)
     end
 end
 
@@ -753,7 +646,6 @@ if testingEnabled then
         PlaceMacroInActionBarSlots = PlaceMacroInActionBarSlots,
         SetMacroSlotRanges = SetMacroSlotRanges,
         IsMacroSetEmpty = IsMacroSetEmpty,
-        DisplaySetSavedMessage = DisplaySetSavedMessage,
         DeleteMacrosInRange = DeleteMacrosInRange,
         RestoreMacroBodies = RestoreMacroBodies,
         DeleteMacroSet = DeleteMacroSet,
@@ -764,7 +656,6 @@ if testingEnabled then
         UndoLastOperation = UndoLastOperation,
         ListMacroSets = ListMacroSets,
         OptionsScreenToggle = OptionsScreenToggle,
-        DisplayDefault = DisplayDefault,
         DisplayHelp = DisplayHelp,
         HandleSlashCommands = HandleSlashCommands
     }

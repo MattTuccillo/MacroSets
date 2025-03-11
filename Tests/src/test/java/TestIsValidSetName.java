@@ -18,8 +18,9 @@ public class TestIsValidSetName {
         // Initialize Lua environment
         globals = JsePlatform.standardGlobals();
         // Overrides
-        globals.load("print = function() end").call();
+        globals.load("testingEnabled = true").call();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
+        globals.load("print = function() end").call();
 
         try {
             // Load Main.lua
