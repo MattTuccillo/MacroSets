@@ -9,9 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.IOException;
 
-public class TestSetMacroSlotRanges {
+public class TestDuplicateNames {
     private Globals globals;
-    private LuaValue setMacroSlotRangesFunction;
+    private LuaValue duplicateNamesFunction;
 
     @BeforeEach
     public void setup() {
@@ -28,8 +28,8 @@ public class TestSetMacroSlotRanges {
             LuaValue testExports = globals.get("TestExports");
             assertNotNull(testExports, "TestExports table should not be null");
 
-            setMacroSlotRangesFunction = testExports.get("SetMacroSlotRanges");
-            assertNotNull(setMacroSlotRangesFunction, "SetMacroSlotRanges function should not be null");
+            duplicateNamesFunction = testExports.get("DuplicateNames");
+            assertNotNull(duplicateNamesFunction, "DuplicateNames function should not be null");
 
         } catch (IOException e) {
             failWithException("IOException occurred during setup", e);
@@ -37,26 +37,21 @@ public class TestSetMacroSlotRanges {
             failWithException("LuaError occurred during setup", e);
         }
     }
-
+    
     @Test
-    public void testSetMacroSlotRanges_General() {
-        Varargs result = setMacroSlotRangesFunction.invoke(LuaValue.valueOf("g"));
-        assertEquals(1, result.arg1().toint(), "Expected start slot to be 1");
-        assertEquals(120, result.arg(2).toint(), "Expected end slot to be 120");
+    public void testDuplicateNames_True() {
+        String luaScript = "macroNames = {'Macro1', 'Macro1'}";
+        globals.load(luaScript).call();
+        LuaValue dupeNames = globals.get("macroNames");
+        assertTrue(duplicateNamesFunction.call(dupeNames).toboolean(), "Expected to be true");
     }
 
     @Test
-    public void testSetMacroSlotRanges_Character() {
-        Varargs result = setMacroSlotRangesFunction.invoke(LuaValue.valueOf("c"));
-        assertEquals(121, result.arg1().toint(), "Expected start slot to be 121");
-        assertEquals(150, result.arg(2).toint(), "Expected end slot to be 150");
-    }
-
-    @Test
-    public void testSetMacroSlotRanges_Default() {
-        Varargs result = setMacroSlotRangesFunction.invoke(LuaValue.valueOf("unknown"));
-        assertEquals(1, result.arg1().toint(), "Expected start slot to be 1");
-        assertEquals(150, result.arg(2).toint(), "Expected end slot to be 150");
+    public void testDuplicateNames_False() {
+        String luaScript = "macroNames = {'Macro1', 'Macro2'}";
+        globals.load(luaScript).call();
+        LuaValue noDupeNames = globals.get("macroNames");
+        assertFalse(duplicateNamesFunction.call(noDupeNames).toboolean(), "Expected to be false");
     }
 
     private void failWithException(String message, Exception e) {

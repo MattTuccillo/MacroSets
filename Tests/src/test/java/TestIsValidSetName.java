@@ -17,13 +17,12 @@ public class TestIsValidSetName {
     public void setup() {
         // Initialize Lua environment
         globals = JsePlatform.standardGlobals();
+        // Overrides
+        globals.load("print = function() end").call();
+        globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
 
         try {
-            // Load WoW mock first
-            Path mockPath = Paths.get("src/resources/wow_mock.lua").toRealPath();
-            globals.loadfile(mockPath.toString()).call();
-
-            // Load Main.lua after the WoW mock
+            // Load Main.lua
             Path luaPath = Paths.get("../Main.lua").toRealPath();
             globals.loadfile(luaPath.toString()).call();
 
