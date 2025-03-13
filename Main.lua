@@ -636,27 +636,3 @@ end
 
 SLASH_MACROSETS1 = '/ms'
 SlashCmdList['MACROSETS'] = HandleSlashCommands
-
-if testingEnabled then
-    TestExports = {
-        BackupMacroSets = BackupMacroSets,
-        AlphabetizeMacroSets = AlphabetizeMacroSets,
-        IsValidSetName = IsValidSetName,
-        GetActionBarSlotsForMacro = GetActionBarSlotsForMacro,
-        PlaceMacroInActionBarSlots = PlaceMacroInActionBarSlots,
-        SetMacroSlotRanges = SetMacroSlotRanges,
-        IsMacroSetEmpty = IsMacroSetEmpty,
-        DeleteMacrosInRange = DeleteMacrosInRange,
-        RestoreMacroBodies = RestoreMacroBodies,
-        DeleteMacroSet = DeleteMacroSet,
-        DeleteAllMacroSets = DeleteAllMacroSets,
-        DuplicateNames = DuplicateNames,
-        SaveMacroSet = SaveMacroSet,
-        LoadMacroSet = LoadMacroSet,
-        UndoLastOperation = UndoLastOperation,
-        ListMacroSets = ListMacroSets,
-        OptionsScreenToggle = OptionsScreenToggle,
-        DisplayHelp = DisplayHelp,
-        HandleSlashCommands = HandleSlashCommands
-    }
-end

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.luaj.vm2.*;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.IOException;
@@ -18,19 +20,26 @@ public class TestIsValidSetName {
         // Initialize Lua environment
         globals = JsePlatform.standardGlobals();
         // Overrides
-        globals.load("testingEnabled = true").call();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
         globals.load("print = function() end").call();
 
         try {
-            // Load Main.lua
+            // Load Main.lua contents as a string
             Path luaPath = Paths.get("../Main.lua").toRealPath();
-            globals.loadfile(luaPath.toString()).call();
+            String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
-            // Get function reference from TestExports
+            // Mock testing code to append
+            String mockCode = "\n" +
+            "TestExports = {IsValidSetName = IsValidSetName}\n";
+
+            // Combine the original script with the testing code
+            String modifiedScript = mainLuaContent + mockCode;
+
+            // Load the modified script into Lua
+            globals.load(modifiedScript).call();
+
+            // Load test function
             LuaValue testExports = globals.get("TestExports");
-            assertNotNull(testExports, "TestExports table should not be null");
-
             isValidSetNameFunction = testExports.get("IsValidSetName");
             assertNotNull(isValidSetNameFunction, "IsValidSetName function should not be null");
 

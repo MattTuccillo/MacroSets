@@ -17,7 +17,6 @@ public class TestToggleCharSpecific {
     @BeforeEach
     public void setup() {
         globals = JsePlatform.standardGlobals();
-        globals.load("testingEnabled = true").call();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
 
         try {
