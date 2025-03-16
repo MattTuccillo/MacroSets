@@ -15,70 +15,68 @@ public class TestHandleSlashCommands {
     private Globals globals;
     private LuaValue handleSlashCommandsFunction;
 
-@BeforeEach
-public void setup() {
-    globals = JsePlatform.standardGlobals();
-    globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
-    globals.load("print = function() end").call();
-    globals.load(
-        "function strsplit(delim, str)\r\n" +
-        "    if not str or str == '' then return '' end\r\n" +
-        "    local result = {}\r\n" +
-        "    for match in (str .. delim):gmatch('(.-)' .. delim) do\r\n" +
-        "        table.insert(result, match)\r\n" +
-        "    end\r\n" +
-        "    return table.unpack(result)\r\n" +
-        "end\r\n"
-    ).call();
+    @BeforeEach
+    public void setup() {
+        globals = JsePlatform.standardGlobals();
+        globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
+        globals.load("print = function() end").call();
+        globals.load(
+            "function strsplit(delim, str)\r\n" +
+            "    if not str or str == '' then return '' end\r\n" +
+            "    local result = {}\r\n" +
+            "    for match in (str .. delim):gmatch('(.-)' .. delim) do\r\n" +
+            "        table.insert(result, match)\r\n" +
+            "    end\r\n" +
+            "    return table.unpack(result)\r\n" +
+            "end\r\n"
+        ).call();
 
-    try {
-        // Load Main.lua contents as a string
-        Path luaPath = Paths.get("../Main.lua").toRealPath();
-        String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
+        try {
+            // Load Main.lua contents as a string
+            Path luaPath = Paths.get("../Main.lua").toRealPath();
+            String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
-        // Mock testing code to append
-        String mockCode = "\n" +
-            "TestExports = {HandleSlashCommands = HandleSlashCommands}\n" +
+            // Mock testing code to append
+            String mockCode = "\n" +
+                "TestExports = {HandleSlashCommands = HandleSlashCommands}\n" +
 
-            "saveMacroSetCalled = false\n" +
-            "loadMacroSetCalled = false\n" +
-            "deleteMacroSetCalled = false\n" +
-            "deleteAllMacroSetsCalled = false\n" +
-            "undoLastOperationCalled = false\n" +
-            "alphabetizeMacroSetsCalled = false\n" +
-            "listMacroSetsCalled = false\n" +
-            "displayHelpCalled = false\n" +
-            "optionsScreenToggleCalled = false\n" +
+                "saveMacroSetCalled = false\n" +
+                "loadMacroSetCalled = false\n" +
+                "deleteMacroSetCalled = false\n" +
+                "deleteAllMacroSetsCalled = false\n" +
+                "undoLastOperationCalled = false\n" +
+                "alphabetizeMacroSetsCalled = false\n" +
+                "listMacroSetsCalled = false\n" +
+                "displayHelpCalled = false\n" +
+                "optionsScreenToggleCalled = false\n" +
 
-            "SaveMacroSet = function(arg1, arg2) saveMacroSetCalled = true end\n" +
-            "LoadMacroSet = function(arg1) loadMacroSetCalled = true end\n" +
-            "DeleteMacroSet = function(arg1) deleteMacroSetCalled = true end\n" +
-            "DeleteAllMacroSets = function() deleteAllMacroSetsCalled = true end\n" +
-            "UndoLastOperation = function() undoLastOperationCalled = true end\n" +
-            "AlphabetizeMacroSets = function() alphabetizeMacroSetsCalled = true end\n" +
-            "ListMacroSets = function() listMacroSetsCalled = true end\n" +
-            "DisplayHelp = function(arg1) displayHelpCalled = true end\n" +
-            "OptionsScreenToggle = function() optionsScreenToggleCalled = true end\n";
+                "SaveMacroSet = function(arg1, arg2) saveMacroSetCalled = true end\n" +
+                "LoadMacroSet = function(arg1) loadMacroSetCalled = true end\n" +
+                "DeleteMacroSet = function(arg1) deleteMacroSetCalled = true end\n" +
+                "DeleteAllMacroSets = function() deleteAllMacroSetsCalled = true end\n" +
+                "UndoLastOperation = function() undoLastOperationCalled = true end\n" +
+                "AlphabetizeMacroSets = function() alphabetizeMacroSetsCalled = true end\n" +
+                "ListMacroSets = function() listMacroSetsCalled = true end\n" +
+                "DisplayHelp = function(arg1) displayHelpCalled = true end\n" +
+                "OptionsScreenToggle = function() optionsScreenToggleCalled = true end\n";
 
-        // Combine the original script with the testing code
-        String modifiedScript = mainLuaContent + mockCode;
+            // Combine the original script with the testing code
+            String modifiedScript = mainLuaContent + mockCode;
 
-        // Load the modified script into Lua
-        globals.load(modifiedScript).call();
+            // Load the modified script into Lua
+            globals.load(modifiedScript).call();
 
-        // Load test function
-        LuaValue testExports = globals.get("TestExports");
-        handleSlashCommandsFunction = testExports.get("HandleSlashCommands");
-        assertNotNull(handleSlashCommandsFunction, "HandleSlashCommands function should not be null");
+            // Load test function
+            LuaValue testExports = globals.get("TestExports");
+            handleSlashCommandsFunction = testExports.get("HandleSlashCommands");
+            assertNotNull(handleSlashCommandsFunction, "HandleSlashCommands function should not be null");
 
-    } catch (IOException e) {
-        failWithException("IOException occurred during setup", e);
-    } catch (LuaError e) {
-        failWithException("LuaError occurred during setup", e);
+        } catch (IOException e) {
+            failWithException("IOException occurred during setup", e);
+        } catch (LuaError e) {
+            failWithException("LuaError occurred during setup", e);
+        }
     }
-}
-    
-
     
     @Test
     public void testHandleSlashCommands_Save() {

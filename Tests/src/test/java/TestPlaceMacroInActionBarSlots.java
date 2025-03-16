@@ -45,41 +45,39 @@ public void setup() {
             "function GetMacroInfo(macroIndex)\n" +
             "   getMacroInfoCalled = true\n" +
             "   return 'test', 134400, 'test'\n" +
-            "end\n" +
+                "end\n" +
 
-            "function PickupMacro(macroIndex)\n" +
-            "   pickupMacroCalled = true\n" +
-            "end\n" +
+                "function PickupMacro(macroIndex)\n" +
+                "   pickupMacroCalled = true\n" +
+                "end\n" +
 
-            "function PlaceAction(slot)\n" +
-            "   placeActionCalled = true\n" +
-            "end\n" +
+                "function PlaceAction(slot)\n" +
+                "   placeActionCalled = true\n" +
+                "end\n" +
 
-            "function ClearCursor()\n" +
-            "   clearCursorCalled = true\n" + 
-            "end\n";
+                "function ClearCursor()\n" +
+                "   clearCursorCalled = true\n" + 
+                "end\n";
 
-        // Combine the original script with the testing code
-        String modifiedScript = mainLuaContent + mockCode;
+            // Combine the original script with the testing code
+            String modifiedScript = mainLuaContent + mockCode;
 
-        // Load the modified script into Lua
-        globals.load(modifiedScript).call();
+            // Load the modified script into Lua
+            globals.load(modifiedScript).call();
 
-        // Load test function
-        LuaValue testExports = globals.get("TestExports");
-        placeMacroInActionBarSlotsFunction = testExports.get("PlaceMacroInActionBarSlots");
-        actionBarSlotLimit = testExports.get("actionBarSlotLimit");
-        assertNotNull(placeMacroInActionBarSlotsFunction, "PlaceMacroInActionBarSlots function should not be null");
-        assertNotNull(actionBarSlotLimit, "actionBarSlotLimit should not be null");
+            // Load test function
+            LuaValue testExports = globals.get("TestExports");
+            placeMacroInActionBarSlotsFunction = testExports.get("PlaceMacroInActionBarSlots");
+            actionBarSlotLimit = testExports.get("actionBarSlotLimit");
+            assertNotNull(placeMacroInActionBarSlotsFunction, "PlaceMacroInActionBarSlots function should not be null");
+            assertNotNull(actionBarSlotLimit, "actionBarSlotLimit should not be null");
 
-    } catch (IOException e) {
-        failWithException("IOException occurred during setup", e);
-    } catch (LuaError e) {
-        failWithException("LuaError occurred during setup", e);
+        } catch (IOException e) {
+            failWithException("IOException occurred during setup", e);
+        } catch (LuaError e) {
+            failWithException("LuaError occurred during setup", e);
+        }
     }
-}
-    
-
     
     @Test
     public void testPlaceMacroInActionBarSlots_Success() {
