@@ -20,8 +20,6 @@ public class TestPlaceMacroInActionBarSlots {
 public void setup() {
     globals = JsePlatform.standardGlobals();
     globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
-
-    // Mock print function call
     globals.load("printCalled = false");
     globals.load("print = function() printCalled = true end").call();
 

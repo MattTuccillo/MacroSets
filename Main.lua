@@ -453,7 +453,7 @@ end
 local function ListMacroSets()
     DebugMessage("ListMacroSets(): Function called.", debug.listMacroSets)
 
-    if #sortedSetNames == 0 then
+    if next(sortedSetNames) == nil then
         print(COLOR_VERMILLION .. "No macro sets saved." .. COLOR_RESET)
         return
     end
