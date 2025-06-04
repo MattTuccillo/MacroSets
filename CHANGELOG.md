@@ -4,7 +4,7 @@
 
 - Changes:
   - Fixed a bug relating to the persistence of backup macro sets across sessions.
-- Supports World of Warcraft version 11.0.5.
+- Supports World of Warcraft version 11.1.5.
 
 ## Version 2.0.0 - [3/7/2025]
 
