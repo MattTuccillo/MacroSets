@@ -356,7 +356,7 @@ local function SaveMacroSet(setName, macroType)
         print(COLOR_GREEN .. "Character Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
     end
     if macroType == "both" then
-        print(COLOR_GREEN .. "Macro set saved as '" .. setName .. "'." .. COLOR_GREEN)
+        print(COLOR_GREEN .. "Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
     end
     -- Alphabetize macro sets
     AlphabetizeMacroSets()
