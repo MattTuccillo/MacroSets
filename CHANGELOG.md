@@ -1,5 +1,11 @@
 # Changelog for Macro Sets WoW Addon
 
+## Version 2.0.1 - [6/4/2025]
+
+- Changes:
+  - Fixed a bug relating to the persistence of backup macro sets across sessions.
+- Supports World of Warcraft version 11.0.5.
+
 ## Version 2.0.0 - [3/7/2025]
 
 - Features: (*Check **Commands** section for more information on all of the features listed below.*)

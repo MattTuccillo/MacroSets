@@ -1,9 +1,9 @@
-## Interface: 110100
+## Interface: 110105
 ## Title: Macro Sets
 ## Notes: Manage and switch between macro sets easily.
 ## Author: MattTuccillo
-## Version: 2.0.0
-## SavedVariables: MacroSetsDB
+## Version: 2.0.1
+## SavedVariables: MacroSetsDB, MacroSetsBackup
 ## IconTexture: Interface\AddOns\MacroSets\Media\Textures\LogoAddon
 ## X-Category: Miscellaneous
 ## X-Curse-Project-ID: 945498
