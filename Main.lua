@@ -96,15 +96,16 @@ end
 
 local function AlphabetizeMacroSets()
     DebugMessage("AlphabetizeMacroSets(): Function called.", debug.alphabetizeMacroSets)
-    sortedSetNames = {}
+    local sorted = {}
     for setName, setDetails in pairs(MacroSetsDB) do
         if type(setDetails) == 'table' and setDetails.macros then
-            table.insert(sortedSetNames, setName)
+            table.insert(sorted, setName)
         end
     end
-    table.sort(sortedSetNames, function(a, b)
+    table.sort(sorted, function(a, b)
         return string.lower(a) < string.lower(b)
     end)
+    return sorted
 end
 
 local function IsValidSetName(setName)
@@ -359,7 +360,7 @@ local function SaveMacroSet(setName, macroType)
         print(COLOR_GREEN .. "Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
     end
     -- Alphabetize macro sets
-    AlphabetizeMacroSets()
+    sortedSetNames = AlphabetizeMacroSets()
 end
 
 local function LoadMacroSet(setName)
@@ -622,7 +623,7 @@ local function HandleSlashCommands(msg)
     elseif command == 'undo' then
         UndoLastOperation()
     elseif command == 'list' then
-        AlphabetizeMacroSets()
+        sortedSetNames = AlphabetizeMacroSets()
         ListMacroSets()
     elseif command == 'help' then
         -- arg1 = helpSection
