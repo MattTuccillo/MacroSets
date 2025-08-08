@@ -283,7 +283,7 @@ local function DeleteMacrosInRange(startSlot, endSlot)
     end
 
     for i = endSlot, startSlot, -1 do
-        local macroName = GetMacroInfo(i)
+        local macroName,_,_ = GetMacroInfo(i)
         if macroName then
             DeleteMacro(i)
         end
@@ -292,7 +292,7 @@ local function DeleteMacrosInRange(startSlot, endSlot)
     if test.deleteMacrosInRange or test.allFunctions then
         local remainingMacros = {}
         for i = startSlot, endSlot do
-            local macroName = GetMacroInfo(i)
+            local macroName,_,_ = GetMacroInfo(i)
             if macroName then
                 table.insert(remainingMacros, macroName)
             end
@@ -571,10 +571,10 @@ local function LoadMacroSet(setName)
         local macroIndex
         local positions
         if generalMacroCount > 0 then
-            macroIndex = CreateMacro(macro.name, macro.icon, "")
+            macroIndex = CreateMacro(macro.name, macro.icon, "", false) -- false for general
             generalMacroCount = generalMacroCount - 1
         elseif characterMacroCount > 0 then
-            macroIndex = CreateMacro(macro.name, macro.icon, "", 1)  -- 1 for character-specific
+            macroIndex = CreateMacro(macro.name, macro.icon, "", true)  -- true for character-specific
             characterMacroCount = characterMacroCount - 1
         else
             print(COLOR_VERMILLION .. "No more macro slots available for this type." .. COLOR_RESET)
