@@ -3,7 +3,7 @@
 ## Version 2.0.3 - [1/27/2026]
 
 - Changes:
-  - Adjusted versioning to avoid incompatability flag.
+  - Adjusted versioning to avoid incompatibility flag.
 - Supports World of Warcraft version 12.0.0.
 
 ## Version 2.0.2 - [8/7/2025]
