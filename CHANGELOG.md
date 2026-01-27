@@ -1,10 +1,16 @@
 # Changelog for Macro Sets WoW Addon
 
+## Version 2.0.3 - [1/27/2026]
+
+- Changes:
+  - Adjusted versioning to avoid incompatability flag.
+- Supports World of Warcraft version 12.0.0.
+
 ## Version 2.0.2 - [8/7/2025]
 
 - Changes:
   - Fixed an addon-breaking bug relating to the type of macro being created when loading a set.
-- Supports World of Warcraft version 11.2.
+- Supports World of Warcraft version 11.2.0.
 
 ## Version 2.0.1 - [6/4/2025]
 
