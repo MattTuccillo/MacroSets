@@ -11,8 +11,8 @@ import java.io.IOException;
 
 public class TestToggleActionBarPlacements {
     private Globals globals;
-    LuaValue macroSetsFunctions;
-    LuaValue macroSetsDB;
+    private LuaValue macroSetsFunctions;
+    private LuaValue macroSetsDB;
 
     @BeforeEach
     public void setup() {
@@ -47,9 +47,7 @@ public class TestToggleActionBarPlacements {
         macroSetsDB.set("replaceBars", LuaValue.FALSE);
         assertFalse(macroSetsDB.get("replaceBars").toboolean(), "Expected replaceBars to be OFF initially");
 
-        // Call ToggleActionBarPlacements()
-        LuaValue result = toggleFunction.call();
-        assertNotNull(result, "ToggleActionBarPlacements should return a value");
+        toggleFunction.call();
         assertTrue(macroSetsDB.get("replaceBars").toboolean(), "Expected replaceBars to be ON after toggle");
     }
 
@@ -62,9 +60,7 @@ public class TestToggleActionBarPlacements {
         macroSetsDB.set("replaceBars", LuaValue.TRUE);
         assertTrue(macroSetsDB.get("replaceBars").toboolean(), "Expected replaceBars to be ON initially");
 
-        // Call ToggleActionBarPlacements()
-        LuaValue result = toggleFunction.call();
-        assertNotNull(result, "ToggleActionBarPlacements should return a value");
+        toggleFunction.call();
         assertFalse(macroSetsDB.get("replaceBars").toboolean(), "Expected replaceBars to be OFF after toggle");
     }
 

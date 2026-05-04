@@ -57,13 +57,13 @@ public class TestListMacroSets {
     }
     
     @Test
-    public void TestListMacroSets_Empty() {
+    public void testListMacroSets_Empty() {
         listMacroSetsFunction.call();
-        assertEquals(1, globals.get("printCounter").toint(), "printCounter expected to be 1");
+        assertEquals(1, globals.get("printCounter").toint(), "Expected print to be called 1 time");
     }
 
     @Test
-    public void TestListMacroSets_Filled() {
+    public void testListMacroSets_Filled() {
         LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();
 
         LuaTable testSetOne = LuaValue.tableOf();
@@ -81,7 +81,7 @@ public class TestListMacroSets {
         sortedSetNames.set(2, LuaValue.valueOf("testTwo"));
 
         listMacroSetsFunction.call();
-        assertEquals(6, globals.get("printCounter").toint(),  "printCounter expected to be 6");
+        assertEquals(6, globals.get("printCounter").toint(), "Expected print to be called 6 times");
     }
 
     private void failWithException(String message, Exception e) {

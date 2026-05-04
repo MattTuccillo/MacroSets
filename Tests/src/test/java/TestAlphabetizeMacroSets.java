@@ -46,29 +46,29 @@ public class TestAlphabetizeMacroSets {
         }
     }
 
-@Test
-public void testAlphabetizeMacroSets() {
-    LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();
+    @Test
+    public void testAlphabetizeMacroSets() {
+        LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();
 
-    LuaTable setA = LuaValue.tableOf();
-    setA.set("macros", LuaValue.tableOf());
-    LuaTable setB = LuaValue.tableOf();
-    setB.set("macros", LuaValue.tableOf());
+        LuaTable setA = LuaValue.tableOf();
+        setA.set("macros", LuaValue.tableOf());
+        LuaTable setB = LuaValue.tableOf();
+        setB.set("macros", LuaValue.tableOf());
 
-    macroSetsDB.set("Beta", setA);
-    macroSetsDB.set("alpha", setB);
-    macroSetsDB.set("invalid", LuaValue.valueOf("ignored"));
+        macroSetsDB.set("Beta", setA);
+        macroSetsDB.set("alpha", setB);
+        macroSetsDB.set("invalid", LuaValue.valueOf("ignored"));
 
-    LuaValue result = alphabetizeMacroSetsFunction.call();
+        LuaValue result = alphabetizeMacroSetsFunction.call();
 
-    assertTrue(result.istable(), "Result should be a Lua table");
+        assertTrue(result.istable(), "Result should be a Lua table");
 
-    LuaTable sortedSetNames = result.checktable();
+        LuaTable sortedSetNames = result.checktable();
 
-    assertEquals(2, sortedSetNames.length(), "Expected two sorted names");
-    assertEquals("alpha", sortedSetNames.get(1).tojstring());
-    assertEquals("Beta", sortedSetNames.get(2).tojstring());
-}
+        assertEquals(2, sortedSetNames.length(), "Expected two sorted names");
+        assertEquals("alpha", sortedSetNames.get(1).tojstring());
+        assertEquals("Beta", sortedSetNames.get(2).tojstring());
+    }
 
 
     private void failWithException(String message, Exception e) {

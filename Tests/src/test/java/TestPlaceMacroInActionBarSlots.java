@@ -16,33 +16,33 @@ public class TestPlaceMacroInActionBarSlots {
     private LuaValue placeMacroInActionBarSlotsFunction;
     private LuaValue actionBarSlotLimit;
 
-@BeforeEach
-public void setup() {
-    globals = JsePlatform.standardGlobals();
-    globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
-    globals.load("printCalled = false");
-    globals.load("print = function() printCalled = true end").call();
+    @BeforeEach
+    public void setup() {
+        globals = JsePlatform.standardGlobals();
+        globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
+        globals.load("printCalled = false").call();
+        globals.load("print = function() printCalled = true end").call();
 
-    try {
-        // Load Main.lua contents as a string
-        Path luaPath = Paths.get("../Main.lua").toRealPath();
-        String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
+        try {
+            // Load Main.lua contents as a string
+            Path luaPath = Paths.get("../Main.lua").toRealPath();
+            String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
-        // Mock testing code to append
-        String mockCode = "\n" +
-            "TestExports = {\n" +
-            "   PlaceMacroInActionBarSlots = PlaceMacroInActionBarSlots,\n" +
-            "   actionBarSlotLimit = actionBarSlotLimit\n" +
-            "}\n" +
+            // Mock testing code to append
+            String mockCode = "\n" +
+                "TestExports = {\n" +
+                "   PlaceMacroInActionBarSlots = PlaceMacroInActionBarSlots,\n" +
+                "   actionBarSlotLimit = actionBarSlotLimit\n" +
+                "}\n" +
 
-            "getMacroInfoCalled = false\n" +
-            "pickupMacroCalled = false\n" +
-            "placeActionCalled = false\n" +
-            "clearCursorCalled = false\n" +
+                "getMacroInfoCalled = false\n" +
+                "pickupMacroCalled = false\n" +
+                "placeActionCalled = false\n" +
+                "clearCursorCalled = false\n" +
 
-            "function GetMacroInfo(macroIndex)\n" +
-            "   getMacroInfoCalled = true\n" +
-            "   return 'test', 134400, 'test'\n" +
+                "function GetMacroInfo(macroIndex)\n" +
+                "   getMacroInfoCalled = true\n" +
+                "   return 'test', 134400, 'test'\n" +
                 "end\n" +
 
                 "function PickupMacro(macroIndex)\n" +
@@ -54,7 +54,7 @@ public void setup() {
                 "end\n" +
 
                 "function ClearCursor()\n" +
-                "   clearCursorCalled = true\n" + 
+                "   clearCursorCalled = true\n" +
                 "end\n";
 
             // Combine the original script with the testing code

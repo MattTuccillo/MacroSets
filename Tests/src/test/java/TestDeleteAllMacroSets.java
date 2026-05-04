@@ -63,6 +63,7 @@ public class TestDeleteAllMacroSets {
         assertFalse(globals.load("return next(MacroSetsDB) == nil").call().toboolean(), "MacroSetsDB expected to not be empty.");
         deleteAllMacroSetsFunction.call();
         assertTrue(globals.load("return next(MacroSetsDB) == nil").call().toboolean(), "MacroSetsDB expected to be empty.");
+        assertTrue(globals.get("backupMacroSetsCalled").toboolean(), "Expected BackupMacroSets to be called");
     }
 
     private void failWithException(String message, Exception e) {

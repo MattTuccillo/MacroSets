@@ -29,7 +29,10 @@ public class TestBackupMacroSets {
                 "TestExports = {BackupMacroSets = BackupMacroSets}\n" +
                 
                 "deepCopyTableCounter = 0\n" +
-                "DeepCopyTable = function(table) deepCopyTableCounter = deepCopyTableCounter + 1 end\n";
+                "DeepCopyTable = function(table)\n" +
+                "   deepCopyTableCounter = deepCopyTableCounter + 1\n" +
+                "   return table\n" +
+                "end\n";
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -52,7 +55,7 @@ public class TestBackupMacroSets {
     @Test
     public void testBackupMacroSets_Empty() {
         backupMacroSetsFunction.call();
-        assertEquals(0, globals.get("deepCopyTableCounter").toint(),  "printCounter expected to be 0");
+        assertEquals(0, globals.get("deepCopyTableCounter").toint(), "Expected DeepCopyTable to be called 0 times");
     }
     
     @Test
@@ -63,7 +66,7 @@ public class TestBackupMacroSets {
         macroSetsDB.set("testOne", testSetOne);
         macroSetsDB.set("testTwo", testSetTwo);
         backupMacroSetsFunction.call();
-        assertEquals(2, globals.get("deepCopyTableCounter").toint(),  "printCounter expected to be 2");
+        assertEquals(2, globals.get("deepCopyTableCounter").toint(), "Expected DeepCopyTable to be called 2 times");
     }
 
     private void failWithException(String message, Exception e) {

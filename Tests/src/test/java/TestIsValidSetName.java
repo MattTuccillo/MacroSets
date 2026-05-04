@@ -17,9 +17,7 @@ public class TestIsValidSetName {
 
     @BeforeEach
     public void setup() {
-        // Initialize Lua environment
         globals = JsePlatform.standardGlobals();
-        // Overrides
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
         globals.load("print = function() end").call();
 
@@ -30,7 +28,7 @@ public class TestIsValidSetName {
 
             // Mock testing code to append
             String mockCode = "\n" +
-            "TestExports = {IsValidSetName = IsValidSetName}\n";
+                "TestExports = {IsValidSetName = IsValidSetName}\n";
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;

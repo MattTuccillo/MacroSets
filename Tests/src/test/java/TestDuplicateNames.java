@@ -17,7 +17,6 @@ public class TestDuplicateNames {
 
     @BeforeEach
     public void setup() {
-        // Initialize Lua environment
         globals = JsePlatform.standardGlobals();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
 
@@ -28,7 +27,7 @@ public class TestDuplicateNames {
 
             // Mock testing code to append
             String mockCode = "\n" +
-            "TestExports = {DuplicateNames = DuplicateNames}\n";
+                "TestExports = {DuplicateNames = DuplicateNames}\n";
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;

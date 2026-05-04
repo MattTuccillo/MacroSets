@@ -11,8 +11,8 @@ import java.io.IOException;
 
 public class TestToggleDynamicIcons {
     private Globals globals;
-    LuaValue macroSetsFunctions;
-    LuaValue macroSetsDB;
+    private LuaValue macroSetsFunctions;
+    private LuaValue macroSetsDB;
 
     @BeforeEach
     public void setup() {
@@ -47,9 +47,7 @@ public class TestToggleDynamicIcons {
         macroSetsDB.set("dynamicIcons", LuaValue.FALSE);
         assertFalse(macroSetsDB.get("dynamicIcons").toboolean(), "Expected dynamicIcons to be OFF initially");
 
-        // Call ToggleDynamicIcons()
-        LuaValue result = toggleFunction.call();
-        assertNotNull(result, "ToggleDynamicIcons should return a value");
+        toggleFunction.call();
         assertTrue(macroSetsDB.get("dynamicIcons").toboolean(), "Expected dynamicIcons to be ON after toggle");
     }
 
@@ -62,9 +60,7 @@ public class TestToggleDynamicIcons {
         macroSetsDB.set("dynamicIcons", LuaValue.TRUE);
         assertTrue(macroSetsDB.get("dynamicIcons").toboolean(), "Expected dynamicIcons to be ON initially");
 
-        // Call ToggleDynamicIcons()
-        LuaValue result = toggleFunction.call();
-        assertNotNull(result, "ToggleDynamicIcons should return a value");
+        toggleFunction.call();
         assertFalse(macroSetsDB.get("dynamicIcons").toboolean(), "Expected dynamicIcons to be OFF after toggle");
     }
 

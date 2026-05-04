@@ -11,8 +11,8 @@ import java.io.IOException;
 
 public class TestToggleCharSpecific {
     private Globals globals;
-    LuaValue macroSetsFunctions;
-    LuaValue macroSetsDB;
+    private LuaValue macroSetsFunctions;
+    private LuaValue macroSetsDB;
 
     @BeforeEach
     public void setup() {
@@ -47,9 +47,7 @@ public class TestToggleCharSpecific {
         macroSetsDB.set("charSpecific", LuaValue.FALSE);
         assertFalse(macroSetsDB.get("charSpecific").toboolean(), "Expected charSpecific to be OFF initially");
 
-        // Call ToggleCharSpecific()
-        LuaValue result = toggleFunction.call();
-        assertNotNull(result, "ToggleCharSpecific should return a value");
+        toggleFunction.call();
         assertTrue(macroSetsDB.get("charSpecific").toboolean(), "Expected charSpecific to be ON after toggle");
     }
 
@@ -62,9 +60,7 @@ public class TestToggleCharSpecific {
         macroSetsDB.set("charSpecific", LuaValue.TRUE);
         assertTrue(macroSetsDB.get("charSpecific").toboolean(), "Expected charSpecific to be ON initially");
 
-        // Call ToggleCharSpecific()
-        LuaValue result = toggleFunction.call();
-        assertNotNull(result, "ToggleCharSpecific should return a value");
+        toggleFunction.call();
         assertFalse(macroSetsDB.get("charSpecific").toboolean(), "Expected charSpecific to be OFF after toggle");
     }
 
