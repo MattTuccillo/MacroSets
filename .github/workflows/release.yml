@@ -24,4 +24,11 @@ jobs:
         run: |
           zip_name="MacroSets-${{ steps.tag_name.outputs.TAG_NAME }}.zip"
           echo "::set-output name=ZIP_NAME::$zip_name"
-          zip -r $zip_name . -x '*.git*'
+          zip -r "$zip_name" . \
+            -x '*.git*' \
+            -x 'Tests/*' \
+            -x 'Tests/**' \
+            -x '*/target/*' \
+            -x '*/target/**' \
+            -x '*.java' \
+            -x '*.class'

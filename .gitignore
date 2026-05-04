@@ -43,5 +43,6 @@ luac.out
 update.sh
 user stories.md
 
-# maven build files in testing
+# Maven build/test artifacts
 target/
+Tests/target/
