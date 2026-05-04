@@ -491,7 +491,7 @@ end
 
 local function DisplayHelp(helpSection)
     DebugMessage("DisplayHelp(): Function called.", debug.displayHelp)
-    DebugMessage("DisplayHelp(): helpSection = " .. helpSection .. ".", debug.displayHelp)
+    DebugMessage("DisplayHelp(): helpSection = " .. tostring(helpSection) .. ".", debug.displayHelp)
 
     if helpSection == nil then
         print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
