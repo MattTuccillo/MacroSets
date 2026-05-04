@@ -1,0 +1,212 @@
+name: Manual Validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_dependency_check:
+        description: "Run OWASP Dependency-Check for Maven test dependencies"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Java/LuaJ Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "23"
+          cache: maven
+
+      - name: Run Tests
+        working-directory: Tests
+        run: mvn -B test
+
+      - name: Summarize Test Results
+        if: always()
+        working-directory: Tests
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import html
+          import os
+          import xml.etree.ElementTree as ET
+
+          reports = sorted(Path("target/surefire-reports").glob("TEST-*.xml"))
+          summary = Path(os.environ["GITHUB_STEP_SUMMARY"])
+
+          total = failures = errors = skipped = 0
+          rows = []
+          details = []
+
+          for report in reports:
+              root = ET.parse(report).getroot()
+              tests = int(root.attrib.get("tests", 0))
+              file_failures = int(root.attrib.get("failures", 0))
+              file_errors = int(root.attrib.get("errors", 0))
+              file_skipped = int(root.attrib.get("skipped", 0))
+
+              total += tests
+              failures += file_failures
+              errors += file_errors
+              skipped += file_skipped
+
+              status = "Passed" if file_failures == 0 and file_errors == 0 else "Failed"
+              rows.append(f"| `{root.attrib.get('name', report.stem)}` | {status} | {tests} | {file_failures} | {file_errors} | {file_skipped} |")
+
+              for testcase in root.findall("testcase"):
+                  problem = testcase.find("failure")
+                  if problem is None:
+                      problem = testcase.find("error")
+                  if problem is not None:
+                      test_name = f"{testcase.attrib.get('classname', '')}.{testcase.attrib.get('name', '')}"
+                      message = html.escape(problem.attrib.get("message", "No message"))
+                      details.append(f"- `{test_name}`: {message}")
+
+          with summary.open("a", encoding="utf-8") as out:
+              out.write("## Java/LuaJ Tests\n\n")
+              if not reports:
+                  out.write("No Surefire XML reports were found.\n")
+              else:
+                  passed = total - failures - errors - skipped
+                  out.write(f"**Total:** {total} | **Passed:** {passed} | **Failures:** {failures} | **Errors:** {errors} | **Skipped:** {skipped}\n\n")
+                  out.write("| Test Class | Status | Tests | Failures | Errors | Skipped |\n")
+                  out.write("| --- | --- | ---: | ---: | ---: | ---: |\n")
+                  out.write("\n".join(rows))
+                  out.write("\n")
+
+                  if details:
+                      out.write("\n### Failures\n\n")
+                      out.write("\n".join(details))
+                      out.write("\n")
+          PY
+
+  lua-lint:
+    name: Lua Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Lua And Luacheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.1 luarocks
+          luarocks install --local luacheck
+          echo "$HOME/.luarocks/bin" >> "$GITHUB_PATH"
+
+      - name: Run Luacheck
+        run: |
+          set -o pipefail
+          luacheck Main.lua Options.lua | tee luacheck-report.txt
+
+      - name: Summarize Luacheck Results
+        if: always()
+        run: |
+          {
+            echo "## Lua Lint"
+            echo
+            if [ -f luacheck-report.txt ]; then
+              echo '```text'
+              cat luacheck-report.txt
+              echo '```'
+            else
+              echo "Luacheck did not produce a report."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  dependency-check:
+    name: Dependency Vulnerability Scan
+    if: ${{ inputs.run_dependency_check == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "23"
+          cache: maven
+
+      - name: Run OWASP Dependency-Check
+        working-directory: Tests
+        run: mvn -B org.owasp:dependency-check-maven:12.2.1:check -DfailBuildOnCVSS=7 -Dformat=ALL
+
+      - name: Summarize Dependency-Check Results
+        if: always()
+        working-directory: Tests
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import os
+
+          summary = Path(os.environ["GITHUB_STEP_SUMMARY"])
+          report = Path("target/dependency-check-report.json")
+
+          with summary.open("a", encoding="utf-8") as out:
+              out.write("## Dependency Vulnerability Scan\n\n")
+
+              if not report.exists():
+                  out.write("No Dependency-Check JSON report was found.\n")
+              else:
+                  data = json.loads(report.read_text(encoding="utf-8"))
+                  dependencies = data.get("dependencies", [])
+                  vulnerable = []
+                  severity_counts = {}
+
+                  for dependency in dependencies:
+                      vulns = dependency.get("vulnerabilities") or []
+                      if vulns:
+                          vulnerable.append((dependency.get("fileName", "unknown"), vulns))
+                          for vuln in vulns:
+                              severity = vuln.get("severity", "UNKNOWN").upper()
+                              severity_counts[severity] = severity_counts.get(severity, 0) + 1
+
+                  out.write(f"**Dependencies scanned:** {len(dependencies)} | **Vulnerable dependencies:** {len(vulnerable)} | **Vulnerabilities:** {sum(severity_counts.values())}\n\n")
+
+                  if severity_counts:
+                      out.write("| Severity | Count |\n")
+                      out.write("| --- | ---: |\n")
+                      for severity, count in sorted(severity_counts.items()):
+                          out.write(f"| {severity} | {count} |\n")
+                      out.write("\n")
+
+                  if vulnerable:
+                      out.write("### Vulnerable Dependencies\n\n")
+                      out.write("| Dependency | Vulnerability | Severity |\n")
+                      out.write("| --- | --- | --- |\n")
+                      for dependency, vulns in vulnerable:
+                          for vuln in vulns:
+                              name = vuln.get("name", "unknown")
+                              severity = vuln.get("severity", "UNKNOWN").upper()
+                              out.write(f"| `{dependency}` | `{name}` | {severity} |\n")
+                      out.write("\n")
+                  else:
+                      out.write("No vulnerable dependencies were reported.\n")
+          PY
+
+      - name: Upload Dependency-Check Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: Tests/target/dependency-check-report.*
+          if-no-files-found: ignore

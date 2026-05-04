@@ -111,7 +111,7 @@ end
 local function IsValidSetName(setName)
     DebugMessage("IsValidSetName(): Function called.", debug.isValidSetName)
     DebugMessage("IsValidSetName(): setName = " .. setName .. ".", debug.isValidSetName)
-    
+
     if not setName or setName == "" then
         print("Please enter a macro set name.")
         return false
@@ -214,8 +214,8 @@ local function DeleteMacroSet(setName)
     DebugMessage("DeleteMacroSet(): Function called.", debug.deleteMacroSet)
     DebugMessage("DeleteMacroSet(): setName = " .. setName .. ".", debug.deleteMacroSet)
 
-    if not IsValidSetName(setName) then 
-        return 
+    if not IsValidSetName(setName) then
+        return
     end
 
     if MacroSetsDB[setName] then
@@ -269,22 +269,22 @@ local function SaveMacroSet(setName, macroType)
     end
 
     -- Validate macro set name
-    if not IsValidSetName(setName) then 
-        return 
+    if not IsValidSetName(setName) then
+        return
     end
 
     -- Determine macro set type
-    local macroType = macroType
-    if macroType ~= "c" and macroType ~= "g" then
+    local resolvedMacroType = macroType
+    if resolvedMacroType ~= "c" and resolvedMacroType ~= "g" then
         if MacroSetsDB.charSpecific then
-            macroType = "c"
+            resolvedMacroType = "c"
         else
-            macroType = "both"
+            resolvedMacroType = "both"
         end
     end
 
     -- Initialize variables
-    local startSlot, endSlot = SetMacroSlotRanges(macroType)
+    local startSlot, endSlot = SetMacroSlotRanges(resolvedMacroType)
     local generalMacroCount = 0
     local characterMacroCount = 0
     local dupes = false
@@ -292,10 +292,10 @@ local function SaveMacroSet(setName, macroType)
     -- Store data in a temporary table
     -- MacroSetsDB[setName] = {macros = {}, type = macroType, generalCount = 0, characterCount = 0, dupes = dupes}
     local tempMacroSet = {
-        macros = {}, 
-        type = macroType, 
-        generalCount = 0, 
-        characterCount = 0, 
+        macros = {},
+        type = resolvedMacroType,
+        generalCount = 0,
+        characterCount = 0,
         dupes = dupes
     }
     for i = startSlot, endSlot do
@@ -340,7 +340,7 @@ local function SaveMacroSet(setName, macroType)
         return
     end
     -- Check empty macro set
-    if IsMacroSetEmpty(generalMacroCount, characterMacroCount, macroType) then
+    if IsMacroSetEmpty(generalMacroCount, characterMacroCount, resolvedMacroType) then
         print(COLOR_VERMILLION .. "No macros to save." .. COLOR_RESET)
         return
     end
@@ -350,13 +350,13 @@ local function SaveMacroSet(setName, macroType)
     -- Insert new set into current database
     MacroSetsDB[setName] = tempMacroSet
     -- Display successful save message
-    if macroType == "g" then
+    if resolvedMacroType == "g" then
         print(COLOR_GREEN .. "General Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
     end
-    if macroType == "c" then
+    if resolvedMacroType == "c" then
         print(COLOR_GREEN .. "Character Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
     end
-    if macroType == "both" then
+    if resolvedMacroType == "both" then
         print(COLOR_GREEN .. "Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
     end
     -- Alphabetize macro sets
@@ -371,8 +371,8 @@ local function LoadMacroSet(setName)
         return
     end
 
-    if not IsValidSetName(setName) then 
-        return 
+    if not IsValidSetName(setName) then
+        return
     end
 
     if not MacroSetsDB[setName] then
@@ -381,8 +381,8 @@ local function LoadMacroSet(setName)
     end
 
     local macroFrameWasOpen = MacroFrame and MacroFrame:IsVisible()
-    if macroFrameWasOpen then 
-        HideUIPanel(MacroFrame) 
+    if macroFrameWasOpen then
+        HideUIPanel(MacroFrame)
     end
 
     local macroSetType = MacroSetsDB[setName].type
@@ -418,8 +418,8 @@ local function LoadMacroSet(setName)
 
     RestoreMacroBodies(setName)
 
-    if macroFrameWasOpen then 
-        ShowUIPanel(MacroFrame) 
+    if macroFrameWasOpen then
+        ShowUIPanel(MacroFrame)
     end
 
     print(COLOR_GREEN .. "Macro set '" .. setName .. "' loaded." .. COLOR_RESET)
@@ -436,7 +436,7 @@ local function UndoLastOperation()
 
     -- Update backup to current macro sets
     BackupMacroSets()
-    
+
     -- Clean current macro sets database
     for setName in pairs(MacroSetsDB) do
         if type(MacroSetsDB[setName]) == "table" then
@@ -487,7 +487,7 @@ local function OptionsScreenToggle()
         Settings.OpenToCategory(macroSetsCategory:GetID())
         DebugMessage("OptionsScreenToggle(): Options screen shown.", debug.optionsScreenToggle)
     end
-end    
+end
 
 local function DisplayHelp(helpSection)
     DebugMessage("DisplayHelp(): Function called.", debug.displayHelp)
@@ -497,7 +497,7 @@ local function DisplayHelp(helpSection)
         print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
         print("Macro Sets - Help: General" .. COLOR_RESET)
         print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
-        print(COLOR_YELLOW .. "/ms save [name] [type] " .. COLOR_SKY_BLUE .. "- Save the current macro set with the specified name." .. COLOR_RESET) 
+        print(COLOR_YELLOW .. "/ms save [name] [type] " .. COLOR_SKY_BLUE .. "- Save the current macro set with the specified name." .. COLOR_RESET)
         print(COLOR_YELLOW .. "/ms load [name] " .. COLOR_SKY_BLUE .. "- Load the macro set with the specified name." .. COLOR_RESET)
         print(COLOR_YELLOW .. "/ms delete [name] " .. COLOR_SKY_BLUE .. "- Delete the macro set with the specified name." .. COLOR_RESET)
         print(COLOR_YELLOW .. "/ms deleteall " .. COLOR_SKY_BLUE .. "- Delete all saved macro sets." .. COLOR_RESET)
