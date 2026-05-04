@@ -13,6 +13,7 @@ import java.io.IOException;
 
 public class TestUndoLastOperation {
     private static final String COLOR_GREEN = "|cFF009E73";
+    private static final String COLOR_VERMILLION = "|cFFD55E00";
     private static final String COLOR_RESET = "|r";
 
     private Globals globals;
@@ -73,22 +74,28 @@ public class TestUndoLastOperation {
 
         undoLastOperationFunction.call();
 
-        String expectedMessage = COLOR_GREEN +
-            "Previous action successfully undone." +
+        String expectedMessage = COLOR_VERMILLION +
+            "No previous action to undo." +
             COLOR_RESET;
-        assertTrue(globals.get("MacroSetsDB").get("currentSet").isnil(), "MacroSetsDB should not include the current set after undo");
-        assertTrue(globals.get("MacroSetsBackup").get("currentSet").istable(), "MacroSetsBackup should include the set before undo");
-        assertEquals(expectedMessage, globals.get("lastPrintMessage").tojstring(), "Expected success message to be printed");
+        assertTrue(globals.get("MacroSetsDB").get("currentSet").istable(), "MacroSetsDB should remain unchanged when there is no backup");
+        assertTrue(globals.get("MacroSetsBackup").get("currentSet").isnil(), "MacroSetsBackup should remain empty when there is no backup");
+        assertEquals(expectedMessage, globals.get("lastPrintMessage").tojstring(), "Expected no-op message to be printed");
     }
 
     @Test
     public void testUndoLastOperation_RestoresBackup() {
         globals.load(
             "MacroSetsDB = {\n" +
-            "   currentSet = {macros = {}, type = 'g'}\n" +
+            "   currentSet = {macros = {}, type = 'g'},\n" +
+            "   dynamicIcons = true,\n" +
+            "   replaceBars = false,\n" +
+            "   charSpecific = true\n" +
             "}\n" +
             "MacroSetsBackup = {\n" +
-            "   previousSet = {macros = {{name = 'testOne', icon = 134400, body = '/say one'}}, type = 'c'}\n" +
+            "   previousSet = {macros = {{name = 'testOne', icon = 134400, body = '/say one'}}, type = 'c'},\n" +
+            "   dynamicIcons = false,\n" +
+            "   replaceBars = true,\n" +
+            "   charSpecific = false\n" +
             "}\n" +
             "lastPrintMessage = nil\n"
         ).call();
@@ -105,6 +112,10 @@ public class TestUndoLastOperation {
             COLOR_RESET;
         assertTrue(macroSetsDB.get("currentSet").isnil(), "MacroSetsDB should not include the current set after undo");
         assertTrue(macroSetsBackup.get("currentSet").istable(), "MacroSetsBackup should include the set before undo");
+        assertTrue(macroSetsBackup.get("dynamicIcons").isnil(), "MacroSetsBackup should not store settings");
+        assertTrue(macroSetsDB.get("dynamicIcons").toboolean(), "Undo should preserve dynamicIcons setting");
+        assertFalse(macroSetsDB.get("replaceBars").toboolean(), "Undo should preserve replaceBars setting");
+        assertTrue(macroSetsDB.get("charSpecific").toboolean(), "Undo should preserve charSpecific setting");
         assertEquals("c", restoredSet.get("type").tojstring(), "Expected restored set type to be c");
         assertEquals("testOne", restoredMacro.get("name").tojstring(), "Expected restored macro name to be testOne");
         assertEquals(134400, restoredMacro.get("icon").toint(), "Expected restored macro icon to be 134400");

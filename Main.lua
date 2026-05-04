@@ -65,24 +65,25 @@ MacroSetsFunctions = MacroSetsFunctions or {}
 MacroSetsDB = MacroSetsDB or {}
 MacroSetsBackup = MacroSetsBackup or {}
 
+local function IsMacroSetEntry(setDetails)
+    return type(setDetails) == "table" and type(setDetails.macros) == "table"
+end
+
 function MacroSetsFunctions.ToggleDynamicIcons()
     DebugMessage("ToggleDynamicIcons(): Function called.", debug.toggleDynamicIcons)
     MacroSetsDB.dynamicIcons = not MacroSetsDB.dynamicIcons
-    local status = MacroSetsDB.dynamicIcons and 'ON' or 'OFF'
     DebugMessage("ToggleDynamicIcons(): Toggled to " .. tostring(MacroSetsDB.dynamicIcons) .. ".", debug.toggleDynamicIcons)
 end
 
 function MacroSetsFunctions.ToggleActionBarPlacements()
     DebugMessage("ToggleActionBarPlacements(): Function called.", debug.toggleActionBarPlacements)
     MacroSetsDB.replaceBars = not MacroSetsDB.replaceBars
-    local status = MacroSetsDB.replaceBars and 'ON' or 'OFF'
     DebugMessage("ToggleActionBarPlacements(): Toggled to " .. tostring(MacroSetsDB.replaceBars) .. ".", debug.toggleActionBarPlacements)
 end
 
 function MacroSetsFunctions.ToggleCharSpecific()
     DebugMessage("ToggleCharSpecific(): Function called.", debug.toggleCharSpecific)
     MacroSetsDB.charSpecific = not MacroSetsDB.charSpecific
-    local status = MacroSetsDB.charSpecific and 'ON' or 'OFF'
     DebugMessage("ToggleCharSpecific(): Toggled to " .. tostring(MacroSetsDB.charSpecific) .. ".", debug.toggleCharSpecific)
 end
 
@@ -90,7 +91,9 @@ local function BackupMacroSets()
     DebugMessage("BackupMacroSets(): Function called.", debug.backupMacroSets)
     MacroSetsBackup = {}
     for setName, setData in pairs(MacroSetsDB) do
-        MacroSetsBackup[setName] = DeepCopyTable(setData)
+        if IsMacroSetEntry(setData) then
+            MacroSetsBackup[setName] = DeepCopyTable(setData)
+        end
     end
 end
 
@@ -98,7 +101,7 @@ local function AlphabetizeMacroSets()
     DebugMessage("AlphabetizeMacroSets(): Function called.", debug.alphabetizeMacroSets)
     local sorted = {}
     for setName, setDetails in pairs(MacroSetsDB) do
-        if type(setDetails) == 'table' and setDetails.macros then
+        if IsMacroSetEntry(setDetails) then
             table.insert(sorted, setName)
         end
     end
@@ -135,9 +138,11 @@ local function GetActionBarSlotsForMacro(macroName)
     local slots = {}
     for i = 1, actionBarSlotLimit do
         local actionType, id = GetActionInfo(i)
-        local name, icon, body = GetMacroInfo(id)
-        if name == macroName then
-            table.insert(slots, i)
+        if actionType == "macro" and id then
+            local name, icon, body = GetMacroInfo(id)
+            if name == macroName then
+                table.insert(slots, i)
+            end
         end
     end
     return slots
@@ -237,7 +242,7 @@ local function DeleteAllMacroSets()
 
     -- Delete all macro sets
     for setName in pairs(MacroSetsDB) do
-        if type(MacroSetsDB[setName]) == "table" then
+        if IsMacroSetEntry(MacroSetsDB[setName]) then
             MacroSetsDB[setName] = nil
         end
     end
@@ -430,8 +435,17 @@ local function UndoLastOperation()
 
     -- Temporarily store backup sets
     local tempMacroSetsDB = {}
+    local hasBackup = false
     for setName, setData in pairs(MacroSetsBackup) do
-        tempMacroSetsDB[setName] = DeepCopyTable(setData)
+        if IsMacroSetEntry(setData) then
+            tempMacroSetsDB[setName] = DeepCopyTable(setData)
+            hasBackup = true
+        end
+    end
+
+    if not hasBackup then
+        print(COLOR_VERMILLION .. "No previous action to undo." .. COLOR_RESET)
+        return
     end
 
     -- Update backup to current macro sets
@@ -439,7 +453,7 @@ local function UndoLastOperation()
 
     -- Clean current macro sets database
     for setName in pairs(MacroSetsDB) do
-        if type(MacroSetsDB[setName]) == "table" then
+        if IsMacroSetEntry(MacroSetsDB[setName]) then
             MacroSetsDB[setName] = nil
         end
     end
@@ -464,7 +478,7 @@ local function ListMacroSets()
     print(COLOR_BLUE .. "==============================" .. COLOR_RESET)
     for _, setName in ipairs(sortedSetNames) do
         local setDetails = MacroSetsDB[setName]
-        if type(setDetails) == 'table' and setDetails.macros then
+        if IsMacroSetEntry(setDetails) then
             local setType = setDetails.type
             local COLOR_BOTH_INDICATOR = "|cFFFFFF36(B)|r"
             local COLOR_GENERAL_INDICATOR = "|cFF36FF4C(G)|r"

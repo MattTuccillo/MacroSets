@@ -13,7 +13,7 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 - Separate handling for general and character-specific macros.
 - Easy-to-use slash commands for managing macro sets.
 - Control over how macro icons are stored and set.
-- Undo command incase you make a mistake.
+- Undo command in case you make a mistake.
 
 ## Installation
 
@@ -67,36 +67,20 @@ Due to the limitations of WOW's API I was unable to devise a method that would a
 - macro with #i flag retained its chosen icon
 - macro without #i flag was given the dynamic icon and it defaulted to the Lightning Bolt icon
 
-## Testing
+## Development checks
 
-I've implemented a simple testing framework to assist with debugging. It executes some additional code within each function in order to output useful information while the addon is running. The table below contains a list of booleans denoting whether or not a function should execute its test code. The table is setup so that it is easy to identify which functions are being toggled on or off and exists within Main.lua in the root directory of the addon.
+This repository includes a luacheck configuration for the addon Lua files and a small Java/LuaJ test harness for internal validation. These checks are for development only and are excluded from release ZIP artifacts.
+
+Run Lua linting from the repository root:
 
 ```
-local test = {
-    allFunctions = false,
-    toggleDynamicIcons = false,
-    toggleActionBarPlacements = false,
-    toggleCharSpecific = false,
-    backupMacroSets = false,
-    alphabetizeMacroSets = false,
-    saveMacroSet = false,
-    loadMacroSet = false,
-    deleteMacroSet = false,
-    deleteAllMacroSets = false,
-    undoLastOperation = false,
-    listMacroSets = false,
-    displayHelp = false,
-    isValidSetName = false,
-    getActionBarSlotsForMacro = false,
-    placeMacroInActionBarSlots = false,
-    setMacroSlotRanges = false,
-    isMacroSetEmpty = false,
-    deleteMacrosInRange = false,
-    restoreMacroBodies = false,
-    duplicateNames = false,
-    optionsScreenToggle = false,
-    handleSlashCommands = false,
-}
+luacheck Main.lua Options.lua
+```
+
+Run the internal Java/LuaJ tests from the `Tests` directory:
+
+```
+mvn test
 ```
 
 ## Author

@@ -87,7 +87,7 @@ local function UpdateHelpText()
     if MacroSetsDB.charSpecific then
         charSpecificHelpText:SetText("Macro sets will be saved as character-specific by default when not specified.")
     else
-        charSpecificHelpText:SetText("Macro sets will be saved as account-wide by default when not specified.")
+        charSpecificHelpText:SetText("Macro sets will save both general and character-specific macros by default when not specified.")
     end
 end
 

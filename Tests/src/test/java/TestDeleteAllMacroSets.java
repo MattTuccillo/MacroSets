@@ -58,11 +58,18 @@ public class TestDeleteAllMacroSets {
     public void testDeleteAllMacroSets() {
         LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();
         assertTrue(globals.load("return next(MacroSetsDB) == nil").call().toboolean(), "MacroSetsDB expected to be empty.");
-        macroSetsDB.set("testOne", LuaValue.tableOf());
-        macroSetsDB.set("testTwo", LuaValue.tableOf());
+        LuaTable testSetOne = LuaValue.tableOf();
+        LuaTable testSetTwo = LuaValue.tableOf();
+        testSetOne.set("macros", LuaValue.tableOf());
+        testSetTwo.set("macros", LuaValue.tableOf());
+        macroSetsDB.set("testOne", testSetOne);
+        macroSetsDB.set("testTwo", testSetTwo);
+        macroSetsDB.set("dynamicIcons", LuaValue.TRUE);
         assertFalse(globals.load("return next(MacroSetsDB) == nil").call().toboolean(), "MacroSetsDB expected to not be empty.");
         deleteAllMacroSetsFunction.call();
-        assertTrue(globals.load("return next(MacroSetsDB) == nil").call().toboolean(), "MacroSetsDB expected to be empty.");
+        assertTrue(macroSetsDB.get("testOne").isnil(), "MacroSetsDB should not include testOne after delete all.");
+        assertTrue(macroSetsDB.get("testTwo").isnil(), "MacroSetsDB should not include testTwo after delete all.");
+        assertTrue(macroSetsDB.get("dynamicIcons").toboolean(), "Delete all should preserve settings.");
         assertTrue(globals.get("backupMacroSetsCalled").toboolean(), "Expected BackupMacroSets to be called");
     }
 

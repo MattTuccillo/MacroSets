@@ -1,5 +1,12 @@
 # Changelog for Macro Sets WoW Addon
 
+## Version 2.1 - [xx/xx/2026]
+
+- Changes:
+  - Fixed a bug where `/ms undo` could clear saved macro sets when there was no previous action to undo.
+  - Fixed a bug where undo backups could store and restore configuration toggle settings.
+- Supports World of Warcraft version 12.0.5
+
 ## Version 2.0.3 - [1/27/2026]
 
 - Changes:

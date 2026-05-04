@@ -63,10 +63,14 @@ public class TestBackupMacroSets {
         LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();
         LuaTable testSetOne = LuaValue.tableOf();
         LuaTable testSetTwo = LuaValue.tableOf();
+        testSetOne.set("macros", LuaValue.tableOf());
+        testSetTwo.set("macros", LuaValue.tableOf());
         macroSetsDB.set("testOne", testSetOne);
         macroSetsDB.set("testTwo", testSetTwo);
+        macroSetsDB.set("dynamicIcons", LuaValue.TRUE);
         backupMacroSetsFunction.call();
         assertEquals(2, globals.get("deepCopyTableCounter").toint(), "Expected DeepCopyTable to be called 2 times");
+        assertTrue(globals.get("MacroSetsBackup").get("dynamicIcons").isnil(), "Expected settings to be excluded from macro set backups");
     }
 
     private void failWithException(String message, Exception e) {

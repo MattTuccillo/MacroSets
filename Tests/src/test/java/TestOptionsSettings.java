@@ -206,6 +206,23 @@ public class TestOptionsSettings {
     }
 
     @Test
+    public void testUpdateHelpText_CharSpecificDisabled() {
+        globals.load(
+            "MacroSetsDB.dynamicIcons = false\n" +
+            "MacroSetsDB.replaceBars = true\n" +
+            "MacroSetsDB.charSpecific = false\n"
+        ).call();
+
+        updateHelpTextFunction.call();
+
+        assertEquals(
+            "Macro sets will save both general and character-specific macros by default when not specified.",
+            testExports.get("charSpecificHelpText").get("text").tojstring(),
+            "Expected charSpecific help text to match disabled state"
+        );
+    }
+
+    @Test
     public void testLoadSettings() {
         globals.load(
             "MacroSetsDB.dynamicIcons = true\n" +

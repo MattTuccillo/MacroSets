@@ -26,7 +26,7 @@ jobs:
         id: create_zip
         run: |
           zip_name="MacroSets-${{ steps.tag_name.outputs.TAG_NAME }}.zip"
-          echo "::set-output name=ZIP_NAME::$zip_name"
+          echo "ZIP_NAME=$zip_name" >> "$GITHUB_OUTPUT"
           zip -r "$zip_name" . \
             -x '*.git*' \
             -x 'Tests/*' \
@@ -35,3 +35,10 @@ jobs:
             -x '*/target/**' \
             -x '*.java' \
             -x '*.class'
+
+      - name: Upload Release Zip Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.create_zip.outputs.ZIP_NAME }}
+          path: ${{ steps.create_zip.outputs.ZIP_NAME }}
+          if-no-files-found: error
