@@ -42,3 +42,7 @@ luac.out
 # ignore update script
 update.sh
 user stories.md
+
+# Maven build/test artifacts
+target/
+Tests/target/

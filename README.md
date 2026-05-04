@@ -36,7 +36,7 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 
 ## Explanation for dynamic icon toggle setting
 
-In this section I'll provide a visual example of the way the the dynamic icon toggle setting affects the addon's functionality as well as an explanation for why it had to exist in the first place.
+In this section I'll provide a visual example of the way the dynamic icon toggle setting affects the addon's functionality as well as an explanation for why it had to exist in the first place.
 
 ### Why it was necessary
 
@@ -86,13 +86,11 @@ local test = {
     undoLastOperation = false,
     listMacroSets = false,
     displayHelp = false,
-    displayDefault = false,
     isValidSetName = false,
     getActionBarSlotsForMacro = false,
     placeMacroInActionBarSlots = false,
     setMacroSlotRanges = false,
-    macroSetIsEmpty = false,
-    displaySetSavedMessage = false,
+    isMacroSetEmpty = false,
     deleteMacrosInRange = false,
     restoreMacroBodies = false,
     duplicateNames = false,

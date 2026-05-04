@@ -50,7 +50,7 @@ local charSpecificCheckbox = CreateCheckbox(checkboxesFrame, "CharSpecificCheckb
 local charSpecificHelpText = CreateHelpText(checkboxesFrame, charSpecificCheckbox, "", 0, -5)
 
 -- Function to initialize settings if they are not already defined
-local function initializeSettings()
+local function InitializeSettings()
     if MacroSetsDB.dynamicIcons == nil then
         MacroSetsDB.dynamicIcons = false
     end
@@ -63,7 +63,7 @@ local function initializeSettings()
 end
 
 -- Function to save the current values of the checkboxes
-local function saveSettings()
+local function SaveSettings()
     if not MacroSetsDB then MacroSetsDB = {} end
     MacroSetsDB.dynamicIcons = dynamicIconsCheckbox:GetChecked()
     MacroSetsDB.replaceBars = replaceBarsCheckbox:GetChecked()
@@ -71,7 +71,7 @@ local function saveSettings()
 end
 
 -- Function to update help text descriptions based on current checkbox states
-local function updateHelpText()
+local function UpdateHelpText()
     if MacroSetsDB.dynamicIcons then
         dynamicIconsHelpText:SetText("All macros are saved with the currently shown icon unless there is a '#i' at the end of the macro name.")
     else
@@ -92,43 +92,43 @@ local function updateHelpText()
 end
 
 -- Function to load saved settings into the checkboxes
-local function loadSettings()
-    initializeSettings()
+local function LoadSettings()
+    InitializeSettings()
     dynamicIconsCheckbox:SetChecked(MacroSetsDB.dynamicIcons)
     replaceBarsCheckbox:SetChecked(MacroSetsDB.replaceBars)
     charSpecificCheckbox:SetChecked(MacroSetsDB.charSpecific)
-    updateHelpText()
+    UpdateHelpText()
 end
 
 -- Set scripts for checkbox interactions
 dynamicIconsCheckbox:SetScript("OnClick", function(self)
     MacroSetsFunctions.ToggleDynamicIcons()
-    saveSettings()
-    updateHelpText()
+    SaveSettings()
+    UpdateHelpText()
 end)
 
 replaceBarsCheckbox:SetScript("OnClick", function(self)
     MacroSetsFunctions.ToggleActionBarPlacements()
-    saveSettings()
-    updateHelpText()
+    SaveSettings()
+    UpdateHelpText()
 end)
 
 charSpecificCheckbox:SetScript("OnClick", function(self)
     MacroSetsFunctions.ToggleCharSpecific()
-    saveSettings()
-    updateHelpText()
+    SaveSettings()
+    UpdateHelpText()
 end)
 
 -- Register the options panel with the WoW interface to manage addon settings
-macroSetsOptionsPanel.okay = saveSettings
-macroSetsOptionsPanel.cancel = loadSettings
+macroSetsOptionsPanel.okay = SaveSettings
+macroSetsOptionsPanel.cancel = LoadSettings
 macroSetsOptionsPanel.default = function()
     dynamicIconsCheckbox:SetChecked(false)
     replaceBarsCheckbox:SetChecked(true)
     charSpecificCheckbox:SetChecked(false)
-    saveSettings()
-    loadSettings()
-    updateHelpText()
+    SaveSettings()
+    LoadSettings()
+    UpdateHelpText()
 end
 
 -- Properly register the options panel with the WoW Settings API
@@ -138,20 +138,20 @@ Settings.RegisterAddOnCategory(macroSetsCategory)
 
 -- Load settings when the options panel is shown
 macroSetsOptionsPanel:SetScript("OnShow", function()
-    loadSettings()
-    updateHelpText()
+    LoadSettings()
+    UpdateHelpText()
 end)
 
 -- Event handling to ensure settings are loaded when the addon is initialized
-local function onEvent(self, event, arg1)
+local function OnEvent(self, event, arg1)
     if event == "ADDON_LOADED" and arg1 == "MacroSets" then
-        loadSettings()
+        LoadSettings()
     end
 end
 
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
-eventFrame:SetScript("OnEvent", onEvent)
+eventFrame:SetScript("OnEvent", OnEvent)
 
 -- Add the options panel to the list of special frames
 -- This ensures the panel can be closed with the Escape key
