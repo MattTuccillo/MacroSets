@@ -1,4 +1,4 @@
-## Interface: 110200
+## Interface: 120000
 ## Title: Macro Sets
 ## Notes: Manage and switch between macro sets easily.
 ## Author: MattTuccillo
