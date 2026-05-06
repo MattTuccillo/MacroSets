@@ -112,7 +112,7 @@ jobs:
       - name: Run Luacheck
         run: |
           set -o pipefail
-          luacheck Main.lua Options.lua | tee luacheck-report.txt
+          luacheck Main.lua MacroImportExport.lua Options.lua | tee luacheck-report.txt
 
       - name: Summarize Luacheck Results
         if: always()

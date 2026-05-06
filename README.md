@@ -14,6 +14,7 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 - Easy-to-use slash commands for managing macro sets.
 - Control over how macro icons are stored and set.
 - Undo command in case you make a mistake.
+- Import and export individual macros from the macro window.
 
 ## Installation
 
@@ -33,6 +34,8 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 - `/ms options`: Toggle the options screen.
 - `/ms help`: Display this list of available commands.
 - `/ms help [command]`: Display detailed information about a specific command.
+
+The macro window also includes Macro Sets import and export buttons. Export selects a shareable string for the currently selected macro. Import opens a text box where you can paste a Macro Sets export string and create the macro.
 
 ## Explanation for dynamic icon toggle setting
 

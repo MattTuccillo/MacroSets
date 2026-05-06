@@ -10,5 +10,5 @@
 
 # Include your Lua and XML files here
 Main.lua
+MacroImportExport.lua
 Options.lua
-

@@ -13,6 +13,7 @@ globals = {
     "GetScreenHeight",
     "GetScreenWidth",
     "HideUIPanel",
+    "hooksecurefunc",
     "InCombatLockdown",
     "MacroFrame",
     "MacroSetsBackup",
