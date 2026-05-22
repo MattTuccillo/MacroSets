@@ -1,11 +1,14 @@
 -- Create a configuration frame for the addon settings UI
-macroSetsOptionsPanel = CreateFrame("Frame", "MacroSetsOptionsPanel", UIParent, "BackdropTemplate")
+macroSetsOptionsPanel = MacroSetsTheme:CreateFrame("Frame", "MacroSetsOptionsPanel", UIParent, "BackdropTemplate")
 
 macroSetsOptionsPanel.name = "MacroSets"
 local screenWidth = GetScreenWidth()
 local screenHeight = GetScreenHeight()
 macroSetsOptionsPanel:SetSize(screenWidth * 0.4, screenHeight * 0.6)
 macroSetsOptionsPanel:SetPoint("CENTER")
+
+-- Apply theme styling
+MacroSetsTheme:ApplyFrameStyle(macroSetsOptionsPanel, "Window")
 
 -- Title for the options panel
 local title = macroSetsOptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
@@ -25,6 +28,8 @@ local function CreateCheckbox(parent, name, labelText, tooltipText, offsetX, off
     checkbox.text:SetFontObject("GameFontNormalLarge")
     checkbox.text:SetText(labelText)
     checkbox.tooltip = tooltipText
+    -- Apply theme styling
+    MacroSetsTheme:ApplyCheckboxStyle(checkbox)
     return checkbox
 end
 

@@ -9,6 +9,7 @@
 ## X-Curse-Project-ID: 945498
 
 # Include your Lua and XML files here
+ThemeAdapter.lua
 Main.lua
 MacroImportExport.lua
 Options.lua
