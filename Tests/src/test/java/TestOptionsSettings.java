@@ -57,6 +57,7 @@ public class TestOptionsSettings {
             "       registeredEvents = {},\n" +
             "       SetSize = function(self, width, height) self.width = width; self.height = height end,\n" +
             "       SetPoint = function(self, ...) self.point = {...} end,\n" +
+            "       SetBackdrop = function(self, backdrop) self.backdrop = backdrop end,\n" +
             "       CreateFontString = function(self, ...) return CreateMockFontString() end,\n" +
             "       GetName = function(self) return self.name end,\n" +
             "       SetChecked = function(self, checked) self.checked = checked end,\n" +
@@ -86,6 +87,9 @@ public class TestOptionsSettings {
         ).call();
 
         try {
+            Path themePath = Paths.get("../ThemeAdapter.lua").toRealPath();
+            globals.loadfile(themePath.toString()).call();
+
             // Load Options.lua contents as a string
             Path luaPath = Paths.get("../Options.lua").toRealPath();
             String optionsLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);

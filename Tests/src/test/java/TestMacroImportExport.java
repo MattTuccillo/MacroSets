@@ -82,6 +82,8 @@ public class TestMacroImportExport {
         ).call();
 
         try {
+            Path themePath = Paths.get("../ThemeAdapter.lua").toRealPath();
+            globals.loadfile(themePath.toString()).call();
             Path luaPath = Paths.get("../MacroImportExport.lua").toRealPath();
             globals.loadfile(luaPath.toString()).call();
             macroSetsFunctions = globals.get("MacroSetsFunctions");
