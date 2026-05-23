@@ -1,6 +1,6 @@
 # Changelog for Macro Sets WoW Addon
 
-## Version 2.1 - [xx/xx/2026]
+## Version 2.1.0 - [xx/xx/2026]
 
 - Features:
   - Added import and export buttons to the macro window for sharing individual macros with other addon users.
