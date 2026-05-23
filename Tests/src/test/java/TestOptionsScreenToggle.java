@@ -26,42 +26,41 @@ public class TestOptionsScreenToggle {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {OptionsScreenToggle = OptionsScreenToggle}\n" +
+            String mockCode = """
 
-                "settingsPanelShown = false\n" +
-                "currentCategoryMatches = false\n" +
-                "hideCounter = 0\n" +
-                "showCounter = 0\n" +
-                "openToCategoryCounter = 0\n" +
-                "lastOpenedCategoryId = nil\n" +
-                "macroSetsCategory = { GetID = function(self) return 42 end }\n" +
-                "otherCategory = { GetID = function(self) return 99 end }\n" +
-
-                "SettingsPanel = {\n" +
-                "   GetCurrentCategory = function(self)\n" +
-                "       if currentCategoryMatches then return macroSetsCategory end\n" +
-                "       return otherCategory\n" +
-                "   end,\n" +
-                "   IsShown = function(self)\n" +
-                "       return settingsPanelShown\n" +
-                "   end,\n" +
-                "   Hide = function(self)\n" +
-                "       hideCounter = hideCounter + 1\n" +
-                "       settingsPanelShown = false\n" +
-                "   end,\n" +
-                "   Show = function(self)\n" +
-                "       showCounter = showCounter + 1\n" +
-                "       settingsPanelShown = true\n" +
-                "   end\n" +
-                "}\n" +
-
-                "Settings = {\n" +
-                "   OpenToCategory = function(categoryId)\n" +
-                "       openToCategoryCounter = openToCategoryCounter + 1\n" +
-                "       lastOpenedCategoryId = categoryId\n" +
-                "   end\n" +
-                "}\n";
+            TestExports = {OptionsScreenToggle = OptionsScreenToggle}
+            settingsPanelShown = false
+            currentCategoryMatches = false
+            hideCounter = 0
+            showCounter = 0
+            openToCategoryCounter = 0
+            lastOpenedCategoryId = nil
+            macroSetsCategory = { GetID = function(self) return 42 end }
+            otherCategory = { GetID = function(self) return 99 end }
+            SettingsPanel = {
+               GetCurrentCategory = function(self)
+                   if currentCategoryMatches then return macroSetsCategory end
+                   return otherCategory
+               end,
+               IsShown = function(self)
+                   return settingsPanelShown
+               end,
+               Hide = function(self)
+                   hideCounter = hideCounter + 1
+                   settingsPanelShown = false
+               end,
+               Show = function(self)
+                   showCounter = showCounter + 1
+                   settingsPanelShown = true
+               end
+            }
+            Settings = {
+               OpenToCategory = function(categoryId)
+                   openToCategoryCounter = openToCategoryCounter + 1
+                   lastOpenedCategoryId = categoryId
+               end
+            }
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -84,8 +83,10 @@ public class TestOptionsScreenToggle {
     @Test
     public void testOptionsScreenToggle_HideCurrentCategory() {
         globals.load(
-            "settingsPanelShown = true\n" +
-            "currentCategoryMatches = true\n"
+            """
+            settingsPanelShown = true
+            currentCategoryMatches = true
+            """
         ).call();
 
         optionsScreenToggleFunction.call();
@@ -99,8 +100,10 @@ public class TestOptionsScreenToggle {
     @Test
     public void testOptionsScreenToggle_ShowCategory() {
         globals.load(
-            "settingsPanelShown = false\n" +
-            "currentCategoryMatches = false\n"
+            """
+            settingsPanelShown = false
+            currentCategoryMatches = false
+            """
         ).call();
 
         optionsScreenToggleFunction.call();
@@ -113,7 +116,6 @@ public class TestOptionsScreenToggle {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

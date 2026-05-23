@@ -27,14 +27,14 @@ public class TestDeleteAllMacroSets {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {DeleteAllMacroSets = DeleteAllMacroSets}\n" +
+            String mockCode = """
 
-                "backupMacroSetsCalled = false\n" +
-
-                "function BackupMacroSets()\n" +
-                "   backupMacroSetsCalled = true\n" +
-                "end\n";
+            TestExports = {DeleteAllMacroSets = DeleteAllMacroSets}
+            backupMacroSetsCalled = false
+            function BackupMacroSets()
+               backupMacroSetsCalled = true
+            end
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -74,7 +74,6 @@ public class TestDeleteAllMacroSets {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

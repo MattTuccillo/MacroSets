@@ -27,23 +27,22 @@ public class TestDeleteMacrosInRange {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {DeleteMacrosInRange = DeleteMacrosInRange}\n" +
+            String mockCode = """
 
-                "getMacroInfoCounter = 0\n" +
-                "deleteMacroCounter = 0\n" +
-
-                "function GetMacroInfo(macroIndex)\n" +
-                "   getMacroInfoCounter = getMacroInfoCounter + 1\n" +
-                "   if (macroIndex > 3) then\n" +
-                "       return nil\n" +
-                "   end\n" +
-                "   return 'test', 134400, 'test'\n" +
-                "end\n" +
-
-                "function DeleteMacro(macroIndex)\n" +
-                "   deleteMacroCounter = deleteMacroCounter + 1\n" +
-                "end\n";
+            TestExports = {DeleteMacrosInRange = DeleteMacrosInRange}
+            getMacroInfoCounter = 0
+            deleteMacroCounter = 0
+            function GetMacroInfo(macroIndex)
+               getMacroInfoCounter = getMacroInfoCounter + 1
+               if (macroIndex > 3) then
+                   return nil
+               end
+               return 'test', 134400, 'test'
+            end
+            function DeleteMacro(macroIndex)
+               deleteMacroCounter = deleteMacroCounter + 1
+            end
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -94,7 +93,6 @@ public class TestDeleteMacrosInRange {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

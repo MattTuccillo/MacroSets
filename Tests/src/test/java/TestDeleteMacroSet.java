@@ -29,15 +29,17 @@ public class TestDeleteMacroSet {
         globals = JsePlatform.standardGlobals();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
         globals.load(
-            "lastPrintMessage = nil\n" +
-            "function print(...)\n" +
-            "    local args = {...}\n" +
-            "    local parts = {}\n" +
-            "    for i = 1, #args do\n" +
-            "        parts[i] = tostring(args[i])\n" +
-            "    end\n" +
-            "    lastPrintMessage = table.concat(parts, ' ')\n" +
-            "end\n"
+            """
+            lastPrintMessage = nil
+            function print(...)
+                local args = {...}
+                local parts = {}
+                for i = 1, #args do
+                    parts[i] = tostring(args[i])
+                end
+                lastPrintMessage = table.concat(parts, ' ')
+            end
+            """
         ).call();
 
         try {
@@ -46,8 +48,10 @@ public class TestDeleteMacroSet {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {DeleteMacroSet = DeleteMacroSet}\n";
+            String mockCode = """
+
+            TestExports = {DeleteMacroSet = DeleteMacroSet}
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -70,9 +74,11 @@ public class TestDeleteMacroSet {
     @Test
     public void testDeleteMacroSet_InvalidName() {
         globals.load(
-            "MacroSetsDB = {}\n" +
-            "MacroSetsBackup = {}\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = {}
+            MacroSetsBackup = {}
+            lastPrintMessage = nil
+            """
         ).call();
 
         LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();
@@ -88,9 +94,11 @@ public class TestDeleteMacroSet {
     @Test
     public void testDeleteMacroSet_SetDoesNotExist() {
         globals.load(
-            "MacroSetsDB = {}\n" +
-            "MacroSetsBackup = {}\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = {}
+            MacroSetsBackup = {}
+            lastPrintMessage = nil
+            """
         ).call();
 
         LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();
@@ -111,9 +119,11 @@ public class TestDeleteMacroSet {
     @Test
     public void testDeleteMacroSet_SetExists() {
         globals.load(
-            "MacroSetsDB = {}\n" +
-            "MacroSetsBackup = {}\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = {}
+            MacroSetsBackup = {}
+            lastPrintMessage = nil
+            """
         ).call();
 
         LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();
@@ -133,7 +143,6 @@ public class TestDeleteMacroSet {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

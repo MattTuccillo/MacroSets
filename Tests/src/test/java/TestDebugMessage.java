@@ -29,11 +29,10 @@ public class TestDebugMessage {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {" +
-                "   DebugMessage = DebugMessage," + 
-                "   debug = debug" +
-                "}\n";
+            String mockCode = """
+
+            TestExports = {   DebugMessage = DebugMessage,   debug = debug}
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -82,7 +81,6 @@ public class TestDebugMessage {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

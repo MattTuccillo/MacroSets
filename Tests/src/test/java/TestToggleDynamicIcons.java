@@ -65,7 +65,6 @@ public class TestToggleDynamicIcons {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

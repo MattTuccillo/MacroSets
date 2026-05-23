@@ -25,14 +25,15 @@ public class TestBackupMacroSets {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {BackupMacroSets = BackupMacroSets}\n" +
-                
-                "deepCopyTableCounter = 0\n" +
-                "DeepCopyTable = function(table)\n" +
-                "   deepCopyTableCounter = deepCopyTableCounter + 1\n" +
-                "   return table\n" +
-                "end\n";
+            String mockCode = """
+
+            TestExports = {BackupMacroSets = BackupMacroSets}
+            deepCopyTableCounter = 0
+            DeepCopyTable = function(table)
+               deepCopyTableCounter = deepCopyTableCounter + 1
+               return table
+            end
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -74,7 +75,6 @@ public class TestBackupMacroSets {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

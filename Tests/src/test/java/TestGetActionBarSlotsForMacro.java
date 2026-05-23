@@ -26,22 +26,24 @@ public class TestGetActionBarSlotsForMacro {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {GetActionBarSlotsForMacro = GetActionBarSlotsForMacro}\n" +
-                "function GetActionInfo(slot)\n" +
-                "   if slot == 5 then return 'macro', 1 end\n" +
-                "   if slot == 10 then return 'macro', 2 end\n" +
-                "   if slot == 15 then return 'spell', 1 end\n" +
-                "   if slot == 20 then return 'macro', 1 end\n" +
-                "   return nil\n" +
-                "end\n" +
-                "getMacroInfoCallCount = 0\n" +
-                "function GetMacroInfo(id)\n" +
-                "   getMacroInfoCallCount = getMacroInfoCallCount + 1\n" +
-                "   if id == 1 then return 'TestMacro', 134400, 'body' end\n" +
-                "   if id == 2 then return 'OtherMacro', 134401, 'body2' end\n" +
-                "   return nil\n" +
-                "end\n";
+            String mockCode = """
+
+            TestExports = {GetActionBarSlotsForMacro = GetActionBarSlotsForMacro}
+            function GetActionInfo(slot)
+               if slot == 5 then return 'macro', 1 end
+               if slot == 10 then return 'macro', 2 end
+               if slot == 15 then return 'spell', 1 end
+               if slot == 20 then return 'macro', 1 end
+               return nil
+            end
+            getMacroInfoCallCount = 0
+            function GetMacroInfo(id)
+               getMacroInfoCallCount = getMacroInfoCallCount + 1
+               if id == 1 then return 'TestMacro', 134400, 'body' end
+               if id == 2 then return 'OtherMacro', 134401, 'body2' end
+               return nil
+            end
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -79,7 +81,6 @@ public class TestGetActionBarSlotsForMacro {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

@@ -26,8 +26,10 @@ public class TestSetMacroSlotRanges {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {SetMacroSlotRanges = SetMacroSlotRanges}\n";
+            String mockCode = """
+
+            TestExports = {SetMacroSlotRanges = SetMacroSlotRanges}
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -69,7 +71,6 @@ public class TestSetMacroSlotRanges {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

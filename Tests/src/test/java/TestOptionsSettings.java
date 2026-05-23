@@ -25,65 +25,67 @@ public class TestOptionsSettings {
         globals = JsePlatform.standardGlobals();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
         globals.load(
-            "MacroSetsDB = {}\n" +
-            "MacroSetsFunctions = {\n" +
-            "   ToggleDynamicIcons = function() MacroSetsDB.dynamicIcons = not MacroSetsDB.dynamicIcons end,\n" +
-            "   ToggleActionBarPlacements = function() MacroSetsDB.replaceBars = not MacroSetsDB.replaceBars end,\n" +
-            "   ToggleCharSpecific = function() MacroSetsDB.charSpecific = not MacroSetsDB.charSpecific end\n" +
-            "}\n" +
-            "UIParent = {}\n" +
-            "UISpecialFrames = {}\n" +
-            "function GetScreenWidth() return 1920 end\n" +
-            "function GetScreenHeight() return 1080 end\n" +
-            "function CreateMockFontString()\n" +
-            "   return {\n" +
-            "       text = nil,\n" +
-            "       SetPoint = function(self, ...) end,\n" +
-            "       SetText = function(self, text) self.text = text end,\n" +
-            "       SetFontObject = function(self, fontObject) self.fontObject = fontObject end,\n" +
-            "       SetWidth = function(self, width) self.width = width end,\n" +
-            "       SetWordWrap = function(self, wordWrap) self.wordWrap = wordWrap end,\n" +
-            "       SetJustifyH = function(self, justifyH) self.justifyH = justifyH end\n" +
-            "   }\n" +
-            "end\n" +
-            "function CreateFrame(frameType, name, parent, template)\n" +
-            "   local frame = {\n" +
-            "       frameType = frameType,\n" +
-            "       name = name,\n" +
-            "       parent = parent,\n" +
-            "       template = template,\n" +
-            "       checked = false,\n" +
-            "       scripts = {},\n" +
-            "       registeredEvents = {},\n" +
-            "       SetSize = function(self, width, height) self.width = width; self.height = height end,\n" +
-            "       SetPoint = function(self, ...) self.point = {...} end,\n" +
-            "       SetBackdrop = function(self, backdrop) self.backdrop = backdrop end,\n" +
-            "       CreateFontString = function(self, ...) return CreateMockFontString() end,\n" +
-            "       GetName = function(self) return self.name end,\n" +
-            "       SetChecked = function(self, checked) self.checked = checked end,\n" +
-            "       GetChecked = function(self) return self.checked end,\n" +
-            "       SetScript = function(self, scriptName, scriptFunction) self.scripts[scriptName] = scriptFunction end,\n" +
-            "       RegisterEvent = function(self, event) self.registeredEvents[event] = true end\n" +
-            "   }\n" +
-            "   if name then\n" +
-            "       _G[name] = frame\n" +
-            "       if frameType == 'CheckButton' then\n" +
-            "           _G[name .. 'Text'] = CreateMockFontString()\n" +
-            "       end\n" +
-            "   end\n" +
-            "   return frame\n" +
-            "end\n" +
-            "Settings = {\n" +
-            "   registerCanvasLayoutCategoryCounter = 0,\n" +
-            "   registerAddOnCategoryCounter = 0,\n" +
-            "   RegisterCanvasLayoutCategory = function(panel, name)\n" +
-            "       Settings.registerCanvasLayoutCategoryCounter = Settings.registerCanvasLayoutCategoryCounter + 1\n" +
-            "       return { id = 42, GetID = function(self) return self.id end }\n" +
-            "   end,\n" +
-            "   RegisterAddOnCategory = function(category)\n" +
-            "       Settings.registerAddOnCategoryCounter = Settings.registerAddOnCategoryCounter + 1\n" +
-            "   end\n" +
-            "}\n"
+            """
+            MacroSetsDB = {}
+            MacroSetsFunctions = {
+               ToggleDynamicIcons = function() MacroSetsDB.dynamicIcons = not MacroSetsDB.dynamicIcons end,
+               ToggleActionBarPlacements = function() MacroSetsDB.replaceBars = not MacroSetsDB.replaceBars end,
+               ToggleCharSpecific = function() MacroSetsDB.charSpecific = not MacroSetsDB.charSpecific end
+            }
+            UIParent = {}
+            UISpecialFrames = {}
+            function GetScreenWidth() return 1920 end
+            function GetScreenHeight() return 1080 end
+            function CreateMockFontString()
+               return {
+                   text = nil,
+                   SetPoint = function(self, ...) end,
+                   SetText = function(self, text) self.text = text end,
+                   SetFontObject = function(self, fontObject) self.fontObject = fontObject end,
+                   SetWidth = function(self, width) self.width = width end,
+                   SetWordWrap = function(self, wordWrap) self.wordWrap = wordWrap end,
+                   SetJustifyH = function(self, justifyH) self.justifyH = justifyH end
+               }
+            end
+            function CreateFrame(frameType, name, parent, template)
+               local frame = {
+                   frameType = frameType,
+                   name = name,
+                   parent = parent,
+                   template = template,
+                   checked = false,
+                   scripts = {},
+                   registeredEvents = {},
+                   SetSize = function(self, width, height) self.width = width; self.height = height end,
+                   SetPoint = function(self, ...) self.point = {...} end,
+                   SetBackdrop = function(self, backdrop) self.backdrop = backdrop end,
+                   CreateFontString = function(self, ...) return CreateMockFontString() end,
+                   GetName = function(self) return self.name end,
+                   SetChecked = function(self, checked) self.checked = checked end,
+                   GetChecked = function(self) return self.checked end,
+                   SetScript = function(self, scriptName, scriptFunction) self.scripts[scriptName] = scriptFunction end,
+                   RegisterEvent = function(self, event) self.registeredEvents[event] = true end
+               }
+               if name then
+                   _G[name] = frame
+                   if frameType == 'CheckButton' then
+                       _G[name .. 'Text'] = CreateMockFontString()
+                   end
+               end
+               return frame
+            end
+            Settings = {
+               registerCanvasLayoutCategoryCounter = 0,
+               registerAddOnCategoryCounter = 0,
+               RegisterCanvasLayoutCategory = function(panel, name)
+                   Settings.registerCanvasLayoutCategoryCounter = Settings.registerCanvasLayoutCategoryCounter + 1
+                   return { id = 42, GetID = function(self) return self.id end }
+               end,
+               RegisterAddOnCategory = function(category)
+                   Settings.registerAddOnCategoryCounter = Settings.registerAddOnCategoryCounter + 1
+               end
+            }
+            """
         ).call();
 
         try {
@@ -95,22 +97,24 @@ public class TestOptionsSettings {
             String optionsLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {\n" +
-                "   InitializeSettings = InitializeSettings,\n" +
-                "   SaveSettings = SaveSettings,\n" +
-                "   UpdateHelpText = UpdateHelpText,\n" +
-                "   LoadSettings = LoadSettings,\n" +
-                "   OnEvent = OnEvent,\n" +
-                "   dynamicIconsCheckbox = dynamicIconsCheckbox,\n" +
-                "   replaceBarsCheckbox = replaceBarsCheckbox,\n" +
-                "   charSpecificCheckbox = charSpecificCheckbox,\n" +
-                "   dynamicIconsHelpText = dynamicIconsHelpText,\n" +
-                "   replaceBarsHelpText = replaceBarsHelpText,\n" +
-                "   charSpecificHelpText = charSpecificHelpText,\n" +
-                "   macroSetsOptionsPanel = macroSetsOptionsPanel,\n" +
-                "   eventFrame = eventFrame\n" +
-                "}\n";
+            String mockCode = """
+
+            TestExports = {
+               InitializeSettings = InitializeSettings,
+               SaveSettings = SaveSettings,
+               UpdateHelpText = UpdateHelpText,
+               LoadSettings = LoadSettings,
+               OnEvent = OnEvent,
+               dynamicIconsCheckbox = dynamicIconsCheckbox,
+               replaceBarsCheckbox = replaceBarsCheckbox,
+               charSpecificCheckbox = charSpecificCheckbox,
+               dynamicIconsHelpText = dynamicIconsHelpText,
+               replaceBarsHelpText = replaceBarsHelpText,
+               charSpecificHelpText = charSpecificHelpText,
+               macroSetsOptionsPanel = macroSetsOptionsPanel,
+               eventFrame = eventFrame
+            }
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = optionsLuaContent + mockCode;
@@ -153,11 +157,13 @@ public class TestOptionsSettings {
     @Test
     public void testInitializeSettings_PreservesExistingValues() {
         globals.load(
-            "MacroSetsDB = {\n" +
-            "   dynamicIcons = true,\n" +
-            "   replaceBars = false,\n" +
-            "   charSpecific = true\n" +
-            "}\n"
+            """
+            MacroSetsDB = {
+               dynamicIcons = true,
+               replaceBars = false,
+               charSpecific = true
+            }
+            """
         ).call();
 
         initializeSettingsFunction.call();
@@ -185,9 +191,11 @@ public class TestOptionsSettings {
     @Test
     public void testUpdateHelpText() {
         globals.load(
-            "MacroSetsDB.dynamicIcons = true\n" +
-            "MacroSetsDB.replaceBars = false\n" +
-            "MacroSetsDB.charSpecific = true\n"
+            """
+            MacroSetsDB.dynamicIcons = true
+            MacroSetsDB.replaceBars = false
+            MacroSetsDB.charSpecific = true
+            """
         ).call();
 
         updateHelpTextFunction.call();
@@ -212,9 +220,11 @@ public class TestOptionsSettings {
     @Test
     public void testUpdateHelpText_CharSpecificDisabled() {
         globals.load(
-            "MacroSetsDB.dynamicIcons = false\n" +
-            "MacroSetsDB.replaceBars = true\n" +
-            "MacroSetsDB.charSpecific = false\n"
+            """
+            MacroSetsDB.dynamicIcons = false
+            MacroSetsDB.replaceBars = true
+            MacroSetsDB.charSpecific = false
+            """
         ).call();
 
         updateHelpTextFunction.call();
@@ -229,9 +239,11 @@ public class TestOptionsSettings {
     @Test
     public void testLoadSettings() {
         globals.load(
-            "MacroSetsDB.dynamicIcons = true\n" +
-            "MacroSetsDB.replaceBars = false\n" +
-            "MacroSetsDB.charSpecific = true\n"
+            """
+            MacroSetsDB.dynamicIcons = true
+            MacroSetsDB.replaceBars = false
+            MacroSetsDB.charSpecific = true
+            """
         ).call();
 
         loadSettingsFunction.call();
@@ -278,7 +290,6 @@ public class TestOptionsSettings {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

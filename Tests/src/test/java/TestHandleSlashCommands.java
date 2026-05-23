@@ -21,14 +21,16 @@ public class TestHandleSlashCommands {
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
         globals.load("print = function() end").call();
         globals.load(
-            "function strsplit(delim, str)\r\n" +
-            "    if not str or str == '' then return '' end\r\n" +
-            "    local result = {}\r\n" +
-            "    for match in (str .. delim):gmatch('(.-)' .. delim) do\r\n" +
-            "        table.insert(result, match)\r\n" +
-            "    end\r\n" +
-            "    return table.unpack(result)\r\n" +
-            "end\r\n"
+            """
+            function strsplit(delim, str)
+                if not str or str == '' then return '' end
+                local result = {}
+                for match in (str .. delim):gmatch('(.-)' .. delim) do
+                    table.insert(result, match)
+                end
+                return table.unpack(result)
+            end
+            """
         ).call();
 
         try {
@@ -37,28 +39,28 @@ public class TestHandleSlashCommands {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {HandleSlashCommands = HandleSlashCommands}\n" +
+            String mockCode = """
 
-                "saveMacroSetCalled = false\n" +
-                "loadMacroSetCalled = false\n" +
-                "deleteMacroSetCalled = false\n" +
-                "deleteAllMacroSetsCalled = false\n" +
-                "undoLastOperationCalled = false\n" +
-                "alphabetizeMacroSetsCalled = false\n" +
-                "listMacroSetsCalled = false\n" +
-                "displayHelpCalled = false\n" +
-                "optionsScreenToggleCalled = false\n" +
-
-                "SaveMacroSet = function(arg1, arg2) saveMacroSetCalled = true end\n" +
-                "LoadMacroSet = function(arg1) loadMacroSetCalled = true end\n" +
-                "DeleteMacroSet = function(arg1) deleteMacroSetCalled = true end\n" +
-                "DeleteAllMacroSets = function() deleteAllMacroSetsCalled = true end\n" +
-                "UndoLastOperation = function() undoLastOperationCalled = true end\n" +
-                "AlphabetizeMacroSets = function() alphabetizeMacroSetsCalled = true end\n" +
-                "ListMacroSets = function() listMacroSetsCalled = true end\n" +
-                "DisplayHelp = function(arg1) displayHelpCalled = true end\n" +
-                "OptionsScreenToggle = function() optionsScreenToggleCalled = true end\n";
+            TestExports = {HandleSlashCommands = HandleSlashCommands}
+            saveMacroSetCalled = false
+            loadMacroSetCalled = false
+            deleteMacroSetCalled = false
+            deleteAllMacroSetsCalled = false
+            undoLastOperationCalled = false
+            alphabetizeMacroSetsCalled = false
+            listMacroSetsCalled = false
+            displayHelpCalled = false
+            optionsScreenToggleCalled = false
+            SaveMacroSet = function(arg1, arg2) saveMacroSetCalled = true end
+            LoadMacroSet = function(arg1) loadMacroSetCalled = true end
+            DeleteMacroSet = function(arg1) deleteMacroSetCalled = true end
+            DeleteAllMacroSets = function() deleteAllMacroSetsCalled = true end
+            UndoLastOperation = function() undoLastOperationCalled = true end
+            AlphabetizeMacroSets = function() alphabetizeMacroSetsCalled = true end
+            ListMacroSets = function() listMacroSetsCalled = true end
+            DisplayHelp = function(arg1) displayHelpCalled = true end
+            OptionsScreenToggle = function() optionsScreenToggleCalled = true end
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -227,7 +229,6 @@ public class TestHandleSlashCommands {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

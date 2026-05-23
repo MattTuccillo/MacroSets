@@ -24,15 +24,17 @@ public class TestSaveMacroSet {
         globals = JsePlatform.standardGlobals();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
         globals.load(
-            "lastPrintMessage = nil\n" +
-            "function print(...)\n" +
-            "    local args = {...}\n" +
-            "    local parts = {}\n" +
-            "    for i = 1, #args do\n" +
-            "        parts[i] = tostring(args[i])\n" +
-            "    end\n" +
-            "    lastPrintMessage = table.concat(parts, ' ')\n" +
-            "end\n"
+            """
+            lastPrintMessage = nil
+            function print(...)
+                local args = {...}
+                local parts = {}
+                for i = 1, #args do
+                    parts[i] = tostring(args[i])
+                end
+                lastPrintMessage = table.concat(parts, ' ')
+            end
+            """
         ).call();
 
         try {
@@ -41,40 +43,37 @@ public class TestSaveMacroSet {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {SaveMacroSet = SaveMacroSet}\n" +
+            String mockCode = """
 
-                "testScenario = nil\n" +
-                "inCombatLockdownCounter = 0\n" +
-                "getMacroInfoCounter = 0\n" +
-                "editMacroCounter = 0\n" +
-
-                "function InCombatLockdown()\n" +
-                "   inCombatLockdownCounter = inCombatLockdownCounter + 1\n" +
-                "   return testScenario == 'combat'\n" +
-                "end\n" +
-
-                "function GetMacroInfo(index)\n" +
-                "   getMacroInfoCounter = getMacroInfoCounter + 1\n" +
-                "   if testScenario == 'success' and index == 1 then\n" +
-                "       return 'testOne', 134401, '/say one'\n" +
-                "   end\n" +
-                "   if testScenario == 'duplicate' and (index == 1 or index == 2) then\n" +
-                "       return 'testDupe', 134401, '/say duplicate'\n" +
-                "   end\n" +
-                "   return nil\n" +
-                "end\n" +
-
-                "function GetActionInfo(slot)\n" +
-                "   if testScenario == 'success' and slot == 5 then\n" +
-                "       return 'macro', 1\n" +
-                "   end\n" +
-                "   return nil\n" +
-                "end\n" +
-
-                "function EditMacro(index, name, icon, body, localFlag)\n" +
-                "   editMacroCounter = editMacroCounter + 1\n" +
-                "end\n";
+            TestExports = {SaveMacroSet = SaveMacroSet}
+            testScenario = nil
+            inCombatLockdownCounter = 0
+            getMacroInfoCounter = 0
+            editMacroCounter = 0
+            function InCombatLockdown()
+               inCombatLockdownCounter = inCombatLockdownCounter + 1
+               return testScenario == 'combat'
+            end
+            function GetMacroInfo(index)
+               getMacroInfoCounter = getMacroInfoCounter + 1
+               if testScenario == 'success' and index == 1 then
+                   return 'testOne', 134401, '/say one'
+               end
+               if testScenario == 'duplicate' and (index == 1 or index == 2) then
+                   return 'testDupe', 134401, '/say duplicate'
+               end
+               return nil
+            end
+            function GetActionInfo(slot)
+               if testScenario == 'success' and slot == 5 then
+                   return 'macro', 1
+               end
+               return nil
+            end
+            function EditMacro(index, name, icon, body, localFlag)
+               editMacroCounter = editMacroCounter + 1
+            end
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -97,10 +96,12 @@ public class TestSaveMacroSet {
     @Test
     public void testSaveMacroSet_InCombat() {
         globals.load(
-            "MacroSetsDB = {}\n" +
-            "MacroSetsBackup = {}\n" +
-            "testScenario = 'combat'\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = {}
+            MacroSetsBackup = {}
+            testScenario = 'combat'
+            lastPrintMessage = nil
+            """
         ).call();
 
         saveMacroSetFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
@@ -120,10 +121,12 @@ public class TestSaveMacroSet {
     @Test
     public void testSaveMacroSet_Empty() {
         globals.load(
-            "MacroSetsDB = {}\n" +
-            "MacroSetsBackup = {}\n" +
-            "testScenario = 'empty'\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = {}
+            MacroSetsBackup = {}
+            testScenario = 'empty'
+            lastPrintMessage = nil
+            """
         ).call();
 
         saveMacroSetFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
@@ -144,10 +147,12 @@ public class TestSaveMacroSet {
     @Test
     public void testSaveMacroSet_DuplicateNames() {
         globals.load(
-            "MacroSetsDB = {}\n" +
-            "MacroSetsBackup = {}\n" +
-            "testScenario = 'duplicate'\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = {}
+            MacroSetsBackup = {}
+            testScenario = 'duplicate'
+            lastPrintMessage = nil
+            """
         ).call();
 
         saveMacroSetFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
@@ -166,10 +171,12 @@ public class TestSaveMacroSet {
     @Test
     public void testSaveMacroSet_GeneralSuccess() {
         globals.load(
-            "MacroSetsDB = { existingSet = {macros = {}, type = 'g'} }\n" +
-            "MacroSetsBackup = {}\n" +
-            "testScenario = 'success'\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = { existingSet = {macros = {}, type = 'g'} }
+            MacroSetsBackup = {}
+            testScenario = 'success'
+            lastPrintMessage = nil
+            """
         ).call();
 
         saveMacroSetFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
@@ -200,7 +207,6 @@ public class TestSaveMacroSet {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

@@ -24,15 +24,17 @@ public class TestUndoLastOperation {
         globals = JsePlatform.standardGlobals();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
         globals.load(
-            "lastPrintMessage = nil\n" +
-            "function print(...)\n" +
-            "    local args = {...}\n" +
-            "    local parts = {}\n" +
-            "    for i = 1, #args do\n" +
-            "        parts[i] = tostring(args[i])\n" +
-            "    end\n" +
-            "    lastPrintMessage = table.concat(parts, ' ')\n" +
-            "end\n"
+            """
+            lastPrintMessage = nil
+            function print(...)
+                local args = {...}
+                local parts = {}
+                for i = 1, #args do
+                    parts[i] = tostring(args[i])
+                end
+                lastPrintMessage = table.concat(parts, ' ')
+            end
+            """
         ).call();
 
         try {
@@ -41,8 +43,10 @@ public class TestUndoLastOperation {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {UndoLastOperation = UndoLastOperation}\n";
+            String mockCode = """
+
+            TestExports = {UndoLastOperation = UndoLastOperation}
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -65,11 +69,13 @@ public class TestUndoLastOperation {
     @Test
     public void testUndoLastOperation_EmptyBackup() {
         globals.load(
-            "MacroSetsDB = {\n" +
-            "   currentSet = {macros = {}, type = 'g'}\n" +
-            "}\n" +
-            "MacroSetsBackup = {}\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = {
+               currentSet = {macros = {}, type = 'g'}
+            }
+            MacroSetsBackup = {}
+            lastPrintMessage = nil
+            """
         ).call();
 
         undoLastOperationFunction.call();
@@ -85,19 +91,21 @@ public class TestUndoLastOperation {
     @Test
     public void testUndoLastOperation_RestoresBackup() {
         globals.load(
-            "MacroSetsDB = {\n" +
-            "   currentSet = {macros = {}, type = 'g'},\n" +
-            "   dynamicIcons = true,\n" +
-            "   replaceBars = false,\n" +
-            "   charSpecific = true\n" +
-            "}\n" +
-            "MacroSetsBackup = {\n" +
-            "   previousSet = {macros = {{name = 'testOne', icon = 134400, body = '/say one'}}, type = 'c'},\n" +
-            "   dynamicIcons = false,\n" +
-            "   replaceBars = true,\n" +
-            "   charSpecific = false\n" +
-            "}\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = {
+               currentSet = {macros = {}, type = 'g'},
+               dynamicIcons = true,
+               replaceBars = false,
+               charSpecific = true
+            }
+            MacroSetsBackup = {
+               previousSet = {macros = {{name = 'testOne', icon = 134400, body = '/say one'}}, type = 'c'},
+               dynamicIcons = false,
+               replaceBars = true,
+               charSpecific = false
+            }
+            lastPrintMessage = nil
+            """
         ).call();
 
         undoLastOperationFunction.call();
@@ -124,7 +132,6 @@ public class TestUndoLastOperation {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

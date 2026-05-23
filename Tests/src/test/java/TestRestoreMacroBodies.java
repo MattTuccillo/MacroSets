@@ -26,30 +26,29 @@ public class TestRestoreMacroBodies {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {RestoreMacroBodies = RestoreMacroBodies}\n" +
+            String mockCode = """
 
-                "getMacroIndexByNameCounter = 0\n" +
-                "editMacroCounter = 0\n" +
-                "lastEditMacroIndex = nil\n" +
-                "lastEditMacroName = nil\n" +
-                "lastEditMacroIcon = nil\n" +
-                "lastEditMacroBody = nil\n" +
-
-                "function GetMacroIndexByName(name)\n" +
-                "   getMacroIndexByNameCounter = getMacroIndexByNameCounter + 1\n" +
-                "   if name == 'testOne' then return 1 end\n" +
-                "   if name == 'testTwo' then return 2 end\n" +
-                "   return nil\n" +
-                "end\n" +
-
-                "function EditMacro(index, name, icon, body)\n" +
-                "   editMacroCounter = editMacroCounter + 1\n" +
-                "   lastEditMacroIndex = index\n" +
-                "   lastEditMacroName = name\n" +
-                "   lastEditMacroIcon = icon\n" +
-                "   lastEditMacroBody = body\n" +
-                "end\n";
+            TestExports = {RestoreMacroBodies = RestoreMacroBodies}
+            getMacroIndexByNameCounter = 0
+            editMacroCounter = 0
+            lastEditMacroIndex = nil
+            lastEditMacroName = nil
+            lastEditMacroIcon = nil
+            lastEditMacroBody = nil
+            function GetMacroIndexByName(name)
+               getMacroIndexByNameCounter = getMacroIndexByNameCounter + 1
+               if name == 'testOne' then return 1 end
+               if name == 'testTwo' then return 2 end
+               return nil
+            end
+            function EditMacro(index, name, icon, body)
+               editMacroCounter = editMacroCounter + 1
+               lastEditMacroIndex = index
+               lastEditMacroName = name
+               lastEditMacroIcon = icon
+               lastEditMacroBody = body
+            end
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -114,7 +113,6 @@ public class TestRestoreMacroBodies {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

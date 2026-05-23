@@ -29,33 +29,30 @@ public class TestPlaceMacroInActionBarSlots {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {\n" +
-                "   PlaceMacroInActionBarSlots = PlaceMacroInActionBarSlots,\n" +
-                "   actionBarSlotLimit = actionBarSlotLimit\n" +
-                "}\n" +
+            String mockCode = """
 
-                "getMacroInfoCalled = false\n" +
-                "pickupMacroCalled = false\n" +
-                "placeActionCalled = false\n" +
-                "clearCursorCalled = false\n" +
-
-                "function GetMacroInfo(macroIndex)\n" +
-                "   getMacroInfoCalled = true\n" +
-                "   return 'test', 134400, 'test'\n" +
-                "end\n" +
-
-                "function PickupMacro(macroIndex)\n" +
-                "   pickupMacroCalled = true\n" +
-                "end\n" +
-
-                "function PlaceAction(slot)\n" +
-                "   placeActionCalled = true\n" +
-                "end\n" +
-
-                "function ClearCursor()\n" +
-                "   clearCursorCalled = true\n" +
-                "end\n";
+            TestExports = {
+               PlaceMacroInActionBarSlots = PlaceMacroInActionBarSlots,
+               actionBarSlotLimit = actionBarSlotLimit
+            }
+            getMacroInfoCalled = false
+            pickupMacroCalled = false
+            placeActionCalled = false
+            clearCursorCalled = false
+            function GetMacroInfo(macroIndex)
+               getMacroInfoCalled = true
+               return 'test', 134400, 'test'
+            end
+            function PickupMacro(macroIndex)
+               pickupMacroCalled = true
+            end
+            function PlaceAction(slot)
+               placeActionCalled = true
+            end
+            function ClearCursor()
+               clearCursorCalled = true
+            end
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -123,7 +120,6 @@ public class TestPlaceMacroInActionBarSlots {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

@@ -24,15 +24,17 @@ public class TestLoadMacroSet {
         globals = JsePlatform.standardGlobals();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
         globals.load(
-            "lastPrintMessage = nil\n" +
-            "function print(...)\n" +
-            "    local args = {...}\n" +
-            "    local parts = {}\n" +
-            "    for i = 1, #args do\n" +
-            "        parts[i] = tostring(args[i])\n" +
-            "    end\n" +
-            "    lastPrintMessage = table.concat(parts, ' ')\n" +
-            "end\n"
+            """
+            lastPrintMessage = nil
+            function print(...)
+                local args = {...}
+                local parts = {}
+                for i = 1, #args do
+                    parts[i] = tostring(args[i])
+                end
+                lastPrintMessage = table.concat(parts, ' ')
+            end
+            """
         ).call();
 
         try {
@@ -41,66 +43,59 @@ public class TestLoadMacroSet {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {LoadMacroSet = LoadMacroSet}\n" +
+            String mockCode = """
 
-                "testScenario = nil\n" +
-                "macroFrameVisible = false\n" +
-                "inCombatLockdownCounter = 0\n" +
-                "deleteMacrosInRangeCounter = 0\n" +
-                "createMacroCounter = 0\n" +
-                "placeMacroInActionBarSlotsCounter = 0\n" +
-                "restoreMacroBodiesCounter = 0\n" +
-                "hideUIPanelCounter = 0\n" +
-                "showUIPanelCounter = 0\n" +
-                "lastDeleteStartSlot = nil\n" +
-                "lastDeleteEndSlot = nil\n" +
-                "lastCreatedName = nil\n" +
-                "lastCreatedIcon = nil\n" +
-                "lastCreatedPerCharacter = nil\n" +
-                "lastPlacedMacroIndex = nil\n" +
-                "lastPlacedPositionCount = nil\n" +
-                "lastRestoredSetName = nil\n" +
-
-                "MacroFrame = { IsVisible = function(self) return macroFrameVisible end }\n" +
-
-                "function InCombatLockdown()\n" +
-                "   inCombatLockdownCounter = inCombatLockdownCounter + 1\n" +
-                "   return testScenario == 'combat'\n" +
-                "end\n" +
-
-                "DeleteMacrosInRange = function(startSlot, endSlot)\n" +
-                "   deleteMacrosInRangeCounter = deleteMacrosInRangeCounter + 1\n" +
-                "   lastDeleteStartSlot = startSlot\n" +
-                "   lastDeleteEndSlot = endSlot\n" +
-                "end\n" +
-
-                "CreateMacro = function(name, icon, body, perCharacter)\n" +
-                "   createMacroCounter = createMacroCounter + 1\n" +
-                "   lastCreatedName = name\n" +
-                "   lastCreatedIcon = icon\n" +
-                "   lastCreatedPerCharacter = perCharacter\n" +
-                "   return 100 + createMacroCounter\n" +
-                "end\n" +
-
-                "PlaceMacroInActionBarSlots = function(macroIndex, positions)\n" +
-                "   placeMacroInActionBarSlotsCounter = placeMacroInActionBarSlotsCounter + 1\n" +
-                "   lastPlacedMacroIndex = macroIndex\n" +
-                "   lastPlacedPositionCount = #positions\n" +
-                "end\n" +
-
-                "RestoreMacroBodies = function(setName)\n" +
-                "   restoreMacroBodiesCounter = restoreMacroBodiesCounter + 1\n" +
-                "   lastRestoredSetName = setName\n" +
-                "end\n" +
-
-                "function HideUIPanel(frame)\n" +
-                "   hideUIPanelCounter = hideUIPanelCounter + 1\n" +
-                "end\n" +
-
-                "function ShowUIPanel(frame)\n" +
-                "   showUIPanelCounter = showUIPanelCounter + 1\n" +
-                "end\n";
+            TestExports = {LoadMacroSet = LoadMacroSet}
+            testScenario = nil
+            macroFrameVisible = false
+            inCombatLockdownCounter = 0
+            deleteMacrosInRangeCounter = 0
+            createMacroCounter = 0
+            placeMacroInActionBarSlotsCounter = 0
+            restoreMacroBodiesCounter = 0
+            hideUIPanelCounter = 0
+            showUIPanelCounter = 0
+            lastDeleteStartSlot = nil
+            lastDeleteEndSlot = nil
+            lastCreatedName = nil
+            lastCreatedIcon = nil
+            lastCreatedPerCharacter = nil
+            lastPlacedMacroIndex = nil
+            lastPlacedPositionCount = nil
+            lastRestoredSetName = nil
+            MacroFrame = { IsVisible = function(self) return macroFrameVisible end }
+            function InCombatLockdown()
+               inCombatLockdownCounter = inCombatLockdownCounter + 1
+               return testScenario == 'combat'
+            end
+            DeleteMacrosInRange = function(startSlot, endSlot)
+               deleteMacrosInRangeCounter = deleteMacrosInRangeCounter + 1
+               lastDeleteStartSlot = startSlot
+               lastDeleteEndSlot = endSlot
+            end
+            CreateMacro = function(name, icon, body, perCharacter)
+               createMacroCounter = createMacroCounter + 1
+               lastCreatedName = name
+               lastCreatedIcon = icon
+               lastCreatedPerCharacter = perCharacter
+               return 100 + createMacroCounter
+            end
+            PlaceMacroInActionBarSlots = function(macroIndex, positions)
+               placeMacroInActionBarSlotsCounter = placeMacroInActionBarSlotsCounter + 1
+               lastPlacedMacroIndex = macroIndex
+               lastPlacedPositionCount = #positions
+            end
+            RestoreMacroBodies = function(setName)
+               restoreMacroBodiesCounter = restoreMacroBodiesCounter + 1
+               lastRestoredSetName = setName
+            end
+            function HideUIPanel(frame)
+               hideUIPanelCounter = hideUIPanelCounter + 1
+            end
+            function ShowUIPanel(frame)
+               showUIPanelCounter = showUIPanelCounter + 1
+            end
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -123,10 +118,12 @@ public class TestLoadMacroSet {
     @Test
     public void testLoadMacroSet_InCombat() {
         globals.load(
-            "MacroSetsDB = {}\n" +
-            "MacroSetsDB.testSet = {macros = {}, type = 'g'}\n" +
-            "testScenario = 'combat'\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = {}
+            MacroSetsDB.testSet = {macros = {}, type = 'g'}
+            testScenario = 'combat'
+            lastPrintMessage = nil
+            """
         ).call();
 
         loadMacroSetFunction.call(LuaValue.valueOf("testSet"));
@@ -143,9 +140,11 @@ public class TestLoadMacroSet {
     @Test
     public void testLoadMacroSet_SetDoesNotExist() {
         globals.load(
-            "MacroSetsDB = {}\n" +
-            "testScenario = nil\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = {}
+            testScenario = nil
+            lastPrintMessage = nil
+            """
         ).call();
 
         loadMacroSetFunction.call(LuaValue.valueOf("missingSet"));
@@ -162,19 +161,21 @@ public class TestLoadMacroSet {
     @Test
     public void testLoadMacroSet_GeneralSuccess() {
         globals.load(
-            "MacroSetsDB = { replaceBars = true }\n" +
-            "MacroSetsDB.testSet = {\n" +
-            "   type = 'g',\n" +
-            "   generalCount = 2,\n" +
-            "   characterCount = 0,\n" +
-            "   macros = {\n" +
-            "       {name = 'testOne', icon = 134400, body = '/say one', position = {5, 10}},\n" +
-            "       {name = 'testTwo', icon = 134401, body = '/say two', position = {}}\n" +
-            "   }\n" +
-            "}\n" +
-            "testScenario = nil\n" +
-            "macroFrameVisible = true\n" +
-            "lastPrintMessage = nil\n"
+            """
+            MacroSetsDB = { replaceBars = true }
+            MacroSetsDB.testSet = {
+               type = 'g',
+               generalCount = 2,
+               characterCount = 0,
+               macros = {
+                   {name = 'testOne', icon = 134400, body = '/say one', position = {5, 10}},
+                   {name = 'testTwo', icon = 134401, body = '/say two', position = {}}
+               }
+            }
+            testScenario = nil
+            macroFrameVisible = true
+            lastPrintMessage = nil
+            """
         ).call();
 
         loadMacroSetFunction.call(LuaValue.valueOf("testSet"));
@@ -200,7 +201,6 @@ public class TestLoadMacroSet {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

@@ -24,17 +24,19 @@ public class TestDisplayHelp {
         globals = JsePlatform.standardGlobals();
         globals.load("if SlashCmdList == nil then SlashCmdList = {} end").call();
         globals.load(
-            "printCounter = 0\n" +
-            "lastPrintMessage = nil\n" +
-            "function print(...)\n" +
-            "    printCounter = printCounter + 1\n" +
-            "    local args = {...}\n" +
-            "    local parts = {}\n" +
-            "    for i = 1, #args do\n" +
-            "        parts[i] = tostring(args[i])\n" +
-            "    end\n" +
-            "    lastPrintMessage = table.concat(parts, ' ')\n" +
-            "end\n"
+            """
+            printCounter = 0
+            lastPrintMessage = nil
+            function print(...)
+                printCounter = printCounter + 1
+                local args = {...}
+                local parts = {}
+                for i = 1, #args do
+                    parts[i] = tostring(args[i])
+                end
+                lastPrintMessage = table.concat(parts, ' ')
+            end
+            """
         ).call();
 
         try {
@@ -43,8 +45,10 @@ public class TestDisplayHelp {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {DisplayHelp = DisplayHelp}\n";
+            String mockCode = """
+
+            TestExports = {DisplayHelp = DisplayHelp}
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -73,8 +77,10 @@ public class TestDisplayHelp {
     @Test
     public void testDisplayHelp_Save() {
         globals.load(
-            "MacroSetsDB.charSpecific = false\n" +
-            "MacroSetsDB.dynamicIcons = false\n"
+            """
+            MacroSetsDB.charSpecific = false
+            MacroSetsDB.dynamicIcons = false
+            """
         ).call();
 
         displayHelpFunction.call(LuaValue.valueOf("save"));
@@ -137,7 +143,6 @@ public class TestDisplayHelp {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

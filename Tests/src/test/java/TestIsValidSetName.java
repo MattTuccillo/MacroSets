@@ -27,8 +27,10 @@ public class TestIsValidSetName {
             String mainLuaContent = new String(Files.readAllBytes(luaPath), StandardCharsets.UTF_8);
 
             // Mock testing code to append
-            String mockCode = "\n" +
-                "TestExports = {IsValidSetName = IsValidSetName}\n";
+            String mockCode = """
+
+            TestExports = {IsValidSetName = IsValidSetName}
+            """;
 
             // Combine the original script with the testing code
             String modifiedScript = mainLuaContent + mockCode;
@@ -95,7 +97,6 @@ public class TestIsValidSetName {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

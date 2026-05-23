@@ -40,27 +40,31 @@ public class TestThemeAdapter {
     @Test
     public void testElvUIThemeUsesSkinHandlersForControls() {
         globals.load(
-            "elvButtonSkinCount = 0\n" +
-            "elvCheckboxSkinCount = 0\n" +
-            "elvEditBoxSkinCount = 0\n" +
-            "local Skins = {}\n" +
-            "Skins.HandleButton = function(self, frame) elvButtonSkinCount = elvButtonSkinCount + 1 frame.elvButtonSkinned = true end\n" +
-            "Skins.HandleCheckBox = function(self, frame) elvCheckboxSkinCount = elvCheckboxSkinCount + 1 frame.elvCheckboxSkinned = true end\n" +
-            "Skins.HandleEditBox = function(self, frame) elvEditBoxSkinCount = elvEditBoxSkinCount + 1 frame.elvEditBoxSkinned = true end\n" +
-            "ElvUI = { { GetModule = function(self, moduleName) if moduleName == 'Skins' then return Skins end end } }\n"
+            """
+            elvButtonSkinCount = 0
+            elvCheckboxSkinCount = 0
+            elvEditBoxSkinCount = 0
+            local Skins = {}
+            Skins.HandleButton = function(self, frame) elvButtonSkinCount = elvButtonSkinCount + 1 frame.elvButtonSkinned = true end
+            Skins.HandleCheckBox = function(self, frame) elvCheckboxSkinCount = elvCheckboxSkinCount + 1 frame.elvCheckboxSkinned = true end
+            Skins.HandleEditBox = function(self, frame) elvEditBoxSkinCount = elvEditBoxSkinCount + 1 frame.elvEditBoxSkinned = true end
+            ElvUI = { { GetModule = function(self, moduleName) if moduleName == 'Skins' then return Skins end end } }
+            """
         ).call();
         loadThemeAdapter();
 
         globals.load(
-            "local button = CreateFrame('Button', 'ButtonFrame')\n" +
-            "local checkbox = CreateFrame('CheckButton', 'CheckboxFrame')\n" +
-            "local editbox = CreateFrame('EditBox', 'EditBoxFrame')\n" +
-            "MacroSetsTheme:ApplyButtonStyle(button)\n" +
-            "MacroSetsTheme:ApplyCheckboxStyle(checkbox)\n" +
-            "MacroSetsTheme:ApplyEditBoxStyle(editbox)\n" +
-            "styledButton = button\n" +
-            "styledCheckbox = checkbox\n" +
-            "styledEditBox = editbox\n"
+            """
+            local button = CreateFrame('Button', 'ButtonFrame')
+            local checkbox = CreateFrame('CheckButton', 'CheckboxFrame')
+            local editbox = CreateFrame('EditBox', 'EditBoxFrame')
+            MacroSetsTheme:ApplyButtonStyle(button)
+            MacroSetsTheme:ApplyCheckboxStyle(checkbox)
+            MacroSetsTheme:ApplyEditBoxStyle(editbox)
+            styledButton = button
+            styledCheckbox = checkbox
+            styledEditBox = editbox
+            """
         ).call();
 
         assertEquals("ElvUI", macroSetsTheme.get("UIFramework").tojstring(), "Expected ElvUI detection");
@@ -79,8 +83,10 @@ public class TestThemeAdapter {
         assertEquals("Default", macroSetsTheme.get("UIFramework").tojstring(), "Expected default before Tukui loads");
 
         globals.load(
-            "Tukui = { {} }\n" +
-            "createdFrames[1]:OnEvent('ADDON_LOADED', 'Tukui')\n"
+            """
+            Tukui = { {} }
+            createdFrames[1]:OnEvent('ADDON_LOADED', 'Tukui')
+            """
         ).call();
 
         assertEquals("Tukui", macroSetsTheme.get("UIFramework").tojstring(), "Expected framework refresh after Tukui loads");
@@ -88,16 +94,18 @@ public class TestThemeAdapter {
 
     private void loadWowFrameStubs() {
         globals.load(
-            "createdFrames = {}\n" +
-            "function CreateFrame(frameType, name, parent, template)\n" +
-            "   local frame = { frameType = frameType, name = name, parent = parent, template = template }\n" +
-            "   frame.SetBackdrop = function(self, backdrop) self.backdrop = backdrop end\n" +
-            "   frame.SetTemplate = function(self, templateName) self.templateName = templateName end\n" +
-            "   frame.RegisterEvent = function(self, event) self.registeredEvent = event end\n" +
-            "   frame.SetScript = function(self, scriptName, scriptFunction) self[scriptName] = scriptFunction end\n" +
-            "   table.insert(createdFrames, frame)\n" +
-            "   return frame\n" +
-            "end\n"
+            """
+            createdFrames = {}
+            function CreateFrame(frameType, name, parent, template)
+               local frame = { frameType = frameType, name = name, parent = parent, template = template }
+               frame.SetBackdrop = function(self, backdrop) self.backdrop = backdrop end
+               frame.SetTemplate = function(self, templateName) self.templateName = templateName end
+               frame.RegisterEvent = function(self, event) self.registeredEvent = event end
+               frame.SetScript = function(self, scriptName, scriptFunction) self[scriptName] = scriptFunction end
+               table.insert(createdFrames, frame)
+               return frame
+            end
+            """
         ).call();
     }
 
@@ -114,7 +122,6 @@ public class TestThemeAdapter {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }

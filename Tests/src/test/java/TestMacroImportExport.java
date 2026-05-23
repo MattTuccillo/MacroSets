@@ -17,68 +17,70 @@ public class TestMacroImportExport {
     public void setup() {
         globals = JsePlatform.standardGlobals();
         globals.load(
-            "MacroSetsFunctions = {}\n" +
-            "lastPrintMessage = nil\n" +
-            "createdMacro = nil\n" +
-            "insertedChatLink = nil\n" +
-            "openedChatText = nil\n" +
-            "importEditBoxText = nil\n" +
-            "combat = false\n" +
-            "generalMacroCount = 0\n" +
-            "characterMacroCount = 0\n" +
-            "MAX_ACCOUNT_MACROS = 120\n" +
-            "MAX_CHARACTER_MACROS = 18\n" +
-            "function print(message) lastPrintMessage = message end\n" +
-            "function InCombatLockdown() return combat end\n" +
-            "function GetNumMacros() return generalMacroCount, characterMacroCount end\n" +
-            "function ChatEdit_InsertLink(link) insertedChatLink = link return true end\n" +
-            "function ChatFrame_OpenChat(text, chatFrame) openedChatText = text end\n" +
-            "function CreateMacro(name, icon, body, perCharacter)\n" +
-            "   createdMacro = { name = name, icon = icon, body = body, perCharacter = perCharacter }\n" +
-            "   return 1\n" +
-            "end\n" +
-            "function GetMacroInfo(index)\n" +
-            "   if index == 3 then return 'Selected', 134402, '/say selected', false end\n" +
-            "   return nil\n" +
-            "end\n" +
-            "function CreateFrame(frameType, name)\n" +
-            "   local frame = { name = name, text = '' }\n" +
-            "   frame.RegisterEvent = function(self, event) self.event = event end\n" +
-            "   frame.SetScript = function(self, scriptName, scriptFunction) self[scriptName] = scriptFunction end\n" +
-            "   frame.SetSize = function() end\n" +
-            "   frame.SetPoint = function() end\n" +
-            "   frame.SetBackdrop = function() end\n" +
-            "   frame.SetBackdropColor = function() end\n" +
-            "   frame.SetFrameLevel = function() end\n" +
-            "   frame.GetFrameLevel = function() return 1 end\n" +
-            "   frame.SetMovable = function() end\n" +
-            "   frame.EnableMouse = function() end\n" +
-            "   frame.RegisterForDrag = function() end\n" +
-            "   frame.StartMoving = function() end\n" +
-            "   frame.StopMovingOrSizing = function() end\n" +
-            "   frame.Hide = function() end\n" +
-            "   frame.Show = function() end\n" +
-            "   frame.HookScript = function() end\n" +
-            "   frame.CreateFontString = function() return CreateFrame('FontString') end\n" +
-            "   frame.CreateTexture = function() return CreateFrame('Texture') end\n" +
-            "   frame.SetMultiLine = function() end\n" +
-            "   frame.SetAutoFocus = function() end\n" +
-            "   frame.SetMaxLetters = function() end\n" +
-            "   frame.SetFont = function() end\n" +
-            "   frame.SetEnabled = function() end\n" +
-            "   frame.SetChecked = function(self, value) self.checked = value end\n" +
-            "   frame.GetChecked = function(self) return self.checked end\n" +
-            "   frame.SetText = function(self, value) self.text = value if self.name == 'MacroSetsImportExportEditBox' then importEditBoxText = value end end\n" +
-            "   frame.GetText = function(self) return self.text end\n" +
-            "   frame.SetFocus = function() end\n" +
-            "   frame.ClearFocus = function() end\n" +
-            "   frame.HighlightText = function() end\n" +
-            "   frame.SetWidth = function() end\n" +
-            "   frame.SetJustifyH = function() end\n" +
-            "   frame.SetColorTexture = function() end\n" +
-            "   frame.GetName = function(self) return self.name or '' end\n" +
-            "   return frame\n" +
-            "end\n"
+            """
+            MacroSetsFunctions = {}
+            lastPrintMessage = nil
+            createdMacro = nil
+            insertedChatLink = nil
+            openedChatText = nil
+            importEditBoxText = nil
+            combat = false
+            generalMacroCount = 0
+            characterMacroCount = 0
+            MAX_ACCOUNT_MACROS = 120
+            MAX_CHARACTER_MACROS = 18
+            function print(message) lastPrintMessage = message end
+            function InCombatLockdown() return combat end
+            function GetNumMacros() return generalMacroCount, characterMacroCount end
+            function ChatEdit_InsertLink(link) insertedChatLink = link return true end
+            function ChatFrame_OpenChat(text, chatFrame) openedChatText = text end
+            function CreateMacro(name, icon, body, perCharacter)
+               createdMacro = { name = name, icon = icon, body = body, perCharacter = perCharacter }
+               return 1
+            end
+            function GetMacroInfo(index)
+               if index == 3 then return 'Selected', 134402, '/say selected', false end
+               return nil
+            end
+            function CreateFrame(frameType, name)
+               local frame = { name = name, text = '' }
+               frame.RegisterEvent = function(self, event) self.event = event end
+               frame.SetScript = function(self, scriptName, scriptFunction) self[scriptName] = scriptFunction end
+               frame.SetSize = function() end
+               frame.SetPoint = function() end
+               frame.SetBackdrop = function() end
+               frame.SetBackdropColor = function() end
+               frame.SetFrameLevel = function() end
+               frame.GetFrameLevel = function() return 1 end
+               frame.SetMovable = function() end
+               frame.EnableMouse = function() end
+               frame.RegisterForDrag = function() end
+               frame.StartMoving = function() end
+               frame.StopMovingOrSizing = function() end
+               frame.Hide = function() end
+               frame.Show = function() end
+               frame.HookScript = function() end
+               frame.CreateFontString = function() return CreateFrame('FontString') end
+               frame.CreateTexture = function() return CreateFrame('Texture') end
+               frame.SetMultiLine = function() end
+               frame.SetAutoFocus = function() end
+               frame.SetMaxLetters = function() end
+               frame.SetFont = function() end
+               frame.SetEnabled = function() end
+               frame.SetChecked = function(self, value) self.checked = value end
+               frame.GetChecked = function(self) return self.checked end
+               frame.SetText = function(self, value) self.text = value if self.name == 'MacroSetsImportExportEditBox' then importEditBoxText = value end end
+               frame.GetText = function(self) return self.text end
+               frame.SetFocus = function() end
+               frame.ClearFocus = function() end
+               frame.HighlightText = function() end
+               frame.SetWidth = function() end
+               frame.SetJustifyH = function() end
+               frame.SetColorTexture = function() end
+               frame.GetName = function(self) return self.name or '' end
+               return frame
+            end
+            """
         ).call();
 
         try {
@@ -355,10 +357,12 @@ public class TestMacroImportExport {
     @Test
     public void testGetSelectedMacroExportString_ModernMacroFrameSelection() {
         globals.load(
-            "MacroFrame = {\n" +
-            "   GetSelectedIndex = function(self) return 2 end,\n" +
-            "   GetMacroDataIndex = function(self, selectedIndex) return selectedIndex + 1 end\n" +
-            "}\n"
+            """
+            MacroFrame = {
+               GetSelectedIndex = function(self) return 2 end,
+               GetMacroDataIndex = function(self, selectedIndex) return selectedIndex + 1 end
+            }
+            """
         ).call();
 
         LuaValue exportString = macroSetsFunctions.get("GetSelectedMacroExportString").call();
@@ -370,7 +374,6 @@ public class TestMacroImportExport {
     }
 
     private void failWithException(String message, Exception e) {
-        e.printStackTrace();
-        fail(message + ": " + e.getMessage());
+        fail(message, e);
     }
 }
