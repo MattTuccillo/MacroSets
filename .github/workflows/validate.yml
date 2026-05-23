@@ -28,7 +28,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "23"
+          java-version: "21"
           cache: maven
 
       - name: Run Tests
@@ -112,7 +112,10 @@ jobs:
       - name: Run Luacheck
         run: |
           set -o pipefail
-          luacheck Main.lua MacroImportExport.lua Options.lua | tee luacheck-report.txt
+          mapfile -d '' lua_files < <(find . -maxdepth 1 -type f -name '*.lua' -print0 | sort -z)
+          printf 'Luacheck files:\n'
+          printf '  %s\n' "${lua_files[@]}"
+          luacheck "${lua_files[@]}" | tee luacheck-report.txt
 
       - name: Summarize Luacheck Results
         if: always()

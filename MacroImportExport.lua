@@ -184,9 +184,9 @@ local function ReplaceMacroSetsChatTokens(message, sender)
     if not message then
         return ""
     end
-    
+
     sender = sender or ""
-    
+
     local success, result = pcall(function()
         local replacedMessage = string.gsub(tostring(message), "%[MS:([A-Za-z0-9]+)%]", function(shareId)
             return CreateMacroShareHyperlink(sender, shareId, "")
@@ -200,11 +200,11 @@ local function ReplaceMacroSetsChatTokens(message, sender)
             return CreateMacroShareHyperlink(sender, shareId, encodedName)
         end)
     end)
-    
+
     if not success then
         return tostring(message)
     end
-    
+
     return result or tostring(message)
 end
 
@@ -342,7 +342,7 @@ local function HookMacroSetsTooltips()
         if not tooltip or not tooltip.SetHyperlink then
             return
         end
-        
+
         pcall(hooksecurefunc, tooltip, "SetHyperlink", function(self, link)
             local success, result = pcall(function()
                 local exportString = NormalizeExportString(link)
@@ -350,7 +350,7 @@ local function HookMacroSetsTooltips()
                     SetMacroSetsTooltip(self, exportString)
                 end
             end)
-            
+
             if not success then
                 -- Silently fail - don't want tooltip hooks to break tooltips
                 return
@@ -372,12 +372,12 @@ local function HookMacroSetsChatFilters()
         local success, result = pcall(function()
             return ReplaceMacroSetsChatTokens(message, sender)
         end)
-        
+
         if not success then
             -- If there's an error, just return the original message
             return false, message, sender, ...
         end
-        
+
         return false, result, sender, ...
     end
 
@@ -549,10 +549,10 @@ local function EnsureImportExportDialog()
     importExportDialog:RegisterForDrag("LeftButton")
     importExportDialog:SetScript("OnDragStart", importExportDialog.StartMoving)
     importExportDialog:SetScript("OnDragStop", importExportDialog.StopMovingOrSizing)
-    
+
     -- Apply theme styling to the dialog
     MacroSetsTheme:ApplyFrameStyle(importExportDialog, "Window")
-    
+
     -- Set backdrop for default style (ElvUI/Tukui will override this)
     if MacroSetsTheme.UIFramework == "Default" then
         importExportDialog:SetBackdrop({
@@ -588,7 +588,7 @@ local function EnsureImportExportDialog()
         self:ClearFocus()
         HideImportExportDialog()
     end)
-    
+
     -- Apply theme styling to the editbox
     MacroSetsTheme:ApplyEditBoxStyle(importExportEditBox)
 
@@ -600,7 +600,7 @@ local function EnsureImportExportDialog()
     importExportAcceptButton = CreateFrame("Button", "MacroSetsImportExportAcceptButton", importExportDialog, "UIPanelButtonTemplate")
     importExportAcceptButton:SetSize(90, 24)
     importExportAcceptButton:SetPoint("BOTTOMRIGHT", -112, 14)
-    
+
     -- Apply theme styling to the button
     MacroSetsTheme:ApplyButtonStyle(importExportAcceptButton)
 
@@ -610,7 +610,7 @@ local function EnsureImportExportDialog()
     if _G and _G[importCharacterSpecificCheckButton:GetName() .. "Text"] then
         _G[importCharacterSpecificCheckButton:GetName() .. "Text"]:SetText("Character Specific")
     end
-    
+
     -- Apply theme styling to the checkbox
     MacroSetsTheme:ApplyCheckboxStyle(importCharacterSpecificCheckButton)
 
@@ -619,7 +619,7 @@ local function EnsureImportExportDialog()
     closeButton:SetPoint("BOTTOMRIGHT", -24, 14)
     closeButton:SetText("Close")
     closeButton:SetScript("OnClick", HideImportExportDialog)
-    
+
     -- Apply theme styling to the button
     MacroSetsTheme:ApplyButtonStyle(closeButton)
 end
@@ -687,10 +687,10 @@ local function EnsureMacroFrameButtons()
     local sidePanel = MacroSetsTheme:CreateFrame("Frame", "MacroSetsImportExportPanel", MacroFrame, "BackdropTemplate")
     sidePanel:SetSize(86, 58)
     sidePanel:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", -4, -82)
-    
+
     -- Apply theme styling to the side panel
     MacroSetsTheme:ApplyFrameStyle(sidePanel, "Window")
-    
+
     -- Set backdrop for default style
     if MacroSetsTheme.UIFramework == "Default" then
         sidePanel:SetBackdrop({
@@ -712,7 +712,7 @@ local function EnsureMacroFrameButtons()
     importButton:SetScript("OnClick", function()
         ShowImportDialog()
     end)
-    
+
     -- Apply theme styling to import button
     MacroSetsTheme:ApplyButtonStyle(importButton)
 
@@ -721,7 +721,7 @@ local function EnsureMacroFrameButtons()
     macroSetsExportButton:SetPoint("TOP", importButton, "BOTTOM", 0, -2)
     macroSetsExportButton:SetText("Export")
     macroSetsExportButton:SetScript("OnClick", ShowSelectedMacroExport)
-    
+
     -- Apply theme styling to export button
     MacroSetsTheme:ApplyButtonStyle(macroSetsExportButton)
 
@@ -749,12 +749,9 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "CHAT_MSG_ADDON" then
         local prefix, message, _channel, sender = ...
         -- Wrap addon message handling in pcall to prevent crashes
-        local success, err = pcall(function()
+        pcall(function()
             HandleMacroSetsAddonMessage(prefix, message, sender)
         end)
-        if not success then
-            -- Silently fail - don't want addon messages to crash the game
-        end
         return
     end
 
