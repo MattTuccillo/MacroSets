@@ -3,7 +3,7 @@
 ## Version 2.1 - [xx/xx/2026]
 
 - Features:
-  - Added import and export buttons to the macro window for sharing individual macros.
+  - Added import and export buttons to the macro window for sharing individual macros with other addon users.
 - Changes:
   - Fixed a bug where `/ms undo` could clear saved macro sets when there was no previous action to undo.
   - Fixed a bug where undo backups could store and restore configuration toggle settings.
