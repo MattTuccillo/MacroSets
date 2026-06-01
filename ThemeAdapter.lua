@@ -1,4 +1,4 @@
--- Theme Adapter for MacroSets
+-- Theme adapter for MacroSets.
 -- Automatically detects and applies themes from ElvUI, Tukui, or other UI frameworks
 -- Falls back to default WoW styling if no UI framework is detected
 
@@ -22,15 +22,17 @@ local function ApplyElvUIStyle(frame, frameType)
     frameType = frameType or "Window"
 
     local E = ElvUI and ElvUI[1]
-    if not E then return end
+    if not E then
+        return
+    end
 
     local S = E:GetModule("Skins")
-    if not S then return end
+    if not S then
+        return
+    end
 
-    -- Safely apply styling with error handling
-    local success, err = pcall(function()
+    local success = pcall(function()
         if frameType == "Window" then
-            -- Apply window skin
             if frame.SetTemplate then
                 frame:SetTemplate("Transparent")
             end
@@ -44,7 +46,6 @@ local function ApplyElvUIStyle(frame, frameType)
     end)
 
     if not success and frame then
-        -- If ElvUI styling fails, just use default - don't error out
         return false
     end
 
@@ -56,7 +57,9 @@ local function ApplyTukuiStyle(frame, frameType)
     frameType = frameType or "Window"
 
     local T = Tukui and Tukui[1]
-    if not T then return end
+    if not T then
+        return
+    end
 
     if frameType == "Window" then
         frame:SetTemplate("Transparent")
@@ -88,7 +91,6 @@ function MacroSetsTheme:CreateFrame(frameType, name, parent, template)
     elseif MacroSetsTheme.UIFramework == "Tukui" then
         ApplyTukuiStyle(frame, "Window")
     else
-        -- Default styling is already applied by BackdropTemplate
         ApplyDefaultStyle(frame, "Window")
     end
 
@@ -97,11 +99,13 @@ end
 
 -- Apply theming to an existing frame
 function MacroSetsTheme:ApplyFrameStyle(frame, styleType)
-    if not frame then return end
+    if not frame then
+        return
+    end
 
     styleType = styleType or "Window"
 
-    local success, err = pcall(function()
+    local success = pcall(function()
         if MacroSetsTheme.UIFramework == "ElvUI" then
             ApplyElvUIStyle(frame, styleType)
         elseif MacroSetsTheme.UIFramework == "Tukui" then
@@ -119,9 +123,11 @@ end
 
 -- Apply theming to a button
 function MacroSetsTheme:ApplyButtonStyle(button)
-    if not button then return end
+    if not button then
+        return
+    end
 
-    local success, err = pcall(function()
+    pcall(function()
         if MacroSetsTheme.UIFramework == "ElvUI" then
             local E = ElvUI and ElvUI[1]
             if E then
@@ -134,14 +140,16 @@ function MacroSetsTheme:ApplyButtonStyle(button)
         end
     end)
 
-    -- If ElvUI styling fails or isn't available, default templates handle the styling
+    -- Default templates handle styling when ElvUI is unavailable.
 end
 
 -- Apply theming to a checkbox
 function MacroSetsTheme:ApplyCheckboxStyle(checkbox)
-    if not checkbox then return end
+    if not checkbox then
+        return
+    end
 
-    local success, err = pcall(function()
+    pcall(function()
         if MacroSetsTheme.UIFramework == "ElvUI" then
             local E = ElvUI and ElvUI[1]
             if E then
@@ -154,14 +162,16 @@ function MacroSetsTheme:ApplyCheckboxStyle(checkbox)
         end
     end)
 
-    -- If ElvUI styling fails or isn't available, default templates handle the styling
+    -- Default templates handle styling when ElvUI is unavailable.
 end
 
 -- Apply theming to an editbox
 function MacroSetsTheme:ApplyEditBoxStyle(editbox)
-    if not editbox then return end
+    if not editbox then
+        return
+    end
 
-    local success, err = pcall(function()
+    pcall(function()
         if MacroSetsTheme.UIFramework == "ElvUI" then
             local E = ElvUI and ElvUI[1]
             if E then
@@ -174,7 +184,7 @@ function MacroSetsTheme:ApplyEditBoxStyle(editbox)
         end
     end)
 
-    -- If ElvUI styling fails or isn't available, no special styling needed
+    -- Default edit box styling is sufficient when ElvUI is unavailable.
 end
 
 -- Get theme-appropriate colors

@@ -1,4 +1,4 @@
--- Create a configuration frame for the addon settings UI
+-- Configuration frame for the addon settings UI
 macroSetsOptionsPanel = MacroSetsTheme:CreateFrame("Frame", "MacroSetsOptionsPanel", UIParent, "BackdropTemplate")
 
 macroSetsOptionsPanel.name = "MacroSets"
@@ -7,20 +7,17 @@ local screenHeight = GetScreenHeight()
 macroSetsOptionsPanel:SetSize(screenWidth * 0.4, screenHeight * 0.6)
 macroSetsOptionsPanel:SetPoint("CENTER")
 
--- Apply theme styling
 MacroSetsTheme:ApplyFrameStyle(macroSetsOptionsPanel, "Window")
 
--- Title for the options panel
 local title = macroSetsOptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 title:SetPoint("TOPLEFT", 16, -16)
 title:SetText("MacroSets Configuration")
 
--- Create a sub-frame for the checkboxes
 local checkboxesFrame = CreateFrame("Frame", "CheckboxesFrame", macroSetsOptionsPanel)
 checkboxesFrame:SetSize(screenWidth * 0.9 * 0.4, screenHeight * 0.7 * 0.6)
 checkboxesFrame:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -20)
 
--- Helper function to create a checkbox with a label and tooltip
+-- Creates a checkbox with a label and tooltip.
 local function CreateCheckbox(parent, name, labelText, tooltipText, offsetX, offsetY)
     local checkbox = CreateFrame("CheckButton", name, parent, "InterfaceOptionsCheckButtonTemplate")
     checkbox:SetPoint("TOPLEFT", parent, "TOPLEFT", offsetX, offsetY)
@@ -28,12 +25,11 @@ local function CreateCheckbox(parent, name, labelText, tooltipText, offsetX, off
     checkbox.text:SetFontObject("GameFontNormalLarge")
     checkbox.text:SetText(labelText)
     checkbox.tooltip = tooltipText
-    -- Apply theme styling
     MacroSetsTheme:ApplyCheckboxStyle(checkbox)
     return checkbox
 end
 
--- Helper function to create help text under checkboxes
+-- Creates help text under a checkbox.
 local function CreateHelpText(parent, referenceCheckbox, helpText, offsetX, offsetY)
     local help = parent:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
     help:SetWidth(screenWidth * 0.35 * 0.9)
@@ -44,7 +40,7 @@ local function CreateHelpText(parent, referenceCheckbox, helpText, offsetX, offs
     return help
 end
 
--- Create checkboxes for addon settings with accompanying help text
+-- Checkbox settings with accompanying help text.
 local dynamicIconsCheckbox = CreateCheckbox(checkboxesFrame, "DynamicIconsCheckbox", "Save initial macro icon", "Toggle whether macro icons should default to the question mark dynamic icon or the first icon that is set when saved", 10, -10)
 local dynamicIconsHelpText = CreateHelpText(checkboxesFrame, dynamicIconsCheckbox, "", 0, -5)
 
@@ -54,7 +50,7 @@ local replaceBarsHelpText = CreateHelpText(checkboxesFrame, replaceBarsCheckbox,
 local charSpecificCheckbox = CreateCheckbox(checkboxesFrame, "CharSpecificCheckbox", "Save as character-specific macro set by default", "Toggle whether macro sets are saved as character-specific sets when not specified.", 10, -150)
 local charSpecificHelpText = CreateHelpText(checkboxesFrame, charSpecificCheckbox, "", 0, -5)
 
--- Function to initialize settings if they are not already defined
+-- Initializes settings that are not already defined.
 local function InitializeSettings()
     if MacroSetsDB.dynamicIcons == nil then
         MacroSetsDB.dynamicIcons = false
@@ -67,15 +63,18 @@ local function InitializeSettings()
     end
 end
 
--- Function to save the current values of the checkboxes
+-- Saves the current checkbox values.
 local function SaveSettings()
-    if not MacroSetsDB then MacroSetsDB = {} end
+    if not MacroSetsDB then
+        MacroSetsDB = {}
+    end
+
     MacroSetsDB.dynamicIcons = dynamicIconsCheckbox:GetChecked()
     MacroSetsDB.replaceBars = replaceBarsCheckbox:GetChecked()
     MacroSetsDB.charSpecific = charSpecificCheckbox:GetChecked()
 end
 
--- Function to update help text descriptions based on current checkbox states
+-- Updates help text based on current checkbox states.
 local function UpdateHelpText()
     if MacroSetsDB.dynamicIcons then
         dynamicIconsHelpText:SetText("All macros are saved with the currently shown icon unless there is a '#i' at the end of the macro name.")
@@ -96,7 +95,7 @@ local function UpdateHelpText()
     end
 end
 
--- Function to load saved settings into the checkboxes
+-- Loads saved settings into the checkboxes.
 local function LoadSettings()
     InitializeSettings()
     dynamicIconsCheckbox:SetChecked(MacroSetsDB.dynamicIcons)
@@ -105,7 +104,6 @@ local function LoadSettings()
     UpdateHelpText()
 end
 
--- Set scripts for checkbox interactions
 dynamicIconsCheckbox:SetScript("OnClick", function(self)
     MacroSetsFunctions.ToggleDynamicIcons()
     SaveSettings()
@@ -124,7 +122,6 @@ charSpecificCheckbox:SetScript("OnClick", function(self)
     UpdateHelpText()
 end)
 
--- Register the options panel with the WoW interface to manage addon settings
 macroSetsOptionsPanel.okay = SaveSettings
 macroSetsOptionsPanel.cancel = LoadSettings
 macroSetsOptionsPanel.default = function()
@@ -136,18 +133,15 @@ macroSetsOptionsPanel.default = function()
     UpdateHelpText()
 end
 
--- Properly register the options panel with the WoW Settings API
 macroSetsCategory = Settings.RegisterCanvasLayoutCategory(macroSetsOptionsPanel, macroSetsOptionsPanel.name)
 Settings.RegisterAddOnCategory(macroSetsCategory)
 
-
--- Load settings when the options panel is shown
 macroSetsOptionsPanel:SetScript("OnShow", function()
     LoadSettings()
     UpdateHelpText()
 end)
 
--- Event handling to ensure settings are loaded when the addon is initialized
+-- Loads settings when the addon is initialized.
 local function OnEvent(self, event, arg1)
     if event == "ADDON_LOADED" and arg1 == "MacroSets" then
         LoadSettings()
@@ -158,6 +152,5 @@ local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:SetScript("OnEvent", OnEvent)
 
--- Add the options panel to the list of special frames
--- This ensures the panel can be closed with the Escape key
+-- Allows the options panel to close with the Escape key.
 table.insert(UISpecialFrames, macroSetsOptionsPanel:GetName())

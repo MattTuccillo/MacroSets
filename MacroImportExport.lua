@@ -9,6 +9,10 @@ MacroSetsFunctions = MacroSetsFunctions or {}
 
 local DeserializeMacro
 local ShowImportDialog
+local importExportDialog
+local importExportEditBox
+local importExportAcceptButton
+local importCharacterSpecificCheckButton
 local sharedMacroExports = {}
 local shareCounter = 0
 
@@ -352,7 +356,7 @@ local function HookMacroSetsTooltips()
             end)
 
             if not success then
-                -- Silently fail - don't want tooltip hooks to break tooltips
+                -- Tooltip hooks should never break normal tooltip rendering.
                 return
             end
         end)
@@ -368,13 +372,11 @@ local function HookMacroSetsChatFilters()
     end
 
     local function FilterMacroSetsChatMessage(self, event, message, sender, ...)
-        -- Wrap in pcall to prevent errors from breaking chat filters
         local success, result = pcall(function()
             return ReplaceMacroSetsChatTokens(message, sender)
         end)
 
         if not success then
-            -- If there's an error, just return the original message
             return false, message, sender, ...
         end
 
@@ -525,11 +527,6 @@ local function GetSelectedMacroExportString()
     return SerializeMacro(name, icon, body, perCharacter)
 end
 
-local importExportDialog
-local importExportEditBox
-local importExportAcceptButton
-local importCharacterSpecificCheckButton
-
 local function HideImportExportDialog()
     if importExportDialog then
         importExportDialog:Hide()
@@ -550,10 +547,9 @@ local function EnsureImportExportDialog()
     importExportDialog:SetScript("OnDragStart", importExportDialog.StartMoving)
     importExportDialog:SetScript("OnDragStop", importExportDialog.StopMovingOrSizing)
 
-    -- Apply theme styling to the dialog
     MacroSetsTheme:ApplyFrameStyle(importExportDialog, "Window")
 
-    -- Set backdrop for default style (ElvUI/Tukui will override this)
+    -- ElvUI and Tukui override the default backdrop styling.
     if MacroSetsTheme.UIFramework == "Default" then
         importExportDialog:SetBackdrop({
             bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -589,7 +585,6 @@ local function EnsureImportExportDialog()
         HideImportExportDialog()
     end)
 
-    -- Apply theme styling to the editbox
     MacroSetsTheme:ApplyEditBoxStyle(importExportEditBox)
 
     local editBoxBackground = importExportDialog:CreateTexture(nil, "BACKGROUND")
@@ -601,7 +596,6 @@ local function EnsureImportExportDialog()
     importExportAcceptButton:SetSize(90, 24)
     importExportAcceptButton:SetPoint("BOTTOMRIGHT", -112, 14)
 
-    -- Apply theme styling to the button
     MacroSetsTheme:ApplyButtonStyle(importExportAcceptButton)
 
     importCharacterSpecificCheckButton = CreateFrame("CheckButton", "MacroSetsImportCharacterSpecificCheckButton", importExportDialog, "InterfaceOptionsCheckButtonTemplate")
@@ -611,7 +605,6 @@ local function EnsureImportExportDialog()
         _G[importCharacterSpecificCheckButton:GetName() .. "Text"]:SetText("Character Specific")
     end
 
-    -- Apply theme styling to the checkbox
     MacroSetsTheme:ApplyCheckboxStyle(importCharacterSpecificCheckButton)
 
     local closeButton = CreateFrame("Button", "MacroSetsImportExportCloseButton", importExportDialog, "UIPanelButtonTemplate")
@@ -620,7 +613,6 @@ local function EnsureImportExportDialog()
     closeButton:SetText("Close")
     closeButton:SetScript("OnClick", HideImportExportDialog)
 
-    -- Apply theme styling to the button
     MacroSetsTheme:ApplyButtonStyle(closeButton)
 end
 
@@ -688,10 +680,9 @@ local function EnsureMacroFrameButtons()
     sidePanel:SetSize(86, 58)
     sidePanel:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", -4, -82)
 
-    -- Apply theme styling to the side panel
     MacroSetsTheme:ApplyFrameStyle(sidePanel, "Window")
 
-    -- Set backdrop for default style
+    -- Keep the side panel compact against the macro frame in the default UI.
     if MacroSetsTheme.UIFramework == "Default" then
         sidePanel:SetBackdrop({
             bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -713,7 +704,6 @@ local function EnsureMacroFrameButtons()
         ShowImportDialog()
     end)
 
-    -- Apply theme styling to import button
     MacroSetsTheme:ApplyButtonStyle(importButton)
 
     macroSetsExportButton = CreateFrame("Button", "MacroSetsExportButton", sidePanel, "UIPanelButtonTemplate")
@@ -722,7 +712,6 @@ local function EnsureMacroFrameButtons()
     macroSetsExportButton:SetText("Export")
     macroSetsExportButton:SetScript("OnClick", ShowSelectedMacroExport)
 
-    -- Apply theme styling to export button
     MacroSetsTheme:ApplyButtonStyle(macroSetsExportButton)
 
     if hooksecurefunc then
@@ -748,7 +737,6 @@ eventFrame:RegisterEvent("CHAT_MSG_ADDON")
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "CHAT_MSG_ADDON" then
         local prefix, message, _channel, sender = ...
-        -- Wrap addon message handling in pcall to prevent crashes
         pcall(function()
             HandleMacroSetsAddonMessage(prefix, message, sender)
         end)

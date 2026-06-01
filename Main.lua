@@ -1,4 +1,4 @@
--- Color codes
+-- Color constants
 local COLOR_PURPLE = "|cFFCC79A7" -- debugging messages
 local COLOR_SKY_BLUE = "|cFF56B4E9" -- help section text
 local COLOR_LIGHT_BLUE = "|cFFADD8E6" -- help section bullets
@@ -8,9 +8,9 @@ local COLOR_ORANGE = "|cFFE69F00" -- help section parameters
 local COLOR_BLUE = "|cFF0072B2" -- heading dividers
 local COLOR_VERMILLION = "|cFFD55E00" -- error message
 local COLOR_GREEN = "|cFF009E73" -- success message
-local COLOR_RESET = "|r" -- reset back to original color
+local COLOR_RESET = "|r" -- reset to the original color
 
--- toggles for debugging
+-- Debug toggles
 local debug = {
     allFunctions = false,
     toggleDynamicIcons = false,
@@ -46,7 +46,7 @@ end
 local function DeepCopyTable(orig)
     local orig_type = type(orig)
     local copy
-    if orig_type == 'table' then
+    if orig_type == "table" then
         copy = {}
         for orig_key, orig_value in next, orig, nil do
             copy[DeepCopyTable(orig_key)] = DeepCopyTable(orig_value)
@@ -183,7 +183,7 @@ local function IsMacroSetEmpty(generalCount, characterCount, macroType)
     DebugMessage("IsMacroSetEmpty(): Function called.", debug.isMacroSetEmpty)
     DebugMessage("IsMacroSetEmpty(): generalCount = " .. generalCount .. ".", debug.isMacroSetEmpty)
     DebugMessage("IsMacroSetEmpty(): characterCount = " .. characterCount .. ".", debug.isMacroSetEmpty)
-    DebugMessage("IsMacroSetEmpty():" .. generalCount+characterCount .. " total macros found.", debug.isMacroSetEmpty)
+    DebugMessage("IsMacroSetEmpty():" .. generalCount + characterCount .. " total macros found.", debug.isMacroSetEmpty)
     DebugMessage("IsMacroSetEmpty(): macroType = " .. macroType .. ".", debug.isMacroSetEmpty)
 
     if (macroType == "g" and generalCount == 0) or
@@ -200,7 +200,7 @@ local function DeleteMacrosInRange(startSlot, endSlot)
     DebugMessage("DeleteMacrosInRange(): startSlot = " .. startSlot .. ".", debug.deleteMacrosInRange)
     DebugMessage("DeleteMacrosInRange(): endSlot = " .. endSlot .. ".", debug.deleteMacrosInRange)
     for i = endSlot, startSlot, -1 do
-        local macroName,_,_ = GetMacroInfo(i)
+        local macroName, _, _ = GetMacroInfo(i)
         if macroName then
             DeleteMacro(i)
         end
@@ -224,9 +224,7 @@ local function DeleteMacroSet(setName)
     end
 
     if MacroSetsDB[setName] then
-        -- Backup current macro sets
         BackupMacroSets()
-        -- Remove the macro set from the database
         MacroSetsDB[setName] = nil
         print(COLOR_GREEN .. "Macro set '" .. setName .. "' has been deleted." .. COLOR_RESET)
     else
@@ -237,10 +235,8 @@ end
 local function DeleteAllMacroSets()
     DebugMessage("DeleteAllMacroSets(): Function called.", debug.deleteAllMacroSets)
 
-    -- Backup current macro sets
     BackupMacroSets()
 
-    -- Delete all macro sets
     for setName in pairs(MacroSetsDB) do
         if IsMacroSetEntry(MacroSetsDB[setName]) then
             MacroSetsDB[setName] = nil
@@ -267,13 +263,11 @@ end
 local function SaveMacroSet(setName, macroType)
     DebugMessage("SaveMacroSet(): Function called.", debug.saveMacroSet)
 
-    -- Prevent execution during combat
     if InCombatLockdown() then
         print(COLOR_VERMILLION .. "Cannot perform this action during combat." .. COLOR_RESET)
         return
     end
 
-    -- Validate macro set name
     if not IsValidSetName(setName) then
         return
     end
@@ -288,14 +282,11 @@ local function SaveMacroSet(setName, macroType)
         end
     end
 
-    -- Initialize variables
     local startSlot, endSlot = SetMacroSlotRanges(resolvedMacroType)
     local generalMacroCount = 0
     local characterMacroCount = 0
     local dupes = false
     local namesCache = {}
-    -- Store data in a temporary table
-    -- MacroSetsDB[setName] = {macros = {}, type = macroType, generalCount = 0, characterCount = 0, dupes = dupes}
     local tempMacroSet = {
         macros = {},
         type = resolvedMacroType,
@@ -304,21 +295,18 @@ local function SaveMacroSet(setName, macroType)
         dupes = dupes
     }
     for i = startSlot, endSlot do
-        -- Prevent Execution During Combat
         if InCombatLockdown() then
             print(COLOR_VERMILLION .. "Save interrupted. Please try again after leaving combat." .. COLOR_RESET)
             return
         end
-        -- Load macro information
+
         local name, icon, body = GetMacroInfo(i)
         if name then
-            -- Check for macro icon behavior flag
             local endsWithD = string.sub(name, -2) == "#i"
-            -- If dynamic icons are enabled and the name ends with "#i"
+
             if MacroSetsDB.dynamicIcons and endsWithD then
                 icon = 134400
                 DebugMessage("SaveMacroSet(): Static icon set for macro: " .. name .. ".", debug.saveMacroSet)
-            -- If dynamic icons are disabled and the name does not end with "#i"
             elseif not MacroSetsDB.dynamicIcons and not endsWithD then
                 icon = 134400
                 DebugMessage("SaveMacroSet(): Dynamic icon set for macro: " .. name .. ".", debug.saveMacroSet)
@@ -339,22 +327,19 @@ local function SaveMacroSet(setName, macroType)
     tempMacroSet.generalCount = generalMacroCount
     tempMacroSet.characterCount = characterMacroCount
 
-    -- Check duplicate macro names
     if tempMacroSet.dupes then
         print(COLOR_VERMILLION .. "Failed to save set. All macros in a set must have unique names." .. COLOR_RESET)
         return
     end
-    -- Check empty macro set
+
     if IsMacroSetEmpty(generalMacroCount, characterMacroCount, resolvedMacroType) then
         print(COLOR_VERMILLION .. "No macros to save." .. COLOR_RESET)
         return
     end
 
-    -- Backup current macro sets
     BackupMacroSets()
-    -- Insert new set into current database
     MacroSetsDB[setName] = tempMacroSet
-    -- Display successful save message
+
     if resolvedMacroType == "g" then
         print(COLOR_GREEN .. "General Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
     end
@@ -364,7 +349,7 @@ local function SaveMacroSet(setName, macroType)
     if resolvedMacroType == "both" then
         print(COLOR_GREEN .. "Macro set saved as '" .. setName .. "'." .. COLOR_RESET)
     end
-    -- Alphabetize macro sets
+
     sortedSetNames = AlphabetizeMacroSets()
 end
 
@@ -433,7 +418,6 @@ end
 local function UndoLastOperation()
     DebugMessage("UndoLastOperation(): Function called.", debug.undoLastOperation)
 
-    -- Temporarily store backup sets
     local tempMacroSetsDB = {}
     local hasBackup = false
     for setName, setData in pairs(MacroSetsBackup) do
@@ -448,17 +432,14 @@ local function UndoLastOperation()
         return
     end
 
-    -- Update backup to current macro sets
     BackupMacroSets()
 
-    -- Clean current macro sets database
     for setName in pairs(MacroSetsDB) do
         if IsMacroSetEntry(MacroSetsDB[setName]) then
             MacroSetsDB[setName] = nil
         end
     end
 
-    -- Load backup into current macro sets database
     for setName, setData in pairs(tempMacroSetsDB) do
         MacroSetsDB[setName] = DeepCopyTable(setData)
     end
@@ -483,7 +464,7 @@ local function ListMacroSets()
             local COLOR_BOTH_INDICATOR = "|cFFFFFF36(B)|r"
             local COLOR_GENERAL_INDICATOR = "|cFF36FF4C(G)|r"
             local COLOR_CHARACTER_INDICATOR = "|cFF58E5F5(C)|r"
-            local setTypeIndicator = setType == 'c' and COLOR_CHARACTER_INDICATOR or setType == 'g' and COLOR_GENERAL_INDICATOR or COLOR_BOTH_INDICATOR
+            local setTypeIndicator = setType == "c" and COLOR_CHARACTER_INDICATOR or setType == "g" and COLOR_GENERAL_INDICATOR or COLOR_BOTH_INDICATOR
             print(COLOR_GREEN .. "- " .. COLOR_RESET .. setTypeIndicator .. setName)
         end
     end
@@ -527,9 +508,9 @@ local function DisplayHelp(helpSection)
         print(COLOR_SKY_BLUE .. "- Type " .. COLOR_YELLOW .. "/ms save [name] [type] " .. COLOR_SKY_BLUE .. "to save the current macro set." .. COLOR_RESET)
         print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "[name] " .. COLOR_LIGHT_BLUE .. "50 characters limit. No spaces." .. COLOR_RESET)
         if (MacroSetsDB.charSpecific) then
-            print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "[type] " .. COLOR_LIGHT_BLUE .. "Defaults to " .. COLOR_ORANGE .. "'c' " .. COLOR_LIGHT_BLUE .."if omitted." .. COLOR_RESET)
+            print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "[type] " .. COLOR_LIGHT_BLUE .. "Defaults to " .. COLOR_ORANGE .. "'c' " .. COLOR_LIGHT_BLUE .. "if omitted." .. COLOR_RESET)
         else
-            print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "[type] " .. COLOR_LIGHT_BLUE .. "Defaults to " .. COLOR_ORANGE .. "'both' " .. COLOR_LIGHT_BLUE .."if omitted." .. COLOR_RESET)
+            print(COLOR_LIGHT_BLUE .. "  - " .. COLOR_ORANGE .. "[type] " .. COLOR_LIGHT_BLUE .. "Defaults to " .. COLOR_ORANGE .. "'both' " .. COLOR_LIGHT_BLUE .. "if omitted." .. COLOR_RESET)
         end
         print(COLOR_LIGHT_BLUE .. "    - " .. COLOR_ORANGE .. "'g' " .. COLOR_LIGHT_BLUE .. "for general macros tab." .. COLOR_RESET)
         print(COLOR_LIGHT_BLUE .. "    - " .. COLOR_ORANGE .. "'c' " .. COLOR_LIGHT_BLUE .. "for character macros tab." .. COLOR_RESET)
@@ -623,31 +604,31 @@ local function HandleSlashCommands(msg)
     local command, arg1, arg2 = strsplit(" ", msg)
     command = string.lower(command)
 
-    if command == 'save' then
+    if command == "save" then
         -- arg1 = setName, arg2 = macroType
         SaveMacroSet(arg1, arg2)
-    elseif command == 'load' then
+    elseif command == "load" then
         -- arg1 = setName
         LoadMacroSet(arg1)
-    elseif command == 'delete' then
+    elseif command == "delete" then
         -- arg1 = setName
         DeleteMacroSet(arg1)
-    elseif command == 'deleteall' then
+    elseif command == "deleteall" then
         DeleteAllMacroSets()
-    elseif command == 'undo' then
+    elseif command == "undo" then
         UndoLastOperation()
-    elseif command == 'list' then
+    elseif command == "list" then
         sortedSetNames = AlphabetizeMacroSets()
         ListMacroSets()
-    elseif command == 'help' then
+    elseif command == "help" then
         -- arg1 = helpSection
         DisplayHelp(arg1)
-    elseif command == 'options' then
+    elseif command == "options" then
         OptionsScreenToggle()
     else
         print(COLOR_VERMILLION .. "Invalid Command: Type " .. COLOR_YELLOW .. "'/ms help'" .. COLOR_VERMILLION .. " for a list of valid commands." .. COLOR_RESET)
     end
 end
 
-SLASH_MACROSETS1 = '/ms'
-SlashCmdList['MACROSETS'] = HandleSlashCommands
+SLASH_MACROSETS1 = "/ms"
+SlashCmdList["MACROSETS"] = HandleSlashCommands
