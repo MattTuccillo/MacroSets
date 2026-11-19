@@ -1,9 +1,10 @@
-## Interface: 120005
+## Interface: 120105, 16001
 ## Title: Macro Sets
 ## Notes: Manage and switch between macro sets easily.
 ## Author: MattTuccillo
-## Version: 2.0.3
+## Version: 2.1.0
 ## SavedVariables: MacroSetsDB, MacroSetsBackup
+## OptionalDeps: ElvUI, Tukui
 ## IconTexture: Interface\AddOns\MacroSets\Media\Textures\LogoAddon
 ## X-Category: Miscellaneous
 ## X-Curse-Project-ID: 945498

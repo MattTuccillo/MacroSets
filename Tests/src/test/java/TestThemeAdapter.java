@@ -20,7 +20,7 @@ public class TestThemeAdapter {
     }
 
     @Test
-    public void testDefaultThemeCreatesBackdropTemplateFrame() {
+    public void testCreateFrame_DefaultThemeUsesBackdropTemplate() {
         loadThemeAdapter();
 
         LuaTable frame = macroSetsTheme.get("CreateFrame").invoke(LuaValue.varargsOf(new LuaValue[] {
@@ -38,7 +38,7 @@ public class TestThemeAdapter {
     }
 
     @Test
-    public void testElvUIThemeUsesSkinHandlersForControls() {
+    public void testApplyControlStyles_ElvUIUsesSkinHandlers() {
         globals.load(
             """
             elvButtonSkinCount = 0
@@ -77,7 +77,7 @@ public class TestThemeAdapter {
     }
 
     @Test
-    public void testThemeUpdatesWhenTukuiLoadsAfterAddon() {
+    public void testUIFramework_UpdatesWhenTukuiLoadsAfterAddon() {
         loadThemeAdapter();
 
         assertEquals("Default", macroSetsTheme.get("UIFramework").tojstring(), "Expected default before Tukui loads");

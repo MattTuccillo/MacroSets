@@ -57,7 +57,7 @@ public class TestListMacroSets {
             failWithException("LuaError occurred during setup", e);
         }
     }
-    
+
     @Test
     public void testListMacroSets_Empty() {
         listMacroSetsFunction.call();

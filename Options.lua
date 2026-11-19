@@ -13,7 +13,7 @@ local title = macroSetsOptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNo
 title:SetPoint("TOPLEFT", 16, -16)
 title:SetText("MacroSets Configuration")
 
-local checkboxesFrame = CreateFrame("Frame", "CheckboxesFrame", macroSetsOptionsPanel)
+local checkboxesFrame = CreateFrame("Frame", "MacroSetsCheckboxesFrame", macroSetsOptionsPanel)
 checkboxesFrame:SetSize(screenWidth * 0.9 * 0.4, screenHeight * 0.7 * 0.6)
 checkboxesFrame:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -20)
 
@@ -41,13 +41,13 @@ local function CreateHelpText(parent, referenceCheckbox, helpText, offsetX, offs
 end
 
 -- Checkbox settings with accompanying help text.
-local dynamicIconsCheckbox = CreateCheckbox(checkboxesFrame, "DynamicIconsCheckbox", "Save initial macro icon", "Toggle whether macro icons should default to the question mark dynamic icon or the first icon that is set when saved", 10, -10)
+local dynamicIconsCheckbox = CreateCheckbox(checkboxesFrame, "MacroSetsDynamicIconsCheckbox", "Save initial macro icon", "Toggle whether macro icons should default to the question mark dynamic icon or the first icon that is set when saved", 10, -10)
 local dynamicIconsHelpText = CreateHelpText(checkboxesFrame, dynamicIconsCheckbox, "", 0, -5)
 
-local replaceBarsCheckbox = CreateCheckbox(checkboxesFrame, "ReplaceBarsCheckbox", "Place loaded macros on action bars", "Toggle whether macros should be placed on action bars when a macro set is loaded.", 10, -80)
+local replaceBarsCheckbox = CreateCheckbox(checkboxesFrame, "MacroSetsReplaceBarsCheckbox", "Place loaded macros on action bars", "Toggle whether macros should be placed on action bars when a macro set is loaded.", 10, -80)
 local replaceBarsHelpText = CreateHelpText(checkboxesFrame, replaceBarsCheckbox, "", 0, -5)
 
-local charSpecificCheckbox = CreateCheckbox(checkboxesFrame, "CharSpecificCheckbox", "Save as character-specific macro set by default", "Toggle whether macro sets are saved as character-specific sets when not specified.", 10, -150)
+local charSpecificCheckbox = CreateCheckbox(checkboxesFrame, "MacroSetsCharSpecificCheckbox", "Save as character-specific macro set by default", "Toggle whether macro sets are saved as character-specific sets when not specified.", 10, -150)
 local charSpecificHelpText = CreateHelpText(checkboxesFrame, charSpecificCheckbox, "", 0, -5)
 
 -- Initializes settings that are not already defined.

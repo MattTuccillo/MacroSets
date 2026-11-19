@@ -29,9 +29,22 @@ public class TestMacroImportExport {
             characterMacroCount = 0
             MAX_ACCOUNT_MACROS = 120
             MAX_CHARACTER_MACROS = 18
-            function print(message) lastPrintMessage = message end
+            function print(...)
+                local args = {...}
+                local parts = {}
+                for i = 1, #args do
+                    parts[i] = tostring(args[i])
+                end
+                lastPrintMessage = table.concat(parts, ' ')
+            end
             function InCombatLockdown() return combat end
             function GetNumMacros() return generalMacroCount, characterMacroCount end
+            sentAddonMessages = {}
+            C_ChatInfo = {
+               SendAddonMessage = function(prefix, message, channel, target)
+                   table.insert(sentAddonMessages, { prefix = prefix, message = message, channel = channel, target = target })
+               end
+            }
             function ChatEdit_InsertLink(link) insertedChatLink = link return true end
             function ChatFrame_OpenChat(text, chatFrame) openedChatText = text end
             function CreateMacro(name, icon, body, perCharacter)
@@ -371,6 +384,65 @@ public class TestMacroImportExport {
         LuaTable macro = macroSetsFunctions.get("DeserializeMacro").call(exportString).checktable();
         assertEquals("Selected", macro.get("name").tojstring(), "Expected selected macro name");
         assertEquals("/say selected", macro.get("body").tojstring(), "Expected selected macro body");
+    }
+
+    @Test
+    public void testHandleMacroSetsAddonMessage_ChunksLongResponse() {
+        String body = "|".repeat(255);
+        LuaValue exportString = macroSetsFunctions.get("SerializeMacro").invoke(LuaValue.varargsOf(new LuaValue[] {
+            LuaValue.valueOf("Long"),
+            LuaValue.valueOf(538569),
+            LuaValue.valueOf(body),
+            LuaValue.FALSE
+        })).arg1();
+        String chatToken = macroSetsFunctions.get("CreateMacroChatToken").call(exportString).tojstring();
+        String shareId = chatToken.substring(chatToken.lastIndexOf(':') + 1, chatToken.length() - 1);
+
+        callAddonMessage("REQ	" + shareId, "Sender-Realm");
+
+        LuaTable sentMessages = globals.get("sentAddonMessages").checktable();
+        assertTrue(sentMessages.length() > 1, "Expected a long export to be split across multiple addon messages");
+        for (int i = 1; i <= sentMessages.length(); i++) {
+            LuaTable sent = sentMessages.get(i).checktable();
+            assertTrue(sent.get("message").tojstring().length() <= 255, "Expected each addon message to fit the 255 byte limit");
+            assertEquals("Sender-Realm", sent.get("target").tojstring(), "Expected response to be whispered to the requester");
+        }
+
+        // Replay the chunks as the requesting client, using a share id it asked for.
+        macroSetsFunctions.get("HandleMacroSetsHyperlink").call(LuaValue.valueOf("MacroSets:share~Sharer~zz99"));
+        for (int i = 1; i <= sentMessages.length(); i++) {
+            String message = sentMessages.get(i).checktable().get("message").tojstring();
+            callAddonMessage(message.replace("RES	" + shareId + "	", "RES	zz99	"), "Sharer");
+        }
+
+        assertEquals(exportString.tojstring(), globals.get("importEditBoxText").tojstring(), "Expected chunks to be reassembled into the original export string");
+    }
+
+    @Test
+    public void testHandleMacroSetsAddonMessage_IgnoresUnrequestedResponse() {
+        callAddonMessage("RES	abc123	MSM2~Test~bjk9~/say hello", "Stranger");
+
+        assertTrue(globals.get("importEditBoxText").isnil(), "Expected unrequested responses to be ignored");
+    }
+
+    @Test
+    public void testHandleMacroSetsAddonMessage_AcceptsSingleMessageResponse() {
+        macroSetsFunctions.get("HandleMacroSetsHyperlink").call(LuaValue.valueOf("MacroSets:share~Sharer~zz98"));
+
+        LuaTable request = globals.get("sentAddonMessages").get(1).checktable();
+        assertEquals("REQ	zz98", request.get("message").tojstring(), "Expected a share request to be sent");
+
+        callAddonMessage("RES	zz98	MSM2~Test~bjk9~/say hello", "Sharer");
+
+        assertEquals("MSM2~Test~bjk9~/say hello", globals.get("importEditBoxText").tojstring(), "Expected single-message responses from older versions to be accepted");
+    }
+
+    private void callAddonMessage(String message, String sender) {
+        macroSetsFunctions.get("HandleMacroSetsAddonMessage").invoke(LuaValue.varargsOf(new LuaValue[] {
+            LuaValue.valueOf("MacroSets"),
+            LuaValue.valueOf(message),
+            LuaValue.valueOf(sender)
+        }));
     }
 
     private void failWithException(String message, Exception e) {

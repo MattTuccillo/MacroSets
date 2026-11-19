@@ -31,7 +31,7 @@ public class TestDebugMessage {
             // Mock testing code to append
             String mockCode = """
 
-            TestExports = {   DebugMessage = DebugMessage,   debug = debug}
+            TestExports = {DebugMessage = DebugMessage, debug = debug}
             """;
 
             // Combine the original script with the testing code

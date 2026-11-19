@@ -79,13 +79,13 @@ public class TestHandleSlashCommands {
             failWithException("LuaError occurred during setup", e);
         }
     }
-    
+
     @Test
     public void testHandleSlashCommands_Save() {
         handleSlashCommandsFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
             LuaValue.valueOf("save"),
             LuaValue.valueOf("test")
-        }));        
+        }));
         assertTrue(globals.get("saveMacroSetCalled").toboolean(), "Expected SaveMacroSet to be called");
         assertFalse(globals.get("loadMacroSetCalled").toboolean(), "Expected LoadMacroSet to not be called");
         assertFalse(globals.get("deleteMacroSetCalled").toboolean(), "Expected DeleteMacroSet to not be called");
@@ -102,7 +102,7 @@ public class TestHandleSlashCommands {
         handleSlashCommandsFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
             LuaValue.valueOf("load"),
             LuaValue.valueOf("test")
-        }));        
+        }));
         assertFalse(globals.get("saveMacroSetCalled").toboolean(), "Expected SaveMacroSet to not be called");
         assertTrue(globals.get("loadMacroSetCalled").toboolean(), "Expected LoadMacroSet to be called");
         assertFalse(globals.get("deleteMacroSetCalled").toboolean(), "Expected DeleteMacroSet to not be called");
@@ -119,7 +119,7 @@ public class TestHandleSlashCommands {
         handleSlashCommandsFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
             LuaValue.valueOf("delete"),
             LuaValue.valueOf("test")
-        }));        
+        }));
         assertFalse(globals.get("saveMacroSetCalled").toboolean(), "Expected SaveMacroSet to not be called");
         assertFalse(globals.get("loadMacroSetCalled").toboolean(), "Expected LoadMacroSet to not be called");
         assertTrue(globals.get("deleteMacroSetCalled").toboolean(), "Expected DeleteMacroSet to be called");
@@ -135,7 +135,7 @@ public class TestHandleSlashCommands {
     public void testHandleSlashCommands_DeleteAll() {
         handleSlashCommandsFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
             LuaValue.valueOf("deleteall")
-        }));        
+        }));
         assertFalse(globals.get("saveMacroSetCalled").toboolean(), "Expected SaveMacroSet to not be called");
         assertFalse(globals.get("loadMacroSetCalled").toboolean(), "Expected LoadMacroSet to not be called");
         assertFalse(globals.get("deleteMacroSetCalled").toboolean(), "Expected DeleteMacroSet to not be called");
@@ -151,7 +151,7 @@ public class TestHandleSlashCommands {
     public void testHandleSlashCommands_Undo() {
         handleSlashCommandsFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
             LuaValue.valueOf("undo")
-        }));        
+        }));
         assertFalse(globals.get("saveMacroSetCalled").toboolean(), "Expected SaveMacroSet to not be called");
         assertFalse(globals.get("loadMacroSetCalled").toboolean(), "Expected LoadMacroSet to not be called");
         assertFalse(globals.get("deleteMacroSetCalled").toboolean(), "Expected DeleteMacroSet to not be called");
@@ -167,7 +167,7 @@ public class TestHandleSlashCommands {
     public void testHandleSlashCommands_List() {
         handleSlashCommandsFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
             LuaValue.valueOf("list")
-        }));        
+        }));
         assertFalse(globals.get("saveMacroSetCalled").toboolean(), "Expected SaveMacroSet to not be called");
         assertFalse(globals.get("loadMacroSetCalled").toboolean(), "Expected LoadMacroSet to not be called");
         assertFalse(globals.get("deleteMacroSetCalled").toboolean(), "Expected DeleteMacroSet to not be called");
@@ -184,7 +184,7 @@ public class TestHandleSlashCommands {
         handleSlashCommandsFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
             LuaValue.valueOf("help"),
             LuaValue.valueOf("save")
-        }));            
+        }));
         assertFalse(globals.get("saveMacroSetCalled").toboolean(), "Expected SaveMacroSet to not be called");
         assertFalse(globals.get("loadMacroSetCalled").toboolean(), "Expected LoadMacroSet to not be called");
         assertFalse(globals.get("deleteMacroSetCalled").toboolean(), "Expected DeleteMacroSet to not be called");
@@ -200,7 +200,7 @@ public class TestHandleSlashCommands {
     public void testHandleSlashCommands_Options() {
         handleSlashCommandsFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
             LuaValue.valueOf("options")
-        }));        
+        }));
         assertFalse(globals.get("saveMacroSetCalled").toboolean(), "Expected SaveMacroSet to not be called");
         assertFalse(globals.get("loadMacroSetCalled").toboolean(), "Expected LoadMacroSet to not be called");
         assertFalse(globals.get("deleteMacroSetCalled").toboolean(), "Expected DeleteMacroSet to not be called");
@@ -216,7 +216,7 @@ public class TestHandleSlashCommands {
     public void testHandleSlashCommands_Invalid() {
         handleSlashCommandsFunction.invoke(LuaValue.varargsOf(new LuaValue[] {
             LuaValue.valueOf("invalid")
-        }));        
+        }));
         assertFalse(globals.get("saveMacroSetCalled").toboolean(), "Expected SaveMacroSet to not be called");
         assertFalse(globals.get("loadMacroSetCalled").toboolean(), "Expected LoadMacroSet to not be called");
         assertFalse(globals.get("deleteMacroSetCalled").toboolean(), "Expected DeleteMacroSet to not be called");

@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class TestGetActionBarSlotsForMacro {
     private Globals globals;
-    private LuaValue getSlotsFunction;
+    private LuaValue getActionBarSlotsForMacroFunction;
 
     @BeforeEach
     public void setup() {
@@ -53,8 +53,8 @@ public class TestGetActionBarSlotsForMacro {
 
             // Load test function
             LuaValue testExports = globals.get("TestExports");
-            getSlotsFunction = testExports.get("GetActionBarSlotsForMacro");
-            assertNotNull(getSlotsFunction, "GetActionBarSlotsForMacro function should not be null");
+            getActionBarSlotsForMacroFunction = testExports.get("GetActionBarSlotsForMacro");
+            assertNotNull(getActionBarSlotsForMacroFunction, "GetActionBarSlotsForMacro function should not be null");
 
         } catch (IOException e) {
             failWithException("IOException occurred during setup", e);
@@ -65,7 +65,7 @@ public class TestGetActionBarSlotsForMacro {
 
     @Test
     public void testGetActionBarSlotsForMacro_Found() {
-        LuaValue result = getSlotsFunction.call(LuaValue.valueOf("TestMacro"));
+        LuaValue result = getActionBarSlotsForMacroFunction.call(LuaValue.valueOf("TestMacro"));
         assertTrue(result.istable(), "Expected result to be a table");
         assertEquals(2, result.length(), "Expected two slots");
         assertEquals(5, result.get(1).toint(), "Expected first slot to be 5");
@@ -75,7 +75,7 @@ public class TestGetActionBarSlotsForMacro {
 
     @Test
     public void testGetActionBarSlotsForMacro_NotFound() {
-        LuaValue result = getSlotsFunction.call(LuaValue.valueOf("MissingMacro"));
+        LuaValue result = getActionBarSlotsForMacroFunction.call(LuaValue.valueOf("MissingMacro"));
         assertTrue(result.istable(), "Expected result to be a table");
         assertEquals(0, result.length(), "Expected empty result for missing macro");
     }

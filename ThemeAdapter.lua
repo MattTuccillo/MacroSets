@@ -61,7 +61,7 @@ local function ApplyTukuiStyle(frame, frameType)
         return
     end
 
-    if frameType == "Window" then
+    if frameType == "Window" and frame.SetTemplate then
         frame:SetTemplate("Transparent")
     end
 end

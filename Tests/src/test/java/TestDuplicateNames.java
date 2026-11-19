@@ -48,7 +48,7 @@ public class TestDuplicateNames {
             failWithException("LuaError occurred during setup", e);
         }
     }
-    
+
     @Test
     public void testDuplicateNames_True() {
         String luaScript = "macroNames = {'Macro1', 'Macro1'}";

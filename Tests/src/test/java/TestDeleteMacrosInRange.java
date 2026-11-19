@@ -61,7 +61,7 @@ public class TestDeleteMacrosInRange {
             failWithException("LuaError occurred during setup", e);
         }
     }
-    
+
     @Test
     public void testDeleteMacrosInRange_Full() {
         deleteMacrosInRangeFunction.invoke(LuaValue.varargsOf(new LuaValue[] {

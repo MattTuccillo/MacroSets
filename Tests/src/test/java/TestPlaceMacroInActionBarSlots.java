@@ -73,7 +73,7 @@ public class TestPlaceMacroInActionBarSlots {
             failWithException("LuaError occurred during setup", e);
         }
     }
-    
+
     @Test
     public void testPlaceMacroInActionBarSlots_Success() {
         LuaTable table = new LuaTable();
@@ -82,7 +82,7 @@ public class TestPlaceMacroInActionBarSlots {
             LuaValue.valueOf(1),
             table
         }));
-        assertTrue(globals.get("getMacroInfoCalled").toboolean(), "Expected GetMacroInfo to be called");     
+        assertTrue(globals.get("getMacroInfoCalled").toboolean(), "Expected GetMacroInfo to be called");
         assertTrue(globals.get("pickupMacroCalled").toboolean(), "Expected PickupMacro to be called");
         assertTrue(globals.get("placeActionCalled").toboolean(), "Expected PlaceAction to be called");
         assertTrue(globals.get("clearCursorCalled").toboolean(), "Expected ClearCursor to be called");
@@ -97,7 +97,7 @@ public class TestPlaceMacroInActionBarSlots {
             LuaValue.valueOf(1),
             table
         }));
-        assertTrue(globals.get("getMacroInfoCalled").toboolean(), "Expected GetMacroInfo to be called");     
+        assertTrue(globals.get("getMacroInfoCalled").toboolean(), "Expected GetMacroInfo to be called");
         assertFalse(globals.get("pickupMacroCalled").toboolean(), "Expected PickupMacro to not be called");
         assertFalse(globals.get("placeActionCalled").toboolean(), "Expected PlaceAction to not be called");
         assertFalse(globals.get("clearCursorCalled").toboolean(), "Expected ClearCursor to not be called");
@@ -112,7 +112,7 @@ public class TestPlaceMacroInActionBarSlots {
             LuaValue.valueOf(1),
             table
         }));
-        assertTrue(globals.get("getMacroInfoCalled").toboolean(), "Expected GetMacroInfo to be called");     
+        assertTrue(globals.get("getMacroInfoCalled").toboolean(), "Expected GetMacroInfo to be called");
         assertFalse(globals.get("pickupMacroCalled").toboolean(), "Expected PickupMacro to not be called");
         assertFalse(globals.get("placeActionCalled").toboolean(), "Expected PlaceAction to not be called");
         assertFalse(globals.get("clearCursorCalled").toboolean(), "Expected ClearCursor to not be called");

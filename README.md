@@ -1,10 +1,10 @@
-# Macro Sets Addon for Retail World of Warcraft
+# Macro Sets Addon for Retail World of Warcraft and WoW Forever
 
 ![Macro Sets Logo](/Media/Textures/LogoAddon.png)
 
 ## Description
 
-Macro Sets is an addon for Retail World of Warcraft that allows players to manage and switch between sets of macros easily. This addon is particularly useful for players who use different sets of macros for various activities like PvE, PvP, roles, and/or specializations.
+Macro Sets is an addon for Retail World of Warcraft and WoW Forever that allows players to manage and switch between sets of macros easily. This addon is particularly useful for players who use different sets of macros for various activities like PvE, PvP, roles, and/or specializations.
 
 ## Features
 
@@ -20,7 +20,7 @@ Macro Sets is an addon for Retail World of Warcraft that allows players to manag
 
 1. Download the addon.
 2. Extract the ZIP file.
-3. Place the `MacroSets` folder into your `World of Warcraft\_retail_\Interface\AddOns` directory.
+3. Place the `MacroSets` folder into your `World of Warcraft\_retail_\Interface\AddOns` directory (or `World of Warcraft\_forever_\Interface\AddOns` for WoW Forever).
 4. Reload your UI or restart World of Warcraft
 
 ## Usage
@@ -77,7 +77,7 @@ This repository includes a luacheck configuration for the addon Lua files and a 
 Run Lua linting from the repository root:
 
 ```
-luacheck Main.lua Options.lua
+luacheck ThemeAdapter.lua Main.lua MacroImportExport.lua Options.lua
 ```
 
 Run the internal Java/LuaJ tests from the `Tests` directory:

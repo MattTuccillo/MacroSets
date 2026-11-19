@@ -61,6 +61,14 @@ end
 -- Create alphabetized macro set list for easier reference when listed
 local sortedSetNames = {}
 local actionBarSlotLimit = 180
+-- Non-set keys stored alongside macro sets in MacroSetsDB and MacroSetsBackup.
+-- A set with one of these names would overwrite a setting or the backup marker.
+local RESERVED_SET_NAMES = {
+    dynamicIcons = true,
+    replaceBars = true,
+    charSpecific = true,
+    hasBackup = true,
+}
 MacroSetsFunctions = MacroSetsFunctions or {}
 MacroSetsDB = MacroSetsDB or {}
 MacroSetsBackup = MacroSetsBackup or {}
@@ -95,6 +103,8 @@ local function BackupMacroSets()
             MacroSetsBackup[setName] = DeepCopyTable(setData)
         end
     end
+    -- Marks that a backup exists even when it holds no sets (e.g. before the first save).
+    MacroSetsBackup.hasBackup = true
 end
 
 local function AlphabetizeMacroSets()
@@ -113,7 +123,7 @@ end
 
 local function IsValidSetName(setName)
     DebugMessage("IsValidSetName(): Function called.", debug.isValidSetName)
-    DebugMessage("IsValidSetName(): setName = " .. setName .. ".", debug.isValidSetName)
+    DebugMessage("IsValidSetName(): setName = " .. tostring(setName) .. ".", debug.isValidSetName)
 
     if not setName or setName == "" then
         print("Please enter a macro set name.")
@@ -127,6 +137,11 @@ local function IsValidSetName(setName)
 
     if string.match(setName, "^[a-zA-Z0-9_-]+$") == nil then
         print(COLOR_VERMILLION .. "Invalid macro set name. Please use only alphanumeric characters, hyphens, and underscores." .. COLOR_RESET)
+        return false
+    end
+
+    if RESERVED_SET_NAMES[setName] then
+        print(COLOR_VERMILLION .. "'" .. setName .. "' is reserved by Macro Sets. Please choose a different name." .. COLOR_RESET)
         return false
     end
 
@@ -217,13 +232,13 @@ end
 
 local function DeleteMacroSet(setName)
     DebugMessage("DeleteMacroSet(): Function called.", debug.deleteMacroSet)
-    DebugMessage("DeleteMacroSet(): setName = " .. setName .. ".", debug.deleteMacroSet)
+    DebugMessage("DeleteMacroSet(): setName = " .. tostring(setName) .. ".", debug.deleteMacroSet)
 
     if not IsValidSetName(setName) then
         return
     end
 
-    if MacroSetsDB[setName] then
+    if IsMacroSetEntry(MacroSetsDB[setName]) then
         BackupMacroSets()
         MacroSetsDB[setName] = nil
         print(COLOR_GREEN .. "Macro set '" .. setName .. "' has been deleted." .. COLOR_RESET)
@@ -365,7 +380,7 @@ local function LoadMacroSet(setName)
         return
     end
 
-    if not MacroSetsDB[setName] then
+    if not IsMacroSetEntry(MacroSetsDB[setName]) then
         print(COLOR_VERMILLION .. "Set does not exist." .. COLOR_RESET)
         return
     end
@@ -419,7 +434,8 @@ local function UndoLastOperation()
     DebugMessage("UndoLastOperation(): Function called.", debug.undoLastOperation)
 
     local tempMacroSetsDB = {}
-    local hasBackup = false
+    -- Backups saved before the hasBackup marker existed are detected by their set entries.
+    local hasBackup = MacroSetsBackup.hasBackup == true
     for setName, setData in pairs(MacroSetsBackup) do
         if IsMacroSetEntry(setData) then
             tempMacroSetsDB[setName] = DeepCopyTable(setData)

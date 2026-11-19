@@ -46,3 +46,6 @@ user stories.md
 # Maven build/test artifacts
 target/
 Tests/target/
+
+# local deploy settings
+deploy.config.json

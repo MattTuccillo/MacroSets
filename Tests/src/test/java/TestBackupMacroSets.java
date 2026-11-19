@@ -52,13 +52,14 @@ public class TestBackupMacroSets {
             failWithException("LuaError occurred during setup", e);
         }
     }
-    
+
     @Test
     public void testBackupMacroSets_Empty() {
         backupMacroSetsFunction.call();
         assertEquals(0, globals.get("deepCopyTableCounter").toint(), "Expected DeepCopyTable to be called 0 times");
+        assertTrue(globals.get("MacroSetsBackup").get("hasBackup").toboolean(), "Expected an empty backup to still be marked as existing");
     }
-    
+
     @Test
     public void testBackupMacroSets_Filled() {
         LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();

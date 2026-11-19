@@ -34,7 +34,8 @@ jobs:
             -x '*/target/*' \
             -x '*/target/**' \
             -x '*.java' \
-            -x '*.class'
+            -x '*.class' \
+            -x 'deploy.*'
 
       - name: Upload Release Zip Artifact
         uses: actions/upload-artifact@v4

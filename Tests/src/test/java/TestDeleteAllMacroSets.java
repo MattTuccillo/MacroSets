@@ -53,9 +53,9 @@ public class TestDeleteAllMacroSets {
             failWithException("LuaError occurred during setup", e);
         }
     }
-    
+
     @Test
-    public void testDeleteAllMacroSets() {
+    public void testDeleteAllMacroSets_PreservesSettings() {
         LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();
         assertTrue(globals.load("return next(MacroSetsDB) == nil").call().toboolean(), "MacroSetsDB expected to be empty.");
         LuaTable testSetOne = LuaValue.tableOf();

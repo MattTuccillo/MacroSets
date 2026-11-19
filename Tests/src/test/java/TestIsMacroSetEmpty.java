@@ -52,8 +52,8 @@ public class TestIsMacroSetEmpty {
     @Test
     public void testIsMacroSetEmpty_GeneralEmpty() {
         assertTrue(isMacroSetEmptyFunction.call(
-            LuaValue.valueOf(0), 
-            LuaValue.valueOf(0), 
+            LuaValue.valueOf(0),
+            LuaValue.valueOf(0),
             LuaValue.valueOf("g")
             ).toboolean(), "Expected to be true");
     }
@@ -61,8 +61,8 @@ public class TestIsMacroSetEmpty {
     @Test
     public void testIsMacroSetEmpty_CharacterEmpty() {
         assertTrue(isMacroSetEmptyFunction.call(
-            LuaValue.valueOf(0), 
-            LuaValue.valueOf(0), 
+            LuaValue.valueOf(0),
+            LuaValue.valueOf(0),
             LuaValue.valueOf("c")
             ).toboolean(), "Expected to be true");
     }
@@ -70,8 +70,8 @@ public class TestIsMacroSetEmpty {
     @Test
     public void testIsMacroSetEmpty_BothEmpty() {
         assertTrue(isMacroSetEmptyFunction.call(
-            LuaValue.valueOf(0), 
-            LuaValue.valueOf(0), 
+            LuaValue.valueOf(0),
+            LuaValue.valueOf(0),
             LuaValue.valueOf("both")
             ).toboolean(), "Expected to be true");
     }
@@ -79,8 +79,8 @@ public class TestIsMacroSetEmpty {
     @Test
     public void testIsMacroSetEmpty_CharacterNotEmpty() {
         assertFalse(isMacroSetEmptyFunction.call(
-            LuaValue.valueOf(0), 
-            LuaValue.valueOf(5), 
+            LuaValue.valueOf(0),
+            LuaValue.valueOf(5),
             LuaValue.valueOf("c")
             ).toboolean(), "Expected to be false");
     }
@@ -88,8 +88,8 @@ public class TestIsMacroSetEmpty {
     @Test
     public void testIsMacroSetEmpty_GeneralNotEmpty() {
         assertFalse(isMacroSetEmptyFunction.call(
-            LuaValue.valueOf(5), 
-            LuaValue.valueOf(0), 
+            LuaValue.valueOf(5),
+            LuaValue.valueOf(0),
             LuaValue.valueOf("g")
             ).toboolean(), "Expected to be false");
     }
@@ -97,8 +97,8 @@ public class TestIsMacroSetEmpty {
     @Test
     public void testIsMacroSetEmpty_BothNotEmpty() {
         assertFalse(isMacroSetEmptyFunction.call(
-            LuaValue.valueOf(5), 
-            LuaValue.valueOf(5), 
+            LuaValue.valueOf(5),
+            LuaValue.valueOf(5),
             LuaValue.valueOf("both")
             ).toboolean(), "Expected to be false");
     }

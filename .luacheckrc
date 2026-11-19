@@ -45,7 +45,6 @@ globals = {
     "Tukui",
     "UIParent",
     "UISpecialFrames",
-    "importExportEditBox",
     "macroSetsCategory",
     "macroSetsOptionsPanel",
     "print",

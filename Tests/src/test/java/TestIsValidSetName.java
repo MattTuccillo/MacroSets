@@ -87,13 +87,30 @@ public class TestIsValidSetName {
 
     @Test
     public void testIsValidSetName_TooLong() {
-        assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("TooLongName_111111111111111111111111111111111111111")).toboolean(), 
+        assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("TooLongName_111111111111111111111111111111111111111")).toboolean(),
             "Expected overly long name to be invalid");
     }
 
     @Test
     public void testIsValidSetName_ContainsSpaces() {
         assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("Name With Spaces")).toboolean(), "Expected 'Name With Spaces' to be invalid");
+    }
+
+    @Test
+    public void testIsValidSetName_Nil() {
+        assertFalse(isValidSetNameFunction.call(LuaValue.NIL).toboolean(), "Expected nil to be invalid without erroring");
+    }
+
+    @Test
+    public void testIsValidSetName_ReservedSettingName() {
+        assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("dynamicIcons")).toboolean(), "Expected 'dynamicIcons' to be reserved");
+        assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("replaceBars")).toboolean(), "Expected 'replaceBars' to be reserved");
+        assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("charSpecific")).toboolean(), "Expected 'charSpecific' to be reserved");
+    }
+
+    @Test
+    public void testIsValidSetName_ReservedBackupMarkerName() {
+        assertFalse(isValidSetNameFunction.call(LuaValue.valueOf("hasBackup")).toboolean(), "Expected 'hasBackup' to be reserved");
     }
 
     private void failWithException(String message, Exception e) {

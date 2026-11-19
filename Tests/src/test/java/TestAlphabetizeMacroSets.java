@@ -49,7 +49,7 @@ public class TestAlphabetizeMacroSets {
     }
 
     @Test
-    public void testAlphabetizeMacroSets() {
+    public void testAlphabetizeMacroSets_SortsCaseInsensitiveAndSkipsNonSets() {
         LuaTable macroSetsDB = globals.get("MacroSetsDB").checktable();
 
         LuaTable setA = LuaValue.tableOf();
@@ -71,7 +71,6 @@ public class TestAlphabetizeMacroSets {
         assertEquals("alpha", sortedSetNames.get(1).tojstring());
         assertEquals("Beta", sortedSetNames.get(2).tojstring());
     }
-
 
     private void failWithException(String message, Exception e) {
         fail(message, e);

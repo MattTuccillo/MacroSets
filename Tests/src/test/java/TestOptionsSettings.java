@@ -175,7 +175,7 @@ public class TestOptionsSettings {
     }
 
     @Test
-    public void testSaveSettings() {
+    public void testSaveSettings_StoresCheckboxValues() {
         testExports.get("dynamicIconsCheckbox").set("checked", LuaValue.TRUE);
         testExports.get("replaceBarsCheckbox").set("checked", LuaValue.FALSE);
         testExports.get("charSpecificCheckbox").set("checked", LuaValue.TRUE);
@@ -189,7 +189,7 @@ public class TestOptionsSettings {
     }
 
     @Test
-    public void testUpdateHelpText() {
+    public void testUpdateHelpText_MixedStates() {
         globals.load(
             """
             MacroSetsDB.dynamicIcons = true
@@ -237,7 +237,7 @@ public class TestOptionsSettings {
     }
 
     @Test
-    public void testLoadSettings() {
+    public void testLoadSettings_AppliesSavedValues() {
         globals.load(
             """
             MacroSetsDB.dynamicIcons = true

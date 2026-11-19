@@ -3,11 +3,19 @@
 ## Version 2.1.0 - [xx/xx/2026]
 
 - Features:
+  - Added support for WoW Forever.
   - Added import and export buttons to the macro window for sharing individual macros with other addon users.
 - Changes:
   - Fixed a bug where `/ms undo` could clear saved macro sets when there was no previous action to undo.
   - Fixed a bug where undo backups could store and restore configuration toggle settings.
-- Supports World of Warcraft version 12.0.5
+  - Fixed a bug where using `/ms save`, `/ms load`, or `/ms delete` without a macro set name caused a Lua error.
+  - Fixed a bug where a macro set could be saved with the same name as a configuration setting, overwriting that setting.
+    - `dynamicIcons`, `replaceBars`, `charSpecific`, and `hasBackup` are now reserved and cannot be used as macro set names.
+  - Fixed a bug where the very first macro set saved could not be undone.
+  - Fixed a bug where longer macros could fail to send when shared through a chat link.
+  - Shared macros are now only accepted from players you requested them from by clicking their chat link.
+  - Improved ElvUI and Tukui theme detection.
+- Supports World of Warcraft version 12.1.5 and WoW Forever version 1.60.1.
 
 ## Version 2.0.3 - [1/27/2026]
 

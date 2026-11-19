@@ -89,6 +89,30 @@ public class TestUndoLastOperation {
     }
 
     @Test
+    public void testUndoLastOperation_MarkedEmptyBackup() {
+        globals.load(
+            """
+            MacroSetsDB = {
+               firstSet = {macros = {}, type = 'g'},
+               dynamicIcons = true
+            }
+            MacroSetsBackup = { hasBackup = true }
+            lastPrintMessage = nil
+            """
+        ).call();
+
+        undoLastOperationFunction.call();
+
+        String expectedMessage = COLOR_GREEN +
+            "Previous action successfully undone." +
+            COLOR_RESET;
+        assertTrue(globals.get("MacroSetsDB").get("firstSet").isnil(), "Undoing the first save should remove the saved set");
+        assertTrue(globals.get("MacroSetsDB").get("dynamicIcons").toboolean(), "Undo should preserve settings");
+        assertTrue(globals.get("MacroSetsBackup").get("firstSet").istable(), "MacroSetsBackup should hold the set so the undo can be redone");
+        assertEquals(expectedMessage, globals.get("lastPrintMessage").tojstring(), "Expected success message to be printed");
+    }
+
+    @Test
     public void testUndoLastOperation_RestoresBackup() {
         globals.load(
             """

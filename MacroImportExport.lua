@@ -4,6 +4,8 @@ local ADDON_MESSAGE_PREFIX = "MacroSets"
 local DEFAULT_MACRO_ICON = 134400
 local MAX_MACRO_BODY_LENGTH = 255
 local BASE36_DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz"
+local MAX_ADDON_MESSAGE_LENGTH = 255
+local MAX_SHARE_CHUNKS = 16
 
 MacroSetsFunctions = MacroSetsFunctions or {}
 
@@ -14,6 +16,8 @@ local importExportEditBox
 local importExportAcceptButton
 local importCharacterSpecificCheckButton
 local sharedMacroExports = {}
+local pendingShareRequests = {}
+local incomingShareChunks = {}
 local shareCounter = 0
 
 local function DecodeEscapedValue(value)
@@ -61,6 +65,10 @@ end
 
 local function DecodeBase36(value)
     value = string.lower(tostring(value or ""))
+    if value == "" then
+        return nil
+    end
+
     local decoded = 0
 
     for index = 1, string.len(value) do
@@ -310,9 +318,11 @@ local function HandleMacroSetsHyperlink(linkData)
         end
 
         if C_ChatInfo and C_ChatInfo.SendAddonMessage then
+            pendingShareRequests[shareId] = true
             C_ChatInfo.SendAddonMessage(ADDON_MESSAGE_PREFIX, "REQ\t" .. shareId, "WHISPER", sender)
             print("|cFF009E73Requesting Macro Sets import from " .. sender .. ".|r")
         elseif SendAddonMessage then
+            pendingShareRequests[shareId] = true
             SendAddonMessage(ADDON_MESSAGE_PREFIX, "REQ\t" .. shareId, "WHISPER", sender)
             print("|cFF009E73Requesting Macro Sets import from " .. sender .. ".|r")
         else
@@ -419,6 +429,62 @@ local function SendMacroSetsAddonWhisper(target, message)
     end
 end
 
+-- Addon messages are capped at 255 bytes, so responses are sent as
+-- "RES\t<shareId>\t<index>\t<total>\t<chunk>" and reassembled by the requester.
+local function SendMacroShareResponse(target, shareId, exportString)
+    local header = "RES\t" .. shareId .. "\t"
+    -- Reserve room for "<index>\t<total>\t".
+    local chunkSize = MAX_ADDON_MESSAGE_LENGTH - string.len(header) - string.len(MAX_SHARE_CHUNKS .. "\t" .. MAX_SHARE_CHUNKS .. "\t")
+    local total = math.max(1, math.ceil(string.len(exportString) / chunkSize))
+    if total > MAX_SHARE_CHUNKS then
+        return
+    end
+
+    for index = 1, total do
+        local chunkStart = (index - 1) * chunkSize + 1
+        local chunk = string.sub(exportString, chunkStart, chunkStart + chunkSize - 1)
+        SendMacroSetsAddonWhisper(target, header .. index .. "\t" .. total .. "\t" .. chunk)
+    end
+end
+
+local function ReceiveMacroShareResponse(shareId, payload)
+    -- Only accept responses to shares this client asked for.
+    if not pendingShareRequests[shareId] then
+        return
+    end
+
+    local index, total, chunk = string.match(payload, "^(%d+)\t(%d+)\t(.*)$")
+    if not index then
+        -- Single-message response from versions before chunking.
+        pendingShareRequests[shareId] = nil
+        ShowImportDialog(payload)
+        return
+    end
+
+    index = tonumber(index)
+    total = tonumber(total)
+    if index < 1 or total < 1 or index > total or total > MAX_SHARE_CHUNKS then
+        return
+    end
+
+    local incoming = incomingShareChunks[shareId]
+    if not incoming or incoming.total ~= total then
+        incoming = { total = total, received = 0, parts = {} }
+        incomingShareChunks[shareId] = incoming
+    end
+
+    if not incoming.parts[index] then
+        incoming.parts[index] = chunk
+        incoming.received = incoming.received + 1
+    end
+
+    if incoming.received == total then
+        incomingShareChunks[shareId] = nil
+        pendingShareRequests[shareId] = nil
+        ShowImportDialog(table.concat(incoming.parts, "", 1, total))
+    end
+end
+
 local function HandleMacroSetsAddonMessage(prefix, message, sender)
     if prefix ~= ADDON_MESSAGE_PREFIX then
         return
@@ -428,12 +494,12 @@ local function HandleMacroSetsAddonMessage(prefix, message, sender)
     if command == "REQ" then
         local share = sharedMacroExports[rest]
         if share then
-            SendMacroSetsAddonWhisper(sender, "RES\t" .. rest .. "\t" .. share.exportString)
+            SendMacroShareResponse(sender, rest, share.exportString)
         end
     elseif command == "RES" then
-        local _, exportString = string.match(rest, "^([^\t]+)\t(.+)$")
-        if exportString then
-            ShowImportDialog(exportString)
+        local shareId, payload = string.match(rest, "^([^\t]+)\t(.+)$")
+        if shareId then
+            ReceiveMacroShareResponse(shareId, payload)
         end
     end
 end
@@ -763,3 +829,5 @@ MacroSetsFunctions.CreateMacroChatToken = CreateMacroChatToken
 MacroSetsFunctions.ReplaceMacroSetsChatTokens = ReplaceMacroSetsChatTokens
 MacroSetsFunctions.InsertMacroHyperlinkIntoChat = InsertMacroHyperlinkIntoChat
 MacroSetsFunctions.ShowImportDialog = ShowImportDialog
+MacroSetsFunctions.HandleMacroSetsHyperlink = HandleMacroSetsHyperlink
+MacroSetsFunctions.HandleMacroSetsAddonMessage = HandleMacroSetsAddonMessage
